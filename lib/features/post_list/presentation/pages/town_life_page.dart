@@ -54,8 +54,21 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
               pinned: true,
               delegate: _SliverCategoryHeaderDelegate(),
             ),
+
+            townLifeState.isLoading && filteredPosts.isEmpty ?
+             SliverFillRemaining(child: Center(child: CircularProgressIndicator()),) :
+             filteredPosts.isEmpty ? SliverFillRemaining(
+              child: Column(
+                
+              ),
+             )
           ],
         ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        backgroundColor: const Color(0xFFFF7B8E),
+        child: Icon(Icons.edit, color: Colors.white),
       ),
     );
   }
