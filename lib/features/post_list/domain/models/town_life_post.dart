@@ -1,3 +1,5 @@
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
+
 class TownLifePost {
   TownLifePost({
     required this.category,
@@ -21,4 +23,28 @@ class TownLifePost {
   final int commentCount; // 댓글 수
   final int likeCount; // 좋아요 수
   final String? imageUrl; // 이미지 URL (null일 경우 이미지 없음)
+
+  // 카테고리 문자열을 enum으로 변환
+  TownLifeCategory get categoryEnum {
+    switch (category) {
+      case '우리동네질문':
+        return TownLifeCategory.question;
+      case '동네소식':
+        return TownLifeCategory.news;
+      case '해주세요':
+        return TownLifeCategory.help;
+      case '일상':
+        return TownLifeCategory.daily;
+      case '동네맛집':
+        return TownLifeCategory.food;
+      case '분실/실종':
+        return TownLifeCategory.lost;
+      case '동네모임':
+        return TownLifeCategory.meeting;
+      case '같이해요':
+        return TownLifeCategory.together;
+      default:
+        return TownLifeCategory.all;
+    }
+  }
 }
