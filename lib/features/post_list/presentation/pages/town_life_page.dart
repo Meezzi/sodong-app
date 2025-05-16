@@ -35,6 +35,23 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
     super.dispose();
   }
 
+  @override
+  Widget build(BuildContext context) {
+    final townLifeState = ref.watch(townLifeStateProvider);
+    final filteredPosts = ref.watch(filteredPostsProvider);
+
+    return TownLifeScaffold(
+      scrollController: _scrollController,
+      onRefresh: () =>
+          ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
+      appBar: _buildAppBar(),
+      regionSelector: _buildRegionSelector(),
+      categorySelector: _buildCategorySelector(),
+      postListView: _buildPostListView(townLifeState, filteredPosts),
+      floatingActionButton: _buildFloatingActionButton(),
+    );
+  }
+
   // 스크롤 이벤트 리스너
   void _scrollListener() {
     if (_isLoadingMore) return;
@@ -51,106 +68,127 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
     }
   }
 
+  Widget _buildAppBar() {
+    return SliverAppBar(
+      title: const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+      floating: true,
+      pinned: true,
+      centerTitle: true,
+      backgroundColor: const Color(0xFFFFE4E8),
+    );
+  }
+
+  Widget _buildRegionSelector() {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _SliverRegionHeaderDelegate(),
+    );
+  }
+
+  Widget _buildCategorySelector() {
+    return SliverPersistentHeader(
+      pinned: true,
+      delegate: _SliverCategoryHeaderDelegate(),
+    );
+  }
+
+  Widget _buildPostListView(
+      TownLifeState townLifeState, List<TownLifePost> filteredPosts) {
+    if (townLifeState.isLoading && filteredPosts.isEmpty) {
+      return const SliverFillRemaining(
+        child: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    if (filteredPosts.isEmpty) {
+      return SliverFillRemaining(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.article_outlined, size: 48, color: Colors.grey[400]),
+              const SizedBox(height: 16),
+              Text(
+                '게시물이 없습니다',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return SliverList(
+      delegate: SliverChildBuilderDelegate(
+        (context, index) {
+          if (index == filteredPosts.length) {
+            return townLifeState.hasMorePosts
+                ? const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                : const SizedBox.shrink();
+          }
+          final post = filteredPosts[index];
+          return TownLifePostItem(
+            post: post,
+            index: index,
+          );
+        },
+        childCount: filteredPosts.length + (townLifeState.hasMorePosts ? 1 : 0),
+      ),
+    );
+  }
+
+  Widget _buildFloatingActionButton() {
+    return FloatingActionButton(
+      onPressed: () {},
+      backgroundColor: const Color(0xFFFF7B8E),
+      child: const Icon(Icons.edit, color: Colors.white),
+    );
+  }
+}
+
+class TownLifeScaffold extends StatelessWidget {
+  const TownLifeScaffold({
+    Key? key,
+    required this.scrollController,
+    required this.onRefresh,
+    required this.appBar,
+    required this.regionSelector,
+    required this.categorySelector,
+    required this.postListView,
+    required this.floatingActionButton,
+  }) : super(key: key);
+
+  final ScrollController scrollController;
+  final Future<void> Function() onRefresh;
+  final Widget appBar;
+  final Widget regionSelector;
+  final Widget categorySelector;
+  final Widget postListView;
+  final Widget floatingActionButton;
+
   @override
   Widget build(BuildContext context) {
-    final townLifeState = ref.watch(townLifeStateProvider);
-    final filteredPosts = ref.watch(filteredPostsProvider);
-
     return Scaffold(
       backgroundColor: Colors.grey[100],
       body: RefreshIndicator(
-        onRefresh: () =>
-            ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
+        onRefresh: onRefresh,
         child: CustomScrollView(
-          controller: _scrollController,
+          controller: scrollController,
           slivers: [
-            // 앱바
-            SliverAppBar(
-              title: const Text('소소한동네',
-                  style: TextStyle(fontWeight: FontWeight.bold)),
-              floating: true,
-              pinned: true,
-              backgroundColor: const Color(0xFFFFE4E8),
-              actions: [
-                IconButton(
-                  icon: const Icon(Icons.search),
-                  onPressed: () {},
-                ),
-                IconButton(
-                  icon: const Icon(Icons.notifications_none),
-                  onPressed: () {},
-                ),
-              ],
-            ),
-
-            // 지역 선택기
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverRegionHeaderDelegate(),
-            ),
-
-            // 카테고리 선택기
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverCategoryHeaderDelegate(),
-            ),
-
-            // 게시물 리스트
-            townLifeState.isLoading && filteredPosts.isEmpty
-                ? const SliverFillRemaining(
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : filteredPosts.isEmpty
-                    ? SliverFillRemaining(
-                        child: Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.article_outlined,
-                                  size: 48, color: Colors.grey[400]),
-                              const SizedBox(height: 16),
-                              Text(
-                                '게시물이 없습니다',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      )
-                    : SliverList(
-                        delegate: SliverChildBuilderDelegate(
-                          (context, index) {
-                            if (index == filteredPosts.length) {
-                              return townLifeState.hasMorePosts
-                                  ? const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 16),
-                                      child: Center(
-                                          child: CircularProgressIndicator()),
-                                    )
-                                  : const SizedBox.shrink();
-                            }
-                            final post = filteredPosts[index];
-                            return TownLifePostItem(
-                              post: post,
-                              index: index,
-                            );
-                          },
-                          childCount: filteredPosts.length +
-                              (townLifeState.hasMorePosts ? 1 : 0),
-                        ),
-                      ),
+            appBar,
+            regionSelector,
+            categorySelector,
+            postListView,
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        backgroundColor: const Color(0xFFFF7B8E),
-        child: const Icon(Icons.edit, color: Colors.white),
-      ),
+      floatingActionButton: floatingActionButton,
     );
   }
 }
