@@ -43,25 +43,48 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
                 IconButton(
                   onPressed: () {},
                   icon: Icon(Icons.notifications_none),
+                ), // 지역 선택기
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverRegionHeaderDelegate(),
                 ),
+
+                // 카테고리 선택기
+                SliverPersistentHeader(
+                  pinned: true,
+                  delegate: _SliverCategoryHeaderDelegate(),
+                ),
+
+                // 게시물 리스트
+                townLifeState.isLoading && filteredPosts.isEmpty
+                    ? const SliverFillRemaining(
+                        child: Center(child: CircularProgressIndicator()),
+                      )
+                    : filteredPosts.isEmpty
+                        ? SliverFillRemaining(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.article_outlined,
+                                      size: 48, color: Colors.grey[400]),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    '게시물이 없습니다',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : SliverList(
+                          
+                        ),
               ],
             ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverRegionHeaderDelegate(),
-            ),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _SliverCategoryHeaderDelegate(),
-            ),
-
-            townLifeState.isLoading && filteredPosts.isEmpty ?
-             SliverFillRemaining(child: Center(child: CircularProgressIndicator()),) :
-             filteredPosts.isEmpty ? SliverFillRemaining(
-              child: Column(
-                
-              ),
-             )
           ],
         ),
       ),
