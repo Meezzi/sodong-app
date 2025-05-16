@@ -76,6 +76,131 @@ class RegionSelector extends ConsumerWidget {
       },
     );
   }
-  
-  void RegionSelectionDialog({required List<Region> regions, required Region initialRegion}) {}
+}
+
+class RegionSelectionDialog extends ConsumerStatefulWidget {
+  final List<Region> regions;
+  final Region initialRegion;
+
+  const RegionSelectionDialog({
+    super.key,
+    required this.regions,
+    required this.initialRegion,
+  });
+
+  @override
+  _RegionSelectionDialogState createState() => _RegionSelectionDialogState();
+}
+
+class _RegionSelectionDialogState extends ConsumerState<RegionSelectionDialog> {
+  late Region _selectedRegion;
+  late String _selectedSubRegion;
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedRegion = widget.initialRegion;
+    _selectedSubRegion = ref.read(selectedSubRegionProvider);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: const Text('지역 선택'),
+      content: SizedBox(
+        width: double.maxFinite,
+        height: 500,
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 지역 목록
+            Expanded(
+              flex: 2,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.regions.length,
+                itemBuilder: (context, index) {
+                  final region = widget.regions[index];
+                  return ListTile(
+                    dense: true,
+                    title: Text(
+                      region.name,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    selected: _selectedRegion.id == region.id,
+                    selectedColor: const Color(0xFFFF7B8E),
+                    onTap: () {
+                      setState(() {
+                        _selectedRegion = region;
+                        _selectedSubRegion = region.subRegions.first;
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+            // 구분선
+            const VerticalDivider(),
+            // 하위 지역 목록
+            Expanded(
+              flex: 3,
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: _selectedRegion.subRegions.length,
+                itemBuilder: (context, index) {
+                  final subRegion = _selectedRegion.subRegions[index];
+                  return ListTile(
+                    dense: true,
+                    title: Text(
+                      subRegion,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    selected: _selectedSubRegion == subRegion,
+                    selectedColor: const Color(0xFFFF7B8E),
+                    onTap: () {
+                      setState(() {
+                        _selectedSubRegion = subRegion;
+                      });
+                    },
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        // TextButton(
+        //   onPressed: () => Navigator.pop(context),
+        //   child: const Text('취소'),
+        // ),
+        SizedBox(
+          width: double.infinity,
+          height: 50,
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFFFF7B8E),
+            ),
+            onPressed: () {
+              ref.read(selectedRegionProvider.notifier).state = _selectedRegion;
+              ref.read(selectedSubRegionProvider.notifier).state =
+                  _selectedSubRegion;
+              Navigator.pop(context);
+            },
+            child: const Text(
+              '확인',
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }
