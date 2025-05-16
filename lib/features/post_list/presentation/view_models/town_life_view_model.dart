@@ -62,4 +62,8 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   }
 }
 
-
+// 좋아요 상태를 관리하는 프로바이더
+final likedPostsProvider =
+    StateNotifierProvider<LikedPostsNotifier, Map<int, bool>>((ref) {
+  return LikedPostsNotifier();
+});
