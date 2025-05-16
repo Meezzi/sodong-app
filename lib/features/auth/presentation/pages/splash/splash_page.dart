@@ -17,6 +17,8 @@ class _SplashPageState extends State<SplashPage> {
 
   void _goToLogin() async {
     await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    await Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override
