@@ -1,5 +1,6 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/post_list/data/repositories/post_service.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
@@ -53,6 +54,9 @@ final likedPostsProvider =
     StateNotifierProvider<LikedPostsNotifier, Map<int, bool>>((ref) {
   return LikedPostsNotifier();
 });
+
+// 게시물 서비스 프로바이더
+final postServiceProvider = Provider<PostService>((ref) => PostService());
 
 class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   LikedPostsNotifier() : super({});
