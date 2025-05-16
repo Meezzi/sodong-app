@@ -8,7 +8,7 @@ class RegionSelector extends ConsumerWidget {
     final categories = ref.watch(categoriesProvider);
     final selectedCategory = ref.watch(selectedCategoryProvider);
 
-    return Container(
+    return SizedBox(
       height: 50,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -18,7 +18,12 @@ class RegionSelector extends ConsumerWidget {
             final category = categories[index];
             final isSelected = selectedCategory == category;
 
-            return Container();
+            return GestureDetector(
+              onTap: () {
+                ref.read(selectedCategoryProvider.notifier).state = category;
+              },
+              child: Container(),
+            );
           },
         ),
       ),
