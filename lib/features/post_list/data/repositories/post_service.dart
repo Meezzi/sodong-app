@@ -6,7 +6,7 @@ class PostService {
   factory PostService() => _instance;
   PostService._internal();
 
-    static const int pageSize = 10;
+  static const int pageSize = 10;
   int _currentPage = 0;
   bool _hasMore = true;
   final List<TownLifePost> _cachedPosts = [];
@@ -26,5 +26,31 @@ class PostService {
     return posts;
   }
 
+  // 추가 게시물 가져오기 (무한 스크롤용)
+  Future<List<TownLifePost>> fetchMorePosts() async {
+    if (!_hasMore) {
+      return [];
+    }
 
+    // API 요청을 현실적으로 만들기 위해 지연 추가
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // 이 예제에서는 전체 데이터가 100개로 제한됩니다
+    if (_currentPage * pageSize >= 100) {
+      _hasMore = false;
+      return [];
+    }
+
+    final posts =
+        generateDummyPosts(pageSize, startIndex: _currentPage * pageSize);
+    _cachedPosts.addAll(posts);
+    _currentPage++;
+
+    return posts;
+  }
+
+  // 현재 캐시된 게시물 가져오기
+  List<TownLifePost> getCachedPosts() {
+    return List.unmodifiable(_cachedPosts);
+  }
 }
