@@ -28,11 +28,21 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
             SliverAppBar(
               title: Text(
                 '소소한동네',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-            )
+              floating: true,
+              pinned: true,
+              actions: [
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.search),
+                ),
+                IconButton(
+                  onPressed: () {},
+                  icon: Icon(Icons.notifications_none),
+                ),
+              ],
+            ),
           ],
         ),
       ),
