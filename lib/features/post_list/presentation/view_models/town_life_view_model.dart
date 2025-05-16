@@ -58,6 +58,8 @@ final likedPostsProvider =
 // 게시물 서비스 프로바이더
 final postServiceProvider = Provider<PostService>((ref) => PostService());
 
+
+
 class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   LikedPostsNotifier() : super({});
 
@@ -69,5 +71,56 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
 
   bool isLiked(int index) {
     return state[index] ?? false;
+  }
+}
+
+
+
+// 게시물 상태 관리를 위한 Notifier
+class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
+  final PostService _postService;
+
+  TownLifeStateNotifier(this._postService) : super(TownLifeState.initial());
+
+  // 초기 게시물 불러오기
+  Future<void> fetchInitialPosts() async {
+    if (state.isLoading) return;
+
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      final posts = await _postService.fetchInitialPosts();
+      state = state.copyWith(
+        posts: posts,
+        isLoading: false,
+        hasMorePosts: _postService.hasMorePosts,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
+      );
+    }
+  }
+
+  // 추가 게시물 불러오기 (무한 스크롤)
+  Future<void> fetchMorePosts() async {
+    if (state.isLoading || !state.hasMorePosts) return;
+
+    state = state.copyWith(isLoading: true, errorMessage: null);
+
+    try {
+      final newPosts = await _postService.fetchMorePosts();
+      state = state.copyWith(
+        posts: [...state.posts, ...newPosts],
+        isLoading: false,
+        hasMorePosts: _postService.hasMorePosts,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        errorMessage: '추가 게시물을 불러오는 중 오류가 발생했습니다.',
+      );
+    }
   }
 }
