@@ -47,3 +47,19 @@ final selectedCategoryProvider =
 // 카테고리 목록 프로바이더
 final categoriesProvider =
     Provider<List<TownLifeCategory>>((ref) => allCategories);
+
+class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
+  LikedPostsNotifier() : super({});
+
+  void toggleLike(int index) {
+    final currentState = Map<int, bool>.from(state);
+    currentState[index] = !(currentState[index] ?? false);
+    state = currentState;
+  }
+
+  bool isLiked(int index) {
+    return state[index] ?? false;
+  }
+}
+
+
