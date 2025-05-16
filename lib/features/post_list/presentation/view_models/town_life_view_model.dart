@@ -58,7 +58,12 @@ final likedPostsProvider =
 // 게시물 서비스 프로바이더
 final postServiceProvider = Provider<PostService>((ref) => PostService());
 
-
+// 게시물 상태 프로바이더
+final townLifeStateProvider =
+    StateNotifierProvider<TownLifeStateNotifier, TownLifeState>((ref) {
+  final postService = ref.watch(postServiceProvider);
+  return TownLifeStateNotifier(postService);
+});
 
 class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   LikedPostsNotifier() : super({});
@@ -74,8 +79,19 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   }
 }
 
+// 필터링된 게시물 목록 프로바이더
+final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
+  final selectedCategory = ref.watch(selectedCategoryProvider);
+  final townLifeState = ref.watch(townLifeStateProvider);
 
+  if (selectedCategory == TownLifeCategory.all) {
+    return townLifeState.posts;
+  }
 
+  return townLifeState.posts
+      .where((post) => post.categoryEnum == selectedCategory)
+      .toList();
+});
 // 게시물 상태 관리를 위한 Notifier
 class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
   final PostService _postService;
