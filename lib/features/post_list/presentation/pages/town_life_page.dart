@@ -81,8 +81,26 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
                             ),
                           )
                         : SliverList(
-                          
-                        ),
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                if (index == filteredPosts.length) {
+                                  return townLifeState.hasMorePosts
+                                      ? const Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 16),
+                                          child: Center(
+                                              child:
+                                                  CircularProgressIndicator()),
+                                        )
+                                      : const SizedBox.shrink();
+                                }
+                                final post = filteredPosts[index];
+                              
+                              },
+                              childCount: filteredPosts.length +
+                                  (townLifeState.hasMorePosts ? 1 : 0),
+                            ),
+                          ),
               ],
             ),
           ],
