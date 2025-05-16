@@ -15,6 +15,8 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
     final townLifeState = ref.watch(townLifeStateProvider);
     final filteredPosts = ref.watch(filteredPostsProvider);
 
-    return Scaffold();
+    return Scaffold(
+      backgroundColor: Colors.grey[100],
+    );
   }
 }
