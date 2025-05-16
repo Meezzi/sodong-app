@@ -1,4 +1,6 @@
 // 게시물 상태 관리를 위한 State 클래스
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 class TownLifeState {
@@ -37,3 +39,7 @@ class TownLifeState {
     );
   }
 }
+
+// 현재 선택된 카테고리를 관리하는 프로바이더
+final selectedCategoryProvider =
+    StateProvider<TownLifeCategory>((ref) => TownLifeCategory.all);
