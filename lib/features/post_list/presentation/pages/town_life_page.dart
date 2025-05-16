@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/category_selector.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/region_selector.dart';
 
 class TownLifePage extends ConsumerStatefulWidget {
