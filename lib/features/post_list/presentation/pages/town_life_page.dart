@@ -32,6 +32,7 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
               ),
               floating: true,
               pinned: true,
+              centerTitle: true,
               actions: [
                 IconButton(
                   onPressed: () {},
