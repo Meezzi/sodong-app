@@ -17,6 +17,13 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
 
     return Scaffold(
       backgroundColor: Colors.grey[100],
+      body: RefreshIndicator(
+        onRefresh: () =>
+            ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
+            child: CustomScrollView(
+              controller: ,
+            ),
+      ),
     );
   }
 }
