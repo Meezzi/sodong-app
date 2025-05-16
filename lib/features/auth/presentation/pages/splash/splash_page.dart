@@ -9,6 +9,17 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   @override
+  void initState() {
+    super.initState();
+
+    _goToLogin();
+  }
+
+  void _goToLogin() async {
+    await Future.delayed(const Duration(seconds: 2));
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFFFE6E9),
