@@ -1,6 +1,4 @@
 class TownLifePost {
-  // 이미지 URL (null일 경우 이미지 없음)
-
   TownLifePost({
     required this.category,
     required this.title,
@@ -22,5 +20,5 @@ class TownLifePost {
   final String timeAgo; // 게시 시간 (예: 10분 전, 1시간 전 등)
   final int commentCount; // 댓글 수
   final int likeCount; // 좋아요 수
-  final String? imageUrl;
+  final String? imageUrl; // 이미지 URL (null일 경우 이미지 없음)
 }
