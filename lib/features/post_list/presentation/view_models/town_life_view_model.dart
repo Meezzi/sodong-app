@@ -48,6 +48,12 @@ final selectedCategoryProvider =
 final categoriesProvider =
     Provider<List<TownLifeCategory>>((ref) => allCategories);
 
+// 좋아요 상태를 관리하는 프로바이더
+final likedPostsProvider =
+    StateNotifierProvider<LikedPostsNotifier, Map<int, bool>>((ref) {
+  return LikedPostsNotifier();
+});
+
 class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   LikedPostsNotifier() : super({});
 
@@ -61,9 +67,3 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
     return state[index] ?? false;
   }
 }
-
-// 좋아요 상태를 관리하는 프로바이더
-final likedPostsProvider =
-    StateNotifierProvider<LikedPostsNotifier, Map<int, bool>>((ref) {
-  return LikedPostsNotifier();
-});
