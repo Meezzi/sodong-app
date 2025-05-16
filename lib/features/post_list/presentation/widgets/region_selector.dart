@@ -11,10 +11,13 @@ class RegionSelector extends ConsumerWidget {
     return Container(
       height: 50,
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(vertical: 8),
         child: ListView.builder(
           itemCount: categories.length,
           itemBuilder: (BuildContext context, int index) {
+            final category = categories[index];
+            final isSelected = selectedCategory == category;
+
             return Container();
           },
         ),
