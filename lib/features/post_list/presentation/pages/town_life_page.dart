@@ -10,6 +10,8 @@ class TownLifePage extends ConsumerStatefulWidget {
 }
 
 class _TownLifePageState extends ConsumerState<TownLifePage> {
+  final ScrollController _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     final townLifeState = ref.watch(townLifeStateProvider);
@@ -20,9 +22,9 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
       body: RefreshIndicator(
         onRefresh: () =>
             ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
-            child: CustomScrollView(
-              controller: ,
-            ),
+        child: CustomScrollView(
+          controller: _scrollController,
+        ),
       ),
     );
   }
