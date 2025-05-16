@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 
@@ -22,7 +23,28 @@ class RegionSelector extends ConsumerWidget {
               onTap: () {
                 ref.read(selectedCategoryProvider.notifier).state = category;
               },
-              child: Container(),
+              child: Container(
+                margin: EdgeInsets.only(left: 12, right: 4),
+                padding: EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: isSelected ? const Color(0xffFF7B8E) : Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                    color: isSelected
+                        ? const Color(0xffFF7B8E)
+                        : Colors.grey[300]!,
+                  ),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  category.text,
+                  style: TextStyle(
+                    color: isSelected ? Colors.white : Colors.black87,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
+                  ),
+                ),
+              ),
             );
           },
         ),
