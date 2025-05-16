@@ -44,9 +44,40 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
                 ),
               ],
             ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverRegionHeaderDelegate(),
+            )
           ],
         ),
       ),
     );
+  }
+}
+
+// 지역 선택기를 위한 SliverPersistentHeader 델리게이트
+class _SliverRegionHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      child: Column(
+        children: [
+          const Divider(height: 1),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => 57.0;
+
+  @override
+  double get minExtent => 57.0;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }
