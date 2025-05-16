@@ -24,6 +24,16 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
             ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
         child: CustomScrollView(
           controller: _scrollController,
+          slivers: [
+            SliverAppBar(
+              title: Text(
+                '소소한동네',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            )
+          ],
         ),
       ),
     );
