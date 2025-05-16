@@ -1,54 +1,81 @@
 import 'package:flutter/material.dart';
-
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 class RegionSelector extends ConsumerWidget {
+  const RegionSelector({super.key});
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categories = ref.watch(categoriesProvider);
-    final selectedCategory = ref.watch(selectedCategoryProvider);
+    final regions = ref.watch(regionsProvider);
+    final selectedRegion = ref.watch(selectedRegionProvider);
+    final selectedSubRegion = ref.watch(selectedSubRegionProvider);
 
-    return SizedBox(
-      height: 50,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        child: ListView.builder(
-          itemCount: categories.length,
-          itemBuilder: (BuildContext context, int index) {
-            final category = categories[index];
-            final isSelected = selectedCategory == category;
-
-            return GestureDetector(
-              onTap: () {
-                ref.read(selectedCategoryProvider.notifier).state = category;
-              },
-              child: Container(
-                margin: EdgeInsets.only(left: 12, right: 4),
-                padding: EdgeInsets.symmetric(horizontal: 16),
-                decoration: BoxDecoration(
-                  color: isSelected ? const Color(0xffFF7B8E) : Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: isSelected
-                        ? const Color(0xffFF7B8E)
-                        : Colors.grey[300]!,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          InkWell(
+            onTap: () => _showRegionSelectionDialog(context, ref),
+            child: Row(
+              children: [
+                const Icon(Icons.location_on,
+                    size: 16, color: Color(0xFFFF7B8E)),
+                const SizedBox(width: 4),
+                Text(
+                  '${selectedRegion.name} ${selectedSubRegion}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
-                alignment: Alignment.center,
-                child: Text(
-                  category.text,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : Colors.black87,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-                ),
+                const SizedBox(width: 4),
+                const Icon(Icons.arrow_drop_down, color: Colors.grey),
+              ],
+            ),
+          ),
+          InkWell(
+            onTap: () {
+              _showRegionSelectionDialog(context, ref);
+            },
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(20),
               ),
-            );
-          },
-        ),
+              child: const Row(
+                children: [
+                  Icon(Icons.tune, size: 14, color: Colors.grey),
+                  SizedBox(width: 2),
+                  Text('지역 설정', style: TextStyle(fontSize: 12)),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
+
+  // 지역 선택 다이얼로그 표시
+  void _showRegionSelectionDialog(BuildContext context, WidgetRef ref) {
+    final regions = ref.read(regionsProvider);
+    final selectedRegion = ref.read(selectedRegionProvider);
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return RegionSelectionDialog(
+          regions: regions,
+          initialRegion: selectedRegion,
+        );
+      },
+    );
+  }
+  
+  void RegionSelectionDialog({required List<Region> regions, required Region initialRegion}) {}
 }
