@@ -7,8 +7,8 @@ class CategorySelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final categories = ref.watch(categoriesProvider);
-    final selectedCategory = ref.watch(selectedCategoryProvider);
+    var categories = ref.watch(categoriesProvider);
+    var selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Container(
       height: 50,
@@ -17,8 +17,8 @@ class CategorySelector extends ConsumerWidget {
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,
         itemBuilder: (context, index) {
-          final category = categories[index];
-          final isSelected = selectedCategory == category;
+          var category = categories[index];
+          var isSelected = selectedCategory == category;
 
           return GestureDetector(
             onTap: () {
