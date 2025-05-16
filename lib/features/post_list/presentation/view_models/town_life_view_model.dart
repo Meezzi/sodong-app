@@ -43,3 +43,7 @@ class TownLifeState {
 // 현재 선택된 카테고리를 관리하는 프로바이더
 final selectedCategoryProvider =
     StateProvider<TownLifeCategory>((ref) => TownLifeCategory.all);
+
+// 카테고리 목록 프로바이더
+final categoriesProvider =
+    Provider<List<TownLifeCategory>>((ref) => allCategories);
