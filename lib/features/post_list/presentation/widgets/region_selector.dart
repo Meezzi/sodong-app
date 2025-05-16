@@ -8,9 +8,9 @@ class RegionSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final regions = ref.watch(regionsProvider);
-    final selectedRegion = ref.watch(selectedRegionProvider);
-    final selectedSubRegion = ref.watch(selectedSubRegionProvider);
+    var regions = ref.watch(regionsProvider);
+    var selectedRegion = ref.watch(selectedRegionProvider);
+    var selectedSubRegion = ref.watch(selectedSubRegionProvider);
 
     return Container(
       width: double.infinity,
@@ -63,8 +63,8 @@ class RegionSelector extends ConsumerWidget {
 
   // 지역 선택 다이얼로그 표시
   void _showRegionSelectionDialog(BuildContext context, WidgetRef ref) {
-    final regions = ref.read(regionsProvider);
-    final selectedRegion = ref.read(selectedRegionProvider);
+    var regions = ref.read(regionsProvider);
+    var selectedRegion = ref.read(selectedRegionProvider);
 
     showDialog(
       context: context,
@@ -79,14 +79,14 @@ class RegionSelector extends ConsumerWidget {
 }
 
 class RegionSelectionDialog extends ConsumerStatefulWidget {
-  final List<Region> regions;
-  final Region initialRegion;
-
   const RegionSelectionDialog({
     super.key,
     required this.regions,
     required this.initialRegion,
   });
+
+  final List<Region> regions;
+  final Region initialRegion;
 
   @override
   _RegionSelectionDialogState createState() => _RegionSelectionDialogState();
@@ -120,7 +120,7 @@ class _RegionSelectionDialogState extends ConsumerState<RegionSelectionDialog> {
                 shrinkWrap: true,
                 itemCount: widget.regions.length,
                 itemBuilder: (context, index) {
-                  final region = widget.regions[index];
+                  var region = widget.regions[index];
                   return ListTile(
                     dense: true,
                     title: Text(
@@ -150,7 +150,7 @@ class _RegionSelectionDialogState extends ConsumerState<RegionSelectionDialog> {
                 shrinkWrap: true,
                 itemCount: _selectedRegion.subRegions.length,
                 itemBuilder: (context, index) {
-                  final subRegion = _selectedRegion.subRegions[index];
+                  var subRegion = _selectedRegion.subRegions[index];
                   return ListTile(
                     dense: true,
                     title: Text(
