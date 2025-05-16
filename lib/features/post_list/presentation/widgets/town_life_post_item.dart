@@ -24,7 +24,7 @@ class TownLifePostItem extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ,// 카테고리
+            // 카테고리
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
               decoration: BoxDecoration(
@@ -59,8 +59,42 @@ class TownLifePostItem extends ConsumerWidget {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 12),
+            // 이미지가 있는 경우 표시
+            if (post.imageUrl != null)
+              Container(
+                height: 200,
+                width: double.infinity,
+                margin: const EdgeInsets.only(bottom: 12),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(8),
+                  image: DecorationImage(
+                    image: NetworkImage(post.imageUrl!),
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
 
-           
+            // 위치, 시간 정보
+            Row(
+              children: [
+                Text(
+                  post.location,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const Text(' • ', style: TextStyle(color: Colors.grey)),
+                Text(
+                  post.timeAgo,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey[600],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
           ],
         ),
       ),
