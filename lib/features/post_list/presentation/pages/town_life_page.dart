@@ -48,7 +48,11 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
             SliverPersistentHeader(
               pinned: true,
               delegate: _SliverRegionHeaderDelegate(),
-            )
+            ),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverCategoryHeaderDelegate(),
+            ),
           ],
         ),
       ),
@@ -77,6 +81,29 @@ class _SliverRegionHeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   double get minExtent => 57.0;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
+
+// 카테고리 선택기를 위한 SliverPersistentHeader 델리게이트
+class _SliverCategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return Container(
+      color: Colors.white,
+      child: const CategorySelector(),
+    );
+  }
+
+  @override
+  double get maxExtent => 50;
+
+  @override
+  double get minExtent => 50;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
