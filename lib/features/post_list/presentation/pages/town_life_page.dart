@@ -70,6 +70,7 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
                   style: TextStyle(fontWeight: FontWeight.bold)),
               floating: true,
               pinned: true,
+              backgroundColor: const Color(0xFFFFE4E8),
               actions: [
                 IconButton(
                   icon: const Icon(Icons.search),
