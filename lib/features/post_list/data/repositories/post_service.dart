@@ -1,3 +1,4 @@
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 class PostService {
@@ -52,5 +53,29 @@ class PostService {
   // 현재 캐시된 게시물 가져오기
   List<TownLifePost> getCachedPosts() {
     return List.unmodifiable(_cachedPosts);
+  }
+
+  // 추가 게시물 존재여부
+  bool get hasMorePosts => _hasMore;
+
+  // 특정 지역에 맞게 필터링
+  List<TownLifePost> filterByRegion(String regionId, String? subRegion) {
+    return _cachedPosts.where((post) {
+      if (regionId != post.regionId) {
+        return false;
+      }
+      if (subRegion != null && subRegion != post.subRegion) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  // 특정 카테고리에 맞게 필터링
+  List<TownLifePost> filterByCategory(TownLifeCategory category) {
+    if (category == TownLifeCategory.all) {
+      return _cachedPosts;
+    }
+    return _cachedPosts.where((post) => post.categoryEnum == category).toList();
   }
 }
