@@ -10,6 +10,15 @@ class RegionSelector extends ConsumerWidget {
 
     return Container(
       height: 50,
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: ListView.builder(
+          itemCount: categories.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Container();
+          },
+        ),
+      ),
     );
   }
 }
