@@ -61,7 +61,7 @@ final postServiceProvider = Provider<PostService>((ref) => PostService());
 // 게시물 상태 프로바이더
 final townLifeStateProvider =
     StateNotifierProvider<TownLifeStateNotifier, TownLifeState>((ref) {
-  final postService = ref.watch(postServiceProvider);
+  var postService = ref.watch(postServiceProvider);
   return TownLifeStateNotifier(postService);
 });
 
@@ -69,7 +69,7 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   LikedPostsNotifier() : super({});
 
   void toggleLike(int index) {
-    final currentState = Map<int, bool>.from(state);
+    var currentState = Map<int, bool>.from(state);
     currentState[index] = !(currentState[index] ?? false);
     state = currentState;
   }
@@ -81,8 +81,8 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
 
 // 필터링된 게시물 목록 프로바이더
 final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
-  final selectedCategory = ref.watch(selectedCategoryProvider);
-  final townLifeState = ref.watch(townLifeStateProvider);
+  var selectedCategory = ref.watch(selectedCategoryProvider);
+  var townLifeState = ref.watch(townLifeStateProvider);
 
   if (selectedCategory == TownLifeCategory.all) {
     return townLifeState.posts;
@@ -92,11 +92,12 @@ final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
       .where((post) => post.categoryEnum == selectedCategory)
       .toList();
 });
+
 // 게시물 상태 관리를 위한 Notifier
 class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
-  final PostService _postService;
-
   TownLifeStateNotifier(this._postService) : super(TownLifeState.initial());
+
+  final PostService _postService;
 
   // 초기 게시물 불러오기
   Future<void> fetchInitialPosts() async {
@@ -105,7 +106,7 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final posts = await _postService.fetchInitialPosts();
+      var posts = await _postService.fetchInitialPosts();
       state = state.copyWith(
         posts: posts,
         isLoading: false,
@@ -126,7 +127,7 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
     state = state.copyWith(isLoading: true, errorMessage: null);
 
     try {
-      final newPosts = await _postService.fetchMorePosts();
+      var newPosts = await _postService.fetchMorePosts();
       state = state.copyWith(
         posts: [...state.posts, ...newPosts],
         isLoading: false,
