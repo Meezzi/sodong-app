@@ -4,14 +4,18 @@ import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart'
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 
 class TownLifePostItem extends ConsumerWidget {
+  const TownLifePostItem({
+    super.key,
+    required this.post,
+    required this.index,
+  });
+
   final TownLifePost post;
   final int index;
 
-  const TownLifePostItem({super.key, required this.post, required this.index});
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isLiked = ref.watch(likedPostsProvider)[index] ?? false;
+    var isLiked = ref.watch(likedPostsProvider)[index] ?? false;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
