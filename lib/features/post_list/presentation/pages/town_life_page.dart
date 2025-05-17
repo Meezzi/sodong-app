@@ -37,8 +37,8 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
 
   @override
   Widget build(BuildContext context) {
-    final townLifeState = ref.watch(townLifeStateProvider);
-    final filteredPosts = ref.watch(filteredPostsProvider);
+    var townLifeState = ref.watch(townLifeStateProvider);
+    var filteredPosts = ref.watch(filteredPostsProvider);
 
     return TownLifeScaffold(
       scrollController: _scrollController,
@@ -56,7 +56,7 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
   void _scrollListener() {
     if (_isLoadingMore) return;
 
-    final townLifeState = ref.read(townLifeStateProvider);
+    var townLifeState = ref.read(townLifeStateProvider);
     if (!townLifeState.hasMorePosts) return;
 
     if (_scrollController.position.pixels >=
@@ -132,7 +132,7 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
                   )
                 : const SizedBox.shrink();
           }
-          final post = filteredPosts[index];
+          var post = filteredPosts[index];
           return TownLifePostItem(
             post: post,
             index: index,
@@ -154,7 +154,7 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
 
 class TownLifeScaffold extends StatelessWidget {
   const TownLifeScaffold({
-    Key? key,
+    super.key,
     required this.scrollController,
     required this.onRefresh,
     required this.appBar,
@@ -162,7 +162,7 @@ class TownLifeScaffold extends StatelessWidget {
     required this.categorySelector,
     required this.postListView,
     required this.floatingActionButton,
-  }) : super(key: key);
+  });
 
   final ScrollController scrollController;
   final Future<void> Function() onRefresh;
