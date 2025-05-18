@@ -4,6 +4,8 @@ import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart'
 class PostService {
   // 싱글톤으로 구성
   static final PostService _instance = PostService._internal();
+
+  // 생성자를 다른 멤버 선언 전에 배치
   factory PostService() => _instance;
   PostService._internal();
 
@@ -20,7 +22,7 @@ class PostService {
     _hasMore = true;
     _cachedPosts.clear();
 
-    final posts = generateDummyPosts(pageSize, startIndex: 0);
+    var posts = generateDummyPosts(pageSize, startIndex: 0);
     _cachedPosts.addAll(posts);
     _currentPage++;
 
@@ -42,7 +44,7 @@ class PostService {
       return [];
     }
 
-    final posts =
+    var posts =
         generateDummyPosts(pageSize, startIndex: _currentPage * pageSize);
     _cachedPosts.addAll(posts);
     _currentPage++;
