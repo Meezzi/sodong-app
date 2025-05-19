@@ -19,7 +19,7 @@ class PostRepository {
   DocumentSnapshot? _lastDocument;
 
   // 현재 선택된 지역과 카테고리
-  String _currentRegionId = 'busan';
+  String _currentRegionId = 'seoul';
   String _currentCategory = 'question';
 
   // Firestore 인스턴스
