@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/core/result/create_post_exception.dart';
 import 'package:sodong_app/core/result/result.dart';
@@ -7,9 +8,10 @@ import 'package:sodong_app/features/post/domain/repository/post_repository.dart'
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 class RemotePostRepository implements PostRepository {
-  RemotePostRepository({required this.firestore});
+  RemotePostRepository({required this.firestore, required this.storage});
 
   final FirebaseFirestore firestore;
+  final FirebaseStorage storage;
 
   @override
   Future<Result<Post>> savePost(
@@ -47,5 +49,6 @@ class RemotePostRepository implements PostRepository {
 
 final postRepositoryProvider = Provider<PostRepository>((ref) {
   final firestore = FirebaseFirestore.instance;
-  return RemotePostRepository(firestore: firestore);
+  final storage = FirebaseStorage.instance;
+  return RemotePostRepository(firestore: firestore, storage: storage);
 });
