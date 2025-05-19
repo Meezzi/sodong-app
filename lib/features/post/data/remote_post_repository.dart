@@ -31,6 +31,14 @@ class RemotePostRepository implements PostRepository {
       await docRef.set(newPost.toFirestore());
 
       return Result.ok(newPost);
+    } on FirebaseException catch (e) {
+      if (e.code == 'permission-denied') {
+        return Result.error(const PermissionFailure());
+      } else if (e.code == 'unavailable') {
+        return Result.error(const NetworkFailure());
+      } else {
+        return Result.error(UnknownFailure(e.message ?? '알 수 없는 Firebase 오류'));
+      }
     } catch (e) {
       return Result.error(UnknownFailure(e.toString()));
     }
