@@ -104,3 +104,10 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
     }
   }
 }
+
+final createPostViewModelProvider =
+    StateNotifierProvider.autoDispose<CreatePostViewModel, CreatePostState>(
+        (ref) {
+  final usecase = ref.watch(createPostUsecaseProvider);
+  return CreatePostViewModel(usecase);
+});
