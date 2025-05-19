@@ -141,8 +141,6 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
     // 카테고리 선택이 변경될 때 처리
     _ref.listen(selectedCategoryProvider, (previous, next) {
       if (previous != next) {
-        print('카테고리 변경: ${next.id}, ${next.text}');
-
         // 모든 카테고리 선택 시 데이터 로드 방식 변경
         if (next == TownLifeCategory.all) {
           // 여러 카테고리의 데이터를 함께 표시
@@ -184,31 +182,23 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
           .map((category) => category.id)
           .toList();
 
-      print('모든 카테고리 데이터 로드 시작 - 총 ${allCategories.length}개 카테고리');
-
       // 각 카테고리별로 현재 선택된 지역의 데이터를 가져옴
       for (var categoryId in allCategories) {
-        print('카테고리 로드 요청: $categoryId');
         try {
           // 현재 선택된 지역에서 해당 카테고리의 게시물 가져오기
           final posts =
               await _postService.fetchCurrentRegionCategoryPosts(categoryId);
 
           if (posts.isNotEmpty) {
-            print('카테고리 $categoryId에서 ${posts.length}개 게시물 로드 성공');
             allPosts.addAll(posts);
 
             // 해당 카테고리의 캐시 업데이트
             _categoryPostsCache[categoryId] = List.from(posts);
           } else {
-            print('카테고리 $categoryId에서 게시물 없음');
-
             // 데이터가 없는 경우에도 빈 리스트로 캐시 업데이트 (이전 지역 데이터를 사용하지 않도록)
             _categoryPostsCache[categoryId] = [];
           }
         } catch (e) {
-          print('카테고리 $categoryId 로드 중 오류: $e');
-
           // 에러 발생시에도 빈 리스트로 캐시 업데이트
           _categoryPostsCache[categoryId] = [];
         }
@@ -216,8 +206,6 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
 
       // 데이터가 없는 경우 처리
       if (allPosts.isEmpty) {
-        print('모든 카테고리에서 데이터가 없습니다.');
-
         // 이전 코드에서는 캐시된 데이터를 사용했지만, 지역 변경 시에는 빈 리스트 반환
         state = state.copyWith(
           posts: [],
@@ -269,20 +257,12 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         _cachedAllCategoryPosts = List.from(allPosts);
       }
 
-      print('전체 카테고리 데이터 로드 완료: ${allPosts.length}개 게시물');
-      if (allPosts.isNotEmpty) {
-        final categories = allPosts.map((p) => p.categoryText).toSet().toList();
-        print('로드된 카테고리: $categories');
-      }
-
       state = state.copyWith(
         posts: allPosts,
         isLoading: false,
         hasMorePosts: false, // 전체 카테고리는 무한 스크롤 비활성화
       );
     } catch (e) {
-      print('전체 카테고리 데이터 로드 오류: $e');
-
       // 에러 발생 시 빈 리스트 반환
       state = state.copyWith(
         posts: [],
@@ -298,18 +278,14 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
       _postService.setCategory(categoryId);
       final posts = await _postService.fetchInitialPosts();
       if (posts.isNotEmpty) {
-        print('카테고리 $categoryId에서 ${posts.length}개 게시물 로드됨');
         // 해당 카테고리의 캐시 업데이트
         _categoryPostsCache[categoryId] = List.from(posts);
       }
       return posts;
     } catch (e) {
-      print('카테고리 $categoryId 로드 중 오류: $e');
       // 에러 발생 시 해당 카테고리의 캐시된 데이터 반환
       if (_categoryPostsCache.containsKey(categoryId) &&
           _categoryPostsCache[categoryId]!.isNotEmpty) {
-        print(
-            '카테고리 $categoryId에 대한 캐시된 데이터 ${_categoryPostsCache[categoryId]!.length}개 사용');
         return _categoryPostsCache[categoryId]!;
       }
       return [];
@@ -336,8 +312,6 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
       } else if (_categoryPostsCache.containsKey(currentCategory) &&
           _categoryPostsCache[currentCategory]!.isNotEmpty) {
         // 데이터가 없고 캐시가 있으면 캐시 사용
-        print(
-            '데이터 없음 - 카테고리 $currentCategory의 캐시된 ${_categoryPostsCache[currentCategory]!.length}개 게시물 사용');
         posts = _categoryPostsCache[currentCategory]!;
       }
 
@@ -347,13 +321,9 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         hasMorePosts: _postService.hasMorePosts,
       );
     } catch (e) {
-      print('초기 게시물 로드 오류: $e');
-
       // 에러 시 캐시된 데이터 확인
       if (_categoryPostsCache.containsKey(currentCategory) &&
           _categoryPostsCache[currentCategory]!.isNotEmpty) {
-        print(
-            '오류 발생 - 카테고리 $currentCategory의 캐시된 ${_categoryPostsCache[currentCategory]!.length}개 게시물 사용');
         state = state.copyWith(
             posts: _categoryPostsCache[currentCategory]!,
             isLoading: false,
@@ -392,7 +362,6 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         hasMorePosts: _postService.hasMorePosts,
       );
     } catch (e) {
-      print('추가 게시물 로드 오류: $e');
       state = state.copyWith(
         isLoading: false,
         errorMessage: '추가 게시물을 불러오는데 실패했습니다.',
