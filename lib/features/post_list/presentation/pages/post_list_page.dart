@@ -25,8 +25,13 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
     // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
     Future.microtask(() {
       final initialRegion = ref.read(selectedRegionProvider);
+      final initialSubRegion = ref.read(selectedSubRegionProvider);
       final postService = ref.read(postServiceProvider);
+
+      print('앱 초기화 - 선택된 지역: ${initialRegion.name}, 하위 지역: $initialSubRegion');
+
       postService.setRegion(initialRegion);
+      postService.setSubRegion(initialSubRegion);
 
       // 초기 게시물 가져오기
       ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
