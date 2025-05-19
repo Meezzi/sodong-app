@@ -162,43 +162,86 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
     List<TownLifePost> allPosts = [];
 
     try {
-      // 주요 카테고리에서 데이터 로드
-      final categoriesToLoad = [
-        TownLifeCategory.question.id,
-        TownLifeCategory.news.id,
-        TownLifeCategory.help.id,
-      ];
+      // 모든 카테고리 데이터 로드 ('all' 카테고리 제외)
+      final categoriesToLoad = TownLifeCategory.values
+          .where((category) => category != TownLifeCategory.all)
+          .map((category) => category.id)
+          .toList();
 
-      print('전체 카테고리 데이터 로드 시작');
+      print('전체 카테고리 데이터 로드 시작 - 총 ${categoriesToLoad.length}개 카테고리');
+
+      // 동시에 여러 카테고리의 데이터를 로드
+      List<Future<List<TownLifePost>>> futures = [];
+
       for (var categoryId in categoriesToLoad) {
-        print('카테고리 로드 중: $categoryId');
-        _postService.setCategory(categoryId);
+        print('카테고리 로드 요청: $categoryId');
+        futures.add(_loadCategoryPosts(categoryId));
+      }
 
-        final posts = await _postService.fetchInitialPosts();
-        if (posts.isNotEmpty) {
-          allPosts.addAll(posts);
-          print('카테고리 $categoryId에서 ${posts.length}개 게시물 로드됨');
-        }
+      // 모든 로드 작업이 완료될 때까지 대기
+      final results = await Future.wait(futures);
+
+      // 결과 합치기
+      for (var posts in results) {
+        allPosts.addAll(posts);
       }
 
       // 데이터가 충분하지 않은 경우 (실제 DB 데이터 부족)
       if (allPosts.isEmpty) {
-        print('데이터가 없습니다.');
+        print('데이터가 없습니다. 기본 카테고리에서 다시 시도합니다.');
+
+        // 기본 카테고리들로 다시 시도
+        final basicCategories = [
+          TownLifeCategory.question.id,
+          TownLifeCategory.news.id,
+          TownLifeCategory.help.id
+        ];
+
+        for (var categoryId in basicCategories) {
+          _postService.setCategory(categoryId);
+          final fallbackPosts = await _postService.fetchInitialPosts();
+          allPosts.addAll(fallbackPosts);
+        }
       }
 
-      // 카테고리별로 정렬 (카테고리 ID 기준)
+      // 카테고리별로 정렬 후 시간순으로 섞기
       if (allPosts.isNotEmpty) {
-        allPosts.sort((a, b) {
-          // 카테고리가 다르면 카테고리 ID 기준으로 정렬
-          if (a.category != b.category) {
-            return a.category.compareTo(b.category);
+        // 카테고리별로 고르게 분포하도록 정렬
+        final Map<String, List<TownLifePost>> postsByCategory = {};
+
+        // 카테고리별로 그룹화
+        for (var post in allPosts) {
+          if (!postsByCategory.containsKey(post.category)) {
+            postsByCategory[post.category] = [];
           }
-          // 카테고리가 같으면 댓글 수 기준으로 정렬
-          return b.commentCount.compareTo(a.commentCount);
-        });
+          postsByCategory[post.category]!.add(post);
+        }
+
+        // 각 카테고리 내부에서 정렬
+        for (var categoryPosts in postsByCategory.values) {
+          categoryPosts
+              .sort((a, b) => b.commentCount.compareTo(a.commentCount));
+        }
+
+        // 최종 결과 리스트 초기화
+        allPosts = [];
+
+        // 각 카테고리에서 번갈아가면서 글을 추가
+        int maxPosts = postsByCategory.values
+            .map((list) => list.length)
+            .fold(0, (prev, curr) => prev > curr ? prev : curr);
+
+        for (int i = 0; i < maxPosts; i++) {
+          for (var categoryPosts in postsByCategory.values) {
+            if (i < categoryPosts.length) {
+              allPosts.add(categoryPosts[i]);
+            }
+          }
+        }
       }
 
       print('전체 카테고리 데이터 로드 완료: ${allPosts.length}개 게시물');
+      print('로드된 카테고리: ${allPosts.map((p) => p.category).toSet().toList()}');
 
       state = state.copyWith(
         posts: allPosts,
@@ -207,10 +250,32 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
       );
     } catch (e) {
       print('전체 카테고리 데이터 로드 오류: $e');
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
-      );
+
+      // 에러 시에도 데이터가 있으면 유지
+      if (state.posts.isNotEmpty) {
+        state = state.copyWith(
+            isLoading: false, errorMessage: '일부 게시물을 불러오는데 실패했습니다.');
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
+        );
+      }
+    }
+  }
+
+  // 특정 카테고리의 게시물을 로드하는 헬퍼 함수
+  Future<List<TownLifePost>> _loadCategoryPosts(String categoryId) async {
+    try {
+      _postService.setCategory(categoryId);
+      final posts = await _postService.fetchInitialPosts();
+      if (posts.isNotEmpty) {
+        print('카테고리 $categoryId에서 ${posts.length}개 게시물 로드됨');
+      }
+      return posts;
+    } catch (e) {
+      print('카테고리 $categoryId 로드 중 오류: $e');
+      return [];
     }
   }
 
