@@ -14,8 +14,14 @@ class CreatePostUsecase {
     required String location,
     required TownLifeCategory category,
     required Post post,
-  }) {
-    return _repository.savePost(location, category, post);
+    required List<String> imageUrls,
+  }) async {
+    return await _repository.createPostWithImages(
+      location,
+      category,
+      imageUrls,
+      post,
+    );
   }
 }
 
