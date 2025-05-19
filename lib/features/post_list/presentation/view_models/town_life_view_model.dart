@@ -1,6 +1,6 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/data/repositories/post_repositories.dart';
+import 'package:sodong_app/features/post_list/data/repository/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
@@ -56,8 +56,7 @@ final likedPostsProvider =
 });
 
 // 게시물 서비스 프로바이더
-final postServiceProvider =
-    Provider<PostRepositories>((ref) => PostRepositories());
+final postServiceProvider = Provider<PostRepository>((ref) => PostRepository());
 
 // 게시물 상태 프로바이더
 final townLifeStateProvider =
@@ -98,7 +97,7 @@ final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
 class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
   TownLifeStateNotifier(this._postService) : super(TownLifeState.initial());
 
-  final PostRepositories _postService;
+  final PostRepository _postService;
 
   // 초기 게시물 불러오기
   Future<void> fetchInitialPosts() async {
