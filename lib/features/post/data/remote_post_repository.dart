@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -14,9 +15,10 @@ class RemotePostRepository implements PostRepository {
   final FirebaseStorage storage;
 
   @override
-  Future<Result<Post>> savePost(
+  Future<Result<Post>> createPostWithImages(
     String location,
     TownLifeCategory category,
+    List<String> imagePaths,
     Post post,
   ) async {
     try {
@@ -24,10 +26,12 @@ class RemotePostRepository implements PostRepository {
           firestore.collection('posts').doc(location).collection(category.id);
 
       final docRef = colRef.doc();
-      final newId = docRef.id;
+      final postId = docRef.id;
+      final uploadedUrls = await _uploadImages(postId, imagePaths);
 
       final newPost = post.copyWith(
-        postId: newId,
+        postId: postId,
+        imageUrl: uploadedUrls,
       );
 
       await docRef.set(newPost.toFirestore());
@@ -44,6 +48,27 @@ class RemotePostRepository implements PostRepository {
     } catch (e) {
       return Result.error(UnknownFailure(e.toString()));
     }
+  }
+
+  Future<List<String>> _uploadImages(
+    String postId,
+    List<String> imagePaths,
+  ) async {
+    final uploadedUrls = <String>[];
+
+    for (final path in imagePaths) {
+      final file = File(path);
+      final fileName =
+          '${DateTime.now().millisecondsSinceEpoch}_${file.hashCode}.jpg';
+
+      final ref = storage.ref().child('posts/$postId/$fileName');
+      await ref.putFile(file);
+
+      final url = await ref.getDownloadURL();
+      uploadedUrls.add(url);
+    }
+
+    return uploadedUrls;
   }
 }
 
