@@ -87,6 +87,7 @@ class PostRepository {
       _currentPage = 0;
       _hasMore = true;
       _totalItemCount = 0;
+      print('지역 변경: $_currentRegionId, $_currentSubRegion');
     }
   }
 
@@ -100,6 +101,7 @@ class PostRepository {
       _currentPage = 0;
       _hasMore = true;
       _totalItemCount = 0;
+      print('하위 지역 변경: $_currentSubRegion');
     }
   }
 
@@ -113,6 +115,7 @@ class PostRepository {
       _currentPage = 0;
       _hasMore = true;
       _totalItemCount = 0;
+      print('카테고리 변경: $_currentCategory');
     }
   }
 
@@ -166,7 +169,8 @@ class PostRepository {
           .get();
 
       _totalItemCount = countQuery.count ?? 0;
-      print('Total documents count: $_totalItemCount');
+      print(
+          'Total documents count: $_totalItemCount for category: $_currentCategory');
 
       // 데이터가 없으면 빈 리스트 반환
       if (_totalItemCount == 0) {
@@ -185,16 +189,18 @@ class PostRepository {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        print('Query returned empty results');
+        print('Query returned empty results for category: $_currentCategory');
         _hasMore = false;
         return [];
       }
 
-      print('Fetched ${querySnapshot.docs.length} documents');
+      print(
+          'Fetched ${querySnapshot.docs.length} documents for category: $_currentCategory');
       _lastDocument = querySnapshot.docs.last;
 
       final posts = querySnapshot.docs.map((doc) {
-        print('Processing document ID: ${doc.id}');
+        print(
+            'Processing document ID: ${doc.id} from category: $_currentCategory');
         final firestorePost = FirestorePost.fromFirestore(doc);
         return firestorePost.toTownLifePost();
       }).toList();
@@ -205,12 +211,15 @@ class PostRepository {
       // 가져온 문서 수가 전체 문서 수와 같거나 pageSize보다 작으면 더 이상 데이터가 없음
       if (posts.length < pageSize || posts.length >= _totalItemCount) {
         _hasMore = false;
+        print('No more data available for category: $_currentCategory');
       }
 
       return posts;
     } catch (e) {
       // 에러 발생 시 더미 데이터 반환 (개발 중에는 유용)
       print('Firestore 데이터 로드 에러: $e');
+      print(
+          '카테고리: $_currentCategory, 지역: $_currentRegionId $_currentSubRegion');
 
       // 개발 환경이라면 더미 데이터 반환
       if (true) {
@@ -228,19 +237,24 @@ class PostRepository {
   // 추가 게시물 가져오기 (무한 스크롤용)
   Future<List<TownLifePost>> fetchMorePosts() async {
     if (!_hasMore || _lastDocument == null) {
+      print(
+          '더 이상 가져올 데이터가 없습니다. hasMore: $_hasMore, lastDocument: ${_lastDocument != null}');
       return [];
     }
 
     // 이미 모든 데이터를 가져왔으면 더 이상 불러오지 않음
     if (_cachedPosts.length >= _totalItemCount) {
       _hasMore = false;
+      print(
+          '이미 모든 데이터를 가져왔습니다. 캐시된 게시물: ${_cachedPosts.length}, 전체 아이템: $_totalItemCount');
       return [];
     }
 
     try {
       // 문서 ID 생성
       final docId = _getDocumentId();
-      print('Fetching more posts from path: posts/$docId/$_currentCategory');
+      print(
+          'Fetching more posts from path: posts/$docId/$_currentCategory, page: $_currentPage');
 
       // 이전에 가져온 마지막 문서 이후부터 가져오기
       final querySnapshot = await _firestore
@@ -253,16 +267,18 @@ class PostRepository {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        print('No more documents found');
+        print('No more documents found for category: $_currentCategory');
         _hasMore = false;
         return [];
       }
 
-      print('Fetched ${querySnapshot.docs.length} more documents');
+      print(
+          'Fetched ${querySnapshot.docs.length} more documents for category: $_currentCategory');
       _lastDocument = querySnapshot.docs.last;
 
       final posts = querySnapshot.docs.map((doc) {
-        print('Processing document ID: ${doc.id}');
+        print(
+            'Processing document ID: ${doc.id} from category: $_currentCategory');
         final firestorePost = FirestorePost.fromFirestore(doc);
         return firestorePost.toTownLifePost();
       }).toList();
@@ -273,12 +289,16 @@ class PostRepository {
       // 가져온 문서 수가 pageSize보다 작거나, 총 가져온 문서 수가 전체 문서 수와 같으면 더 이상 데이터가 없음
       if (posts.length < pageSize || _cachedPosts.length >= _totalItemCount) {
         _hasMore = false;
+        print(
+            'No more data after fetching more. Total cached: ${_cachedPosts.length}, Total count: $_totalItemCount');
       }
 
       return posts;
     } catch (e) {
       // 에러 발생 시 더 이상 데이터가 없다고 처리
       print('Firestore 추가 데이터 로드 에러: $e');
+      print(
+          '카테고리: $_currentCategory, 지역: $_currentRegionId $_currentSubRegion');
       _hasMore = false;
       return [];
     }
@@ -312,4 +332,42 @@ class PostRepository {
     }
     return _cachedPosts.where((post) => post.categoryEnum == category).toList();
   }
+}
+
+// 더미 데이터 생성 함수 (개발 및 테스트용)
+List<TownLifePost> generateDummyPosts(int count, {int startIndex = 0}) {
+  final List<TownLifePost> dummyPosts = [];
+  final categories = [
+    TownLifeCategory.question,
+    TownLifeCategory.news,
+    TownLifeCategory.help,
+    TownLifeCategory.daily,
+    TownLifeCategory.food,
+    TownLifeCategory.lost,
+    TownLifeCategory.meeting,
+    TownLifeCategory.together
+  ];
+
+  for (int i = startIndex; i < startIndex + count; i++) {
+    // 현재 선택된 카테고리에 맞는 더미 데이터 생성
+    final category = categories[i % categories.length];
+
+    dummyPosts.add(
+      TownLifePost(
+        category: category.id,
+        title: '게시물 제목 $i (${category.text})',
+        content: '게시물 내용 $i - 이것은 더미 데이터입니다.',
+        location: 'Seoul Gangnam',
+        regionId: 'seoul_gangnam',
+        subRegion: 'Gangnam',
+        timeAgo: '${i % 24}시간 전',
+        commentCount: i,
+        likeCount: i % 10,
+        imageUrl: i % 3 == 0 ? 'https://picsum.photos/200/300?random=$i' : null,
+        imageUrls:
+            i % 3 == 0 ? ['https://picsum.photos/200/300?random=$i'] : [],
+      ),
+    );
+  }
+  return dummyPosts;
 }
