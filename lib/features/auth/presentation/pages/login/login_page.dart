@@ -15,7 +15,7 @@ class LoginPage extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               SvgPicture.asset(
-                'assets/svg/neutral/ios_neutral_rd_SU.svg',
+                'assets/auth/light/google_login_button_light.svg',
                 height: 60,
               ),
             ],
