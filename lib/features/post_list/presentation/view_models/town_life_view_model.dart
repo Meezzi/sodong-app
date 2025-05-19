@@ -108,6 +108,10 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         _postService.setRegion(next);
         final selectedCategory = _ref.read(selectedCategoryProvider);
 
+        // 지역이 변경되면 카테고리 캐시 초기화
+        _categoryPostsCache.clear();
+        _cachedAllCategoryPosts.clear();
+
         if (selectedCategory == TownLifeCategory.all) {
           _loadAllCategoriesData();
         } else {
@@ -121,6 +125,10 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
       if (previous != next) {
         _postService.setSubRegion(next);
         final selectedCategory = _ref.read(selectedCategoryProvider);
+
+        // 하위 지역이 변경되면 카테고리 캐시 초기화
+        _categoryPostsCache.clear();
+        _cachedAllCategoryPosts.clear();
 
         if (selectedCategory == TownLifeCategory.all) {
           _loadAllCategoriesData();
@@ -160,7 +168,7 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
   // 각 카테고리별 캐시를 관리하는 맵 추가
   final Map<String, List<TownLifePost>> _categoryPostsCache = {};
 
-  // 여러 카테고리의 데이터를 함께 로드하는 함수
+  // 여러 카테고리의 데이터를 함께 로드하는 함수 (현재 선택된 지역만)
   Future<void> _loadAllCategoriesData() async {
     // 로딩 시작하기 전에 이전 데이터 보존
     final previousPosts = state.posts;
@@ -178,13 +186,13 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
 
       print('모든 카테고리 데이터 로드 시작 - 총 ${allCategories.length}개 카테고리');
 
-      // 각 카테고리별로 여러 지역의 데이터를 가져옴
+      // 각 카테고리별로 현재 선택된 지역의 데이터를 가져옴
       for (var categoryId in allCategories) {
         print('카테고리 로드 요청: $categoryId');
         try {
-          // 모든 지역에서 해당 카테고리의 게시물 가져오기
+          // 현재 선택된 지역에서 해당 카테고리의 게시물 가져오기
           final posts =
-              await _postService.fetchAllRegionsCategoryPosts(categoryId);
+              await _postService.fetchCurrentRegionCategoryPosts(categoryId);
 
           if (posts.isNotEmpty) {
             print('카테고리 $categoryId에서 ${posts.length}개 게시물 로드 성공');
@@ -195,49 +203,28 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
           } else {
             print('카테고리 $categoryId에서 게시물 없음');
 
-            // 데이터가 없는 경우 캐시된 데이터가 있으면 사용
-            if (_categoryPostsCache.containsKey(categoryId) &&
-                _categoryPostsCache[categoryId]!.isNotEmpty) {
-              print(
-                  '카테고리 $categoryId에 대한 캐시된 데이터 ${_categoryPostsCache[categoryId]!.length}개 사용');
-              allPosts.addAll(_categoryPostsCache[categoryId]!);
-            }
+            // 데이터가 없는 경우에도 빈 리스트로 캐시 업데이트 (이전 지역 데이터를 사용하지 않도록)
+            _categoryPostsCache[categoryId] = [];
           }
         } catch (e) {
           print('카테고리 $categoryId 로드 중 오류: $e');
 
-          // 에러 발생 시 캐시된 데이터가 있으면 사용
-          if (_categoryPostsCache.containsKey(categoryId) &&
-              _categoryPostsCache[categoryId]!.isNotEmpty) {
-            print(
-                '오류 발생 - 카테고리 $categoryId에 대한 캐시된 데이터 ${_categoryPostsCache[categoryId]!.length}개 사용');
-            allPosts.addAll(_categoryPostsCache[categoryId]!);
-          }
+          // 에러 발생시에도 빈 리스트로 캐시 업데이트
+          _categoryPostsCache[categoryId] = [];
         }
       }
 
-      // 데이터가 없는 경우 마지막 캐시된 데이터 사용
+      // 데이터가 없는 경우 처리
       if (allPosts.isEmpty) {
-        print('모든 카테고리에서 데이터가 없습니다. 캐시된 데이터 확인...');
+        print('모든 카테고리에서 데이터가 없습니다.');
 
-        // 모든 카테고리 캐시에서 데이터 취합
-        for (var category in _categoryPostsCache.keys) {
-          if (_categoryPostsCache[category]!.isNotEmpty) {
-            allPosts.addAll(_categoryPostsCache[category]!);
-          }
-        }
-
-        if (allPosts.isNotEmpty) {
-          print('모든 카테고리 캐시에서 ${allPosts.length}개 게시물 복원');
-        } else if (_cachedAllCategoryPosts.isNotEmpty) {
-          print('캐시된 ${_cachedAllCategoryPosts.length}개 게시물 사용');
-          allPosts = List.from(_cachedAllCategoryPosts);
-        } else if (previousPosts.isNotEmpty) {
-          print('이전 상태의 ${previousPosts.length}개 게시물 사용');
-          allPosts = List.from(previousPosts);
-        } else {
-          print('사용 가능한 게시물이 없습니다.');
-        }
+        // 이전 코드에서는 캐시된 데이터를 사용했지만, 지역 변경 시에는 빈 리스트 반환
+        state = state.copyWith(
+          posts: [],
+          isLoading: false,
+          hasMorePosts: false,
+        );
+        return;
       } else {
         // 새 데이터가 있으면 캐시 업데이트
         _cachedAllCategoryPosts = List.from(allPosts);
@@ -296,40 +283,12 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
     } catch (e) {
       print('전체 카테고리 데이터 로드 오류: $e');
 
-      // 에러 발생 시 캐시된 데이터나 이전 데이터 사용
-      List<TownLifePost> fallbackPosts = [];
-
-      // 모든 카테고리 캐시에서 데이터 취합
-      for (var category in _categoryPostsCache.keys) {
-        if (_categoryPostsCache[category]!.isNotEmpty) {
-          fallbackPosts.addAll(_categoryPostsCache[category]!);
-        }
-      }
-
-      if (fallbackPosts.isNotEmpty) {
-        print('오류 발생 - 카테고리 캐시에서 ${fallbackPosts.length}개 게시물 사용');
-        state = state.copyWith(
-            posts: fallbackPosts,
-            isLoading: false,
-            errorMessage: '일부 데이터를 불러오는데 실패했습니다.');
-      } else if (_cachedAllCategoryPosts.isNotEmpty) {
-        print('오류 발생 - 캐시된 ${_cachedAllCategoryPosts.length}개 게시물 사용');
-        state = state.copyWith(
-            posts: _cachedAllCategoryPosts,
-            isLoading: false,
-            errorMessage: '일부 데이터를 불러오는데 실패했습니다.');
-      } else if (previousPosts.isNotEmpty) {
-        print('오류 발생 - 이전 상태의 ${previousPosts.length}개 게시물 사용');
-        state = state.copyWith(
-            posts: previousPosts,
-            isLoading: false,
-            errorMessage: '일부 데이터를 불러오는데 실패했습니다.');
-      } else {
-        state = state.copyWith(
-          isLoading: false,
-          errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
-        );
-      }
+      // 에러 발생 시 빈 리스트 반환
+      state = state.copyWith(
+        posts: [],
+        isLoading: false,
+        errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
+      );
     }
   }
 
