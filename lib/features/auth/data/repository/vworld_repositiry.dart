@@ -4,4 +4,58 @@ class VWorldRepository {
   final Dio _client = Dio(BaseOptions(
     validateStatus: (status) => true,
   ));
+
+  static const String _apiKey = '4CD4C156-1D16-3B17-AFF0-E99C90DDDACE';
+
+  Future<List<String>> findByName(String query) async {
+    final response = await _client.get(
+      'https://api.vworld.kr/req/search',
+      queryParameters: {
+        'request': 'search',
+        'key': _apiKey,
+        'query': query,
+        'type': 'DISTRICT',
+        'category': 'L4',
+        'size': 100,
+      },
+    );
+
+    if (response.statusCode == 200 &&
+        response.data['response']['status'] == 'OK') {
+      return List.of(response.data['response']['result']['items'])
+          .map((e) => e['title'].toString())
+          .toList();
+    }
+
+    print('findByName error: ${response.statusCode} / ${response.data}');
+    return [];
+  }
+
+  Future<List<String>> findByLatLng({
+    required double lat,
+    required double lng,
+  }) async {
+    final response = await _client.get(
+      'https://api.vworld.kr/req/data',
+      queryParameters: {
+        'request': 'GetFeature',
+        'data': 'LT_C_ADEMD_INFO',
+        'key': _apiKey,
+        'geomfilter': 'point($lng $lat)',
+        'geometry': 'false',
+        'size': 100,
+      },
+    );
+
+    if (response.statusCode == 200 &&
+        response.data['response']['status'] == 'OK') {
+      return List.of(response.data['response']['result']['featureCollection']
+              ['features'])
+          .map((e) => e['properties']['full_nm'].toString())
+          .toList();
+    }
+
+    print('findByLatLng error: ${response.statusCode} / ${response.data}');
+    return [];
+  }
 }
