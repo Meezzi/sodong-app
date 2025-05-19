@@ -6,6 +6,7 @@ import '../view_models/region_view_model.dart';
 import '../widgets/category_selector.dart';
 import '../widgets/region_selector.dart';
 import '../widgets/town_life_post_item.dart';
+import '../../domain/models/category.dart';
 
 class PostListPage extends ConsumerStatefulWidget {
   const PostListPage({super.key});
@@ -55,8 +56,23 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
     return TownLifeScaffold(
       scrollController: _scrollController,
-      onRefresh: () =>
-          ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
+      onRefresh: () {
+        // 현재 선택된 카테고리
+        final selectedCategory = ref.read(selectedCategoryProvider);
+
+        // 항상 모든 카테고리 데이터를 로드하는 방식으로 변경
+        if (selectedCategory == TownLifeCategory.all) {
+          // 전체 카테고리인 경우 해당 메서드 호출
+          return ref
+              .read(townLifeStateProvider.notifier)
+              .refreshAllCategoryData();
+        } else {
+          // 다른 카테고리를 보고 있더라도 전체 데이터 새로고침
+          return ref
+              .read(townLifeStateProvider.notifier)
+              .refreshAllCategoryData();
+        }
+      },
       appBar: _buildAppBar(),
       regionSelector: _buildRegionSelector(),
       categorySelector: _buildCategorySelector(),
