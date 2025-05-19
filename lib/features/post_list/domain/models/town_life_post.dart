@@ -15,7 +15,7 @@ class TownLifePost {
     this.imageUrl,
     this.imageUrls = const [],
   });
-  final String category; // 카테고리 (우리동네질문, 동네소식 등)
+  final String category; // 카테고리 (카테고리 ID: question, news, help 등)
   final String title; // 게시글 제목
   final String content; // 게시글 내용
   final String location; // 위치 정보 (예: 서울시 강남구)
@@ -27,39 +27,26 @@ class TownLifePost {
   final String? imageUrl; // 대표 이미지 URL (null일 경우 이미지 없음)
   final List<String> imageUrls; // 모든 이미지 URL 목록
 
-  // 카테고리 문자열을 enum으로 변환
+  // 카테고리 문자열을 enum으로 변환 (ID 기반 매핑)
   TownLifeCategory get categoryEnum {
-    switch (category) {
-      case '우리동네질문':
-        return TownLifeCategory.question;
-      case '동네소식':
-        return TownLifeCategory.news;
-      case '해주세요':
-        return TownLifeCategory.help;
-      case '일상':
-        return TownLifeCategory.daily;
-      case '동네맛집':
-        return TownLifeCategory.food;
-      case '분실/실종':
-        return TownLifeCategory.lost;
-      case '동네모임':
-        return TownLifeCategory.meeting;
-      case '같이해요':
-        return TownLifeCategory.together;
-      default:
-        return TownLifeCategory.all;
-    }
+    // 직접 ID로 매칭 (FirestorePost에서 category 필드가 ID 형태로 저장되므로)
+    return TownLifeCategory.fromId(category);
+  }
+
+  // 카테고리 표시 텍스트 반환
+  String get categoryText {
+    return categoryEnum.text;
   }
 }
 
 // 더미 데이터
 List<TownLifePost> generateDummyPosts(int count, {int startIndex = 0}) {
   final categories = [
-    '우리동네질문',
-    '동네소식',
-    '해주세요',
-    '일상',
-    '동네맛집',
+    TownLifeCategory.question.id,
+    TownLifeCategory.news.id,
+    TownLifeCategory.help.id,
+    TownLifeCategory.daily.id,
+    TownLifeCategory.food.id,
   ];
 
   final contents = [
