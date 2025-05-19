@@ -1,3 +1,8 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/core/result/result.dart';
+import 'package:sodong_app/features/create_post/domain/usecase/create_post_usecase.dart';
+import 'package:sodong_app/features/post/domain/entities/post.dart';
+import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 final class CreatePostState {
@@ -37,5 +42,30 @@ final class CreatePostState {
       error: error,
       category: category ?? this.category,
     );
+  }
+}
+
+class CreatePostViewModel extends StateNotifier<CreatePostState> {
+  CreatePostViewModel(this._createPostUsecase) : super(CreatePostState());
+
+  final CreatePostUsecase _createPostUsecase;
+
+  void setTitle(String title) =>
+      state = state.copyWith(title: title, error: null);
+
+  void setContent(String content) =>
+      state = state.copyWith(content: content, error: null);
+
+  void toggleAnonymous() =>
+      state = state.copyWith(isAnonymous: !state.isAnonymous);
+
+  void addImage(String path) =>
+      state = state.copyWith(imageUrls: [...state.imageUrls, path]);
+
+  void removeImage(String path) =>
+      state = state.copyWith(imageUrls: [...state.imageUrls]..remove(path));
+
+  void setCategory(TownLifeCategory category) {
+    state = state.copyWith(category: category);
   }
 }
