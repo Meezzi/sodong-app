@@ -15,6 +15,7 @@ class TownLifePost {
     this.imageUrl,
     this.imageUrls = const [],
   });
+
   final String category; // 카테고리 (카테고리 ID: question, news, help 등)
   final String title; // 게시글 제목
   final String content; // 게시글 내용
