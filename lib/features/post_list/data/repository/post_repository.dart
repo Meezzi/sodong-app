@@ -485,4 +485,52 @@ class PostRepository {
       return [];
     }
   }
+
+  // 전체 카테고리 데이터 로드를 위한 메서드 (현재 선택된 지역의 데이터만 포함)
+  Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(
+      String category) async {
+    try {
+      print('현재 선택된 지역에서 $category 카테고리 데이터 로드 시작');
+      List<TownLifePost> allPosts = [];
+
+      // 선택된 지역 정보 사용
+      final docId = _getDocumentId();
+      print('전체 카테고리 검색 (현재 지역): posts/$docId/$category');
+
+      try {
+        // 현재 선택된 지역의 카테고리 게시물 가져오기
+        final querySnapshot = await _firestore
+            .collection('posts')
+            .doc(docId)
+            .collection(category)
+            .orderBy('createdAt', descending: true)
+            .limit(10) // 더 많은 게시물 가져오기
+            .get();
+
+        if (!querySnapshot.docs.isEmpty) {
+          final posts = querySnapshot.docs.map((doc) {
+            print('문서 처리: ${doc.id}, 지역: $_currentRegionId, 카테고리: $category');
+            final firestorePost = FirestorePost.fromFirestore(doc);
+            return firestorePost.toTownLifePost();
+          }).toList();
+
+          allPosts.addAll(posts);
+          print('$_currentRegionId 지역에서 ${posts.length}개 게시물 로드됨');
+        }
+      } catch (e) {
+        print('$_currentRegionId 지역 $category 카테고리 로드 중 오류: $e');
+      }
+
+      // 정렬 로직 유지
+      allPosts.sort((a, b) {
+        return b.commentCount.compareTo(a.commentCount);
+      });
+
+      print('현재 지역에서 총 ${allPosts.length}개 게시물 로드 완료');
+      return allPosts;
+    } catch (e) {
+      print('지역 데이터 로드 중 오류 발생: $e');
+      return [];
+    }
+  }
 }
