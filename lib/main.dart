@@ -5,8 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:sodong_app/features/auth/presentation/pages/login/login_page.dart';
 import 'package:sodong_app/features/auth/presentation/pages/splash/splash_page.dart';
 import 'package:sodong_app/firebase_options.dart';
-import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
