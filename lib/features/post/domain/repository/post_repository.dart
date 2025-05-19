@@ -4,7 +4,7 @@ import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 abstract interface class PostRepository {
   /// Post 저장
-  Future<Result<void>> savePost(
+  Future<Result<Post>> savePost(
     String location,
     TownLifeCategory category,
     Post post,
