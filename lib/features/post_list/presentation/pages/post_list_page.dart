@@ -6,14 +6,14 @@ import '../widgets/category_selector.dart';
 import '../widgets/region_selector.dart';
 import '../widgets/town_life_post_item.dart';
 
-class TownLifePage extends ConsumerStatefulWidget {
-  const TownLifePage({super.key});
+class PostListPage extends ConsumerStatefulWidget {
+  const PostListPage({super.key});
 
   @override
-  ConsumerState<TownLifePage> createState() => _TownLifePageState();
+  ConsumerState<PostListPage> createState() => _TownLifePageState();
 }
 
-class _TownLifePageState extends ConsumerState<TownLifePage> {
+class _TownLifePageState extends ConsumerState<PostListPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
 
