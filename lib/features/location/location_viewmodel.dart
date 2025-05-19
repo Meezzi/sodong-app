@@ -18,7 +18,12 @@ class LocationViewmodel extends Notifier<Location> {
   void getLocation() async {
     // 1. 위치 권한 허용하기
     LocationPermission permission = await Geolocator.checkPermission();
-
+    // 만약 권한이 없다면 아래에서 권한을 요청
+    if (permission == LocationPermission.denied ||
+        permission == LocationPermission.deniedForever) {
+      // 사용자에게 권한 허용을 요청하여 시스템 팝업이 뜨고 사용자가 '허용' 또는 '거부'를 선택할 수 있게함
+      permission = await Geolocator.requestPermission();
+    }
     // 2. gps가져와서 로케이션 세팅
 
     // 3. 위도 경도로 한국의 지역명 가져오기
