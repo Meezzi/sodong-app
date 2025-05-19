@@ -44,3 +44,8 @@ class RemotePostRepository implements PostRepository {
     }
   }
 }
+
+final postRepositoryProvider = Provider<PostRepository>((ref) {
+  final firestore = FirebaseFirestore.instance;
+  return RemotePostRepository(firestore: firestore);
+});
