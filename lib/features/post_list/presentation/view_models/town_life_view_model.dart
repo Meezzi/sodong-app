@@ -2,7 +2,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/data/repository/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post_list/domain/models/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 class TownLifeState {
   final List<TownLifePost> posts;
@@ -62,7 +64,7 @@ final postServiceProvider = Provider<PostRepository>((ref) => PostRepository());
 final townLifeStateProvider =
     StateNotifierProvider<TownLifeStateNotifier, TownLifeState>((ref) {
   var postService = ref.watch(postServiceProvider);
-  return TownLifeStateNotifier(postService);
+  return TownLifeStateNotifier(postService, ref);
 });
 
 class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
@@ -95,9 +97,39 @@ final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
 
 // 게시물 상태 관리를 위한 Notifier
 class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
-  TownLifeStateNotifier(this._postService) : super(TownLifeState.initial());
+  TownLifeStateNotifier(this._postService, this._ref)
+      : super(TownLifeState.initial()) {
+    // 지역 선택이 변경될 때 게시물 다시 불러오기
+    _ref.listen(selectedRegionProvider, (previous, next) {
+      if (previous != next) {
+        _postService.setRegion(next);
+        fetchInitialPosts();
+      }
+    });
+
+    // 카테고리 선택이 변경될 때 처리
+    _ref.listen(selectedCategoryProvider, (previous, next) {
+      if (previous != next) {
+        String categoryStr;
+        switch (next) {
+          case TownLifeCategory.question:
+            categoryStr = 'question';
+            break;
+          case TownLifeCategory.news:
+            categoryStr = 'news';
+            break;
+          // 필요한 만큼 카테고리 매핑 추가
+          default:
+            categoryStr = 'question'; // 기본값
+        }
+        _postService.setCategory(categoryStr);
+        fetchInitialPosts();
+      }
+    });
+  }
 
   final PostRepository _postService;
+  final Ref _ref;
 
   // 초기 게시물 불러오기
   Future<void> fetchInitialPosts() async {
