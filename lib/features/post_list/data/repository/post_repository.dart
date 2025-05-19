@@ -17,7 +17,6 @@ class PostRepository {
       // 해당 지역의 첫 번째 하위 지역 선택
       if (region.subRegions.isNotEmpty) {
         _currentSubRegion = region.subRegions.first;
-        print('앱 초기화 - 선택된 지역: ${region.name}, 하위 지역: $_currentSubRegion');
       }
     }
   }
@@ -152,7 +151,6 @@ class PostRepository {
       _currentPage = 0;
       _hasMore = true;
       _totalItemCount = 0;
-      print('지역 변경: $_currentRegionId, $_currentSubRegion');
     }
   }
 
@@ -166,7 +164,6 @@ class PostRepository {
       _currentPage = 0;
       _hasMore = true;
       _totalItemCount = 0;
-      print('하위 지역 변경: $_currentSubRegion');
     }
   }
 
@@ -180,7 +177,6 @@ class PostRepository {
       _currentPage = 0;
       _hasMore = true;
       _totalItemCount = 0;
-      print('카테고리 변경: $_currentCategory');
     }
   }
 
@@ -197,7 +193,6 @@ class PostRepository {
       // 해당 지역의 첫 번째 하위 지역 사용
       if (region.subRegions.isNotEmpty) {
         _currentSubRegion = region.subRegions.first;
-        print('하위 지역 자동 설정: $_currentSubRegion');
       } else {
         // 하위 지역이 없는 경우 기본값 설정
         return _currentRegionId;
@@ -223,9 +218,6 @@ class PostRepository {
       englishName = _koToEnRegionMap[koreanName] ?? koreanName.toLowerCase();
     }
 
-    print(
-        '지역 변환: $_currentRegionId, $koreanName -> ${_currentRegionId}_$englishName');
-
     // {도시}_{구} 형식으로 반환 (seoul_gangnam, busan_haeundae 등)
     return '${_currentRegionId}_$englishName';
   }
@@ -241,7 +233,6 @@ class PostRepository {
     try {
       // 문서 ID 생성
       final docId = _getDocumentId();
-      print('Fetching initial posts from path: posts/$docId/$_currentCategory');
 
       // 먼저 컬렉션에 있는 문서 수를 가져옵니다
       final countQuery = await _firestore
@@ -252,12 +243,9 @@ class PostRepository {
           .get();
 
       _totalItemCount = countQuery.count ?? 0;
-      print(
-          'Total documents count: $_totalItemCount for category: $_currentCategory');
 
       // 데이터가 없으면 빈 리스트 반환
       if (_totalItemCount == 0) {
-        print('No documents found in posts/$docId/$_currentCategory');
         _hasMore = false;
         return [];
       }
@@ -272,18 +260,13 @@ class PostRepository {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        print('Query returned empty results for category: $_currentCategory');
         _hasMore = false;
         return [];
       }
 
-      print(
-          'Fetched ${querySnapshot.docs.length} documents for category: $_currentCategory');
       _lastDocument = querySnapshot.docs.last;
 
       final posts = querySnapshot.docs.map((doc) {
-        print(
-            'Processing document ID: ${doc.id} from category: $_currentCategory');
         final firestorePost = FirestorePost.fromFirestore(doc);
         return firestorePost.toTownLifePost();
       }).toList();
@@ -294,16 +277,10 @@ class PostRepository {
       // 가져온 문서 수가 전체 문서 수와 같거나 pageSize보다 작으면 더 이상 데이터가 없음
       if (posts.length < pageSize || posts.length >= _totalItemCount) {
         _hasMore = false;
-        print('No more data available for category: $_currentCategory');
       }
 
       return posts;
     } catch (e) {
-      // 에러 발생 시 로그 출력하고 빈 리스트 반환
-      print('Firestore 데이터 로드 에러: $e');
-      print(
-          '카테고리: $_currentCategory, 지역: $_currentRegionId $_currentSubRegion');
-
       // 에러 발생 시 더 이상 데이터가 없다고 처리
       _hasMore = false;
       return [];
@@ -313,24 +290,18 @@ class PostRepository {
   // 추가 게시물 가져오기 (무한 스크롤용)
   Future<List<TownLifePost>> fetchMorePosts() async {
     if (!_hasMore || _lastDocument == null) {
-      print(
-          '더 이상 가져올 데이터가 없습니다. hasMore: $_hasMore, lastDocument: ${_lastDocument != null}');
       return [];
     }
 
     // 이미 모든 데이터를 가져왔으면 더 이상 불러오지 않음
     if (_cachedPosts.length >= _totalItemCount) {
       _hasMore = false;
-      print(
-          '이미 모든 데이터를 가져왔습니다. 캐시된 게시물: ${_cachedPosts.length}, 전체 아이템: $_totalItemCount');
       return [];
     }
 
     try {
       // 문서 ID 생성
       final docId = _getDocumentId();
-      print(
-          'Fetching more posts from path: posts/$docId/$_currentCategory, page: $_currentPage');
 
       // 이전에 가져온 마지막 문서 이후부터 가져오기
       final querySnapshot = await _firestore
@@ -343,18 +314,13 @@ class PostRepository {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
-        print('No more documents found for category: $_currentCategory');
         _hasMore = false;
         return [];
       }
 
-      print(
-          'Fetched ${querySnapshot.docs.length} more documents for category: $_currentCategory');
       _lastDocument = querySnapshot.docs.last;
 
       final posts = querySnapshot.docs.map((doc) {
-        print(
-            'Processing document ID: ${doc.id} from category: $_currentCategory');
         final firestorePost = FirestorePost.fromFirestore(doc);
         return firestorePost.toTownLifePost();
       }).toList();
@@ -365,16 +331,11 @@ class PostRepository {
       // 가져온 문서 수가 pageSize보다 작거나, 총 가져온 문서 수가 전체 문서 수와 같으면 더 이상 데이터가 없음
       if (posts.length < pageSize || _cachedPosts.length >= _totalItemCount) {
         _hasMore = false;
-        print(
-            'No more data after fetching more. Total cached: ${_cachedPosts.length}, Total count: $_totalItemCount');
       }
 
       return posts;
     } catch (e) {
       // 에러 발생 시 더 이상 데이터가 없다고 처리
-      print('Firestore 추가 데이터 로드 에러: $e');
-      print(
-          '카테고리: $_currentCategory, 지역: $_currentRegionId $_currentSubRegion');
       _hasMore = false;
       return [];
     }
@@ -413,8 +374,6 @@ class PostRepository {
   Future<List<TownLifePost>> fetchAllRegionsCategoryPosts(
       String category) async {
     try {
-      print('전체 지역에서 $category 카테고리 데이터 로드 시작');
-
       // 기본 지역 리스트 (현재는 서울, 부산만 포함하지만 필요에 따라 확장 가능)
       List<String> regions = ['seoul', 'busan'];
       List<TownLifePost> allPosts = [];
@@ -439,7 +398,6 @@ class PostRepository {
 
           // 문서 ID 생성
           final docId = _getDocumentId();
-          print('전체 카테고리 검색: posts/$docId/$category');
 
           try {
             // 해당 지역의 카테고리 게시물 가져오기
@@ -453,16 +411,14 @@ class PostRepository {
 
             if (!querySnapshot.docs.isEmpty) {
               final posts = querySnapshot.docs.map((doc) {
-                print('문서 처리: ${doc.id}, 지역: $region, 카테고리: $category');
                 final firestorePost = FirestorePost.fromFirestore(doc);
                 return firestorePost.toTownLifePost();
               }).toList();
 
               allPosts.addAll(posts);
-              print('$region 지역에서 ${posts.length}개 게시물 로드됨');
             }
           } catch (e) {
-            print('$region 지역 $category 카테고리 로드 중 오류: $e');
+            // 오류 처리
           }
         }
 
@@ -478,10 +434,8 @@ class PostRepository {
         return b.commentCount.compareTo(a.commentCount);
       });
 
-      print('전체 지역에서 총 ${allPosts.length}개 게시물 로드 완료');
       return allPosts;
     } catch (e) {
-      print('전체 지역 데이터 로드 중 오류 발생: $e');
       return [];
     }
   }
@@ -490,12 +444,10 @@ class PostRepository {
   Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(
       String category) async {
     try {
-      print('현재 선택된 지역에서 $category 카테고리 데이터 로드 시작');
       List<TownLifePost> allPosts = [];
 
       // 선택된 지역 정보 사용
       final docId = _getDocumentId();
-      print('전체 카테고리 검색 (현재 지역): posts/$docId/$category');
 
       try {
         // 현재 선택된 지역의 카테고리 게시물 가져오기
@@ -509,16 +461,14 @@ class PostRepository {
 
         if (!querySnapshot.docs.isEmpty) {
           final posts = querySnapshot.docs.map((doc) {
-            print('문서 처리: ${doc.id}, 지역: $_currentRegionId, 카테고리: $category');
             final firestorePost = FirestorePost.fromFirestore(doc);
             return firestorePost.toTownLifePost();
           }).toList();
 
           allPosts.addAll(posts);
-          print('$_currentRegionId 지역에서 ${posts.length}개 게시물 로드됨');
         }
       } catch (e) {
-        print('$_currentRegionId 지역 $category 카테고리 로드 중 오류: $e');
+        // 오류 처리
       }
 
       // 정렬 로직 유지
@@ -526,10 +476,8 @@ class PostRepository {
         return b.commentCount.compareTo(a.commentCount);
       });
 
-      print('현재 지역에서 총 ${allPosts.length}개 게시물 로드 완료');
       return allPosts;
     } catch (e) {
-      print('지역 데이터 로드 중 오류 발생: $e');
       return [];
     }
   }
