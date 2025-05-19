@@ -31,14 +31,12 @@ class FirestorePost {
   factory FirestorePost.fromFirestore(DocumentSnapshot doc) {
     try {
       final data = doc.data() as Map<String, dynamic>? ?? {};
-      print('Document data: $data');
 
       // 데이터가 없는 경우에도 기본값으로 생성할 수 있도록 함
       Timestamp timestamp;
       try {
         timestamp = data['createdAt'] as Timestamp? ?? Timestamp.now();
       } catch (e) {
-        print('Error parsing createdAt: $e');
         timestamp = Timestamp.now();
       }
 
@@ -51,7 +49,7 @@ class FirestorePost {
           images = [data['imageUrl'] as String];
         }
       } catch (e) {
-        print('Error parsing image URLs: $e');
+        // 이미지 URL 파싱 에러 처리
       }
 
       RegionInfo regionInfo;
@@ -62,7 +60,6 @@ class FirestorePost {
         } else {
           // 지역 정보가 없으면 기본값 사용
           final docPath = doc.reference.path;
-          print('Document path: $docPath');
 
           // 경로에서 지역 ID 추출 (posts/seoul_gangnam/question/docId)
           final parts = docPath.split('/');
@@ -87,7 +84,6 @@ class FirestorePost {
           );
         }
       } catch (e) {
-        print('Error parsing region info: $e');
         regionInfo = RegionInfo(
           codeName: 'unknown',
           displayName: 'Unknown',
@@ -109,7 +105,6 @@ class FirestorePost {
         region: regionInfo,
       );
     } catch (e) {
-      print('전체 파싱 오류: $e');
       // 기본값으로 생성
       return FirestorePost(
         id: doc.id,
