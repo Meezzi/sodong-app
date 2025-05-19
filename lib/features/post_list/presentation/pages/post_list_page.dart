@@ -29,8 +29,6 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
       final initialSubRegion = ref.read(selectedSubRegionProvider);
       final postService = ref.read(postServiceProvider);
 
-      print('앱 초기화 - 선택된 지역: ${initialRegion.name}, 하위 지역: $initialSubRegion');
-
       postService.setRegion(initialRegion);
       postService.setSubRegion(initialSubRegion);
 
