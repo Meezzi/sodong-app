@@ -5,7 +5,23 @@ import 'package:sodong_app/features/post_list/domain/models/firestore_post.dart'
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 
 class PostRepository {
-  PostRepository._internal();
+  PostRepository._internal() {
+    // 초기화 시 기본 선택된 지역에 대한 하위 지역 설정
+    if (_currentSubRegion.isEmpty && regionList.isNotEmpty) {
+      // regionList에서 현재 선택된 지역 ID에 맞는 지역 찾기
+      final region = regionList.firstWhere(
+        (r) => r.id == _currentRegionId,
+        orElse: () => regionList.first,
+      );
+
+      // 해당 지역의 첫 번째 하위 지역 선택
+      if (region.subRegions.isNotEmpty) {
+        _currentSubRegion = region.subRegions.first;
+        print('앱 초기화 - 선택된 지역: ${region.name}, 하위 지역: $_currentSubRegion');
+      }
+    }
+  }
+
   // 생성자를 다른 멤버 선언 전에 배치
   factory PostRepository() => _instance;
   // 싱글톤으로 구성
@@ -59,6 +75,55 @@ class PostRepository {
     '영도': 'yeongdo',
     '중구': 'junggu',
     '해운대': 'haeundae',
+  };
+
+  // 경기도 지역 매핑 테이블 추가
+  static const Map<String, String> _gyeonggiRegionMap = {
+    '고양': 'goyang',
+    '과천': 'gwacheon',
+    '광명': 'gwangmyeong',
+    '광주': 'gwangju',
+    '구리': 'guri',
+    '군포': 'gunpo',
+    '김포': 'gimpo',
+    '남양주': 'namyangju',
+    '동두천': 'dongducheon',
+    '부천': 'bucheon',
+    '성남': 'seongnam',
+    '수원': 'suwon',
+    '시흥': 'siheung',
+    '안산': 'ansan',
+    '안성': 'anseong',
+    '안양': 'anyang',
+    '양주': 'yangju',
+    '여주': 'yeoju',
+    '오산': 'osan',
+    '용인': 'yongin',
+    '의왕': 'uiwang',
+    '의정부': 'uijeongbu',
+    '이천': 'icheon',
+    '파주': 'paju',
+    '평택': 'pyeongtaek',
+    '포천': 'pocheon',
+    '하남': 'hanam',
+    '화성': 'hwaseong',
+    '가평': 'gapyeong',
+    '양평': 'yangpyeong',
+    '연천': 'yeoncheon',
+  };
+
+  // 인천 지역 매핑 테이블 추가
+  static const Map<String, String> _incheonRegionMap = {
+    '계양': 'gyeyang',
+    '남동': 'namdong',
+    '동구': 'donggu',
+    '미추홀': 'michuhol',
+    '부평': 'bupyeong',
+    '서구': 'seogu',
+    '연수': 'yeonsu',
+    '중구': 'junggu',
+    '강화': 'ganghwa',
+    '옹진': 'ongjin',
   };
 
   static const int pageSize = 10;
@@ -121,9 +186,22 @@ class PostRepository {
 
   // 문서 ID 생성 (지역_하위지역 형식)
   String _getDocumentId() {
-    // 하위 지역이 없으면 그냥 지역 ID 반환
+    // 하위 지역이 없으면 첫 번째 하위 지역으로 설정
     if (_currentSubRegion.isEmpty) {
-      return _currentRegionId;
+      // 현재 지역에 해당하는 Region 객체 찾기
+      final region = regionList.firstWhere(
+        (r) => r.id == _currentRegionId,
+        orElse: () => regionList.first,
+      );
+
+      // 해당 지역의 첫 번째 하위 지역 사용
+      if (region.subRegions.isNotEmpty) {
+        _currentSubRegion = region.subRegions.first;
+        print('하위 지역 자동 설정: $_currentSubRegion');
+      } else {
+        // 하위 지역이 없는 경우 기본값 설정
+        return _currentRegionId;
+      }
     }
 
     // 하위 지역에서 '구', '군', '시' 제거
@@ -134,8 +212,13 @@ class PostRepository {
 
     // 한글 지역명을 영문으로 변환 (지역에 따라 다른 매핑 테이블 사용)
     String englishName;
+
     if (_currentRegionId == 'busan') {
       englishName = _busanRegionMap[koreanName] ?? koreanName.toLowerCase();
+    } else if (_currentRegionId == 'gyeonggi') {
+      englishName = _gyeonggiRegionMap[koreanName] ?? koreanName.toLowerCase();
+    } else if (_currentRegionId == 'incheon') {
+      englishName = _incheonRegionMap[koreanName] ?? koreanName.toLowerCase();
     } else {
       englishName = _koToEnRegionMap[koreanName] ?? koreanName.toLowerCase();
     }
