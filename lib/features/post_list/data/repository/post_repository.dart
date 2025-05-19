@@ -17,9 +17,10 @@ class PostRepository {
   bool _hasMore = true;
   final List<TownLifePost> _cachedPosts = [];
   DocumentSnapshot? _lastDocument;
+  int _totalItemCount = 0; // 전체 문서 수를 저장
 
   // 현재 선택된 지역과 카테고리
-  String _currentRegionId = 'seoul';
+  String _currentRegionId = 'busan';
   String _currentCategory = 'question';
 
   // Firestore 인스턴스
@@ -34,6 +35,7 @@ class PostRepository {
       _lastDocument = null;
       _currentPage = 0;
       _hasMore = true;
+      _totalItemCount = 0;
     }
   }
 
@@ -46,6 +48,7 @@ class PostRepository {
       _lastDocument = null;
       _currentPage = 0;
       _hasMore = true;
+      _totalItemCount = 0;
     }
   }
 
@@ -55,8 +58,25 @@ class PostRepository {
     _hasMore = true;
     _cachedPosts.clear();
     _lastDocument = null;
+    _totalItemCount = 0;
 
     try {
+      // 먼저 컬렉션에 있는 문서 수를 가져옵니다
+      final countQuery = await _firestore
+          .collection('posts')
+          .doc(_currentRegionId)
+          .collection(_currentCategory)
+          .count()
+          .get();
+
+      _totalItemCount = countQuery.count ?? 0;
+
+      // 데이터가 없으면 빈 리스트 반환
+      if (_totalItemCount == 0) {
+        _hasMore = false;
+        return [];
+      }
+
       // 선택된 지역의 선택된 카테고리 게시물을 최신순으로 가져오기
       final querySnapshot = await _firestore
           .collection('posts')
@@ -80,6 +100,12 @@ class PostRepository {
 
       _cachedPosts.addAll(posts);
       _currentPage++;
+
+      // 가져온 문서 수가 전체 문서 수와 같거나 pageSize보다 작으면 더 이상 데이터가 없음
+      if (posts.length < pageSize || posts.length >= _totalItemCount) {
+        _hasMore = false;
+      }
+
       return posts;
     } catch (e) {
       // 에러 발생 시 더미 데이터 반환 (개발 중에는 유용)
@@ -94,6 +120,12 @@ class PostRepository {
   // 추가 게시물 가져오기 (무한 스크롤용)
   Future<List<TownLifePost>> fetchMorePosts() async {
     if (!_hasMore || _lastDocument == null) {
+      return [];
+    }
+
+    // 이미 모든 데이터를 가져왔으면 더 이상 불러오지 않음
+    if (_cachedPosts.length >= _totalItemCount) {
+      _hasMore = false;
       return [];
     }
 
@@ -122,22 +154,18 @@ class PostRepository {
 
       _cachedPosts.addAll(posts);
       _currentPage++;
-      return posts;
-    } catch (e) {
-      // 에러 발생 시 더미 데이터 반환 (개발 중에는 유용)
-      print('Firestore 추가 데이터 로드 에러: $e');
 
-      // 이 예제에서는 전체 데이터가 100개로 제한됩니다
-      if (_currentPage * pageSize >= 100) {
+      // 가져온 문서 수가 pageSize보다 작거나, 총 가져온 문서 수가 전체 문서 수와 같으면 더 이상 데이터가 없음
+      if (posts.length < pageSize || _cachedPosts.length >= _totalItemCount) {
         _hasMore = false;
-        return [];
       }
 
-      var posts =
-          generateDummyPosts(pageSize, startIndex: _currentPage * pageSize);
-      _cachedPosts.addAll(posts);
-      _currentPage++;
       return posts;
+    } catch (e) {
+      // 에러 발생 시 더 이상 데이터가 없다고 처리
+      print('Firestore 추가 데이터 로드 에러: $e');
+      _hasMore = false;
+      return [];
     }
   }
 
