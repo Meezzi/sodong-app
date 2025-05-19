@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/models/town_life_post.dart';
 import '../view_models/town_life_view_model.dart';
+import '../view_models/region_view_model.dart';
 import '../widgets/category_selector.dart';
 import '../widgets/region_selector.dart';
 import '../widgets/town_life_post_item.dart';
@@ -20,9 +21,16 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   @override
   void initState() {
     super.initState();
-    // 초기 게시물 가져오기
-    Future.microtask(
-        () => ref.read(townLifeStateProvider.notifier).fetchInitialPosts());
+
+    // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
+    Future.microtask(() {
+      final initialRegion = ref.read(selectedRegionProvider);
+      final postService = ref.read(postServiceProvider);
+      postService.setRegion(initialRegion);
+
+      // 초기 게시물 가져오기
+      ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
+    });
 
     // 스크롤 이벤트 감지
     _scrollController.addListener(_scrollListener);
