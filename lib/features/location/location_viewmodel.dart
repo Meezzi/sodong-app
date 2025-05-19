@@ -23,6 +23,12 @@ class LocationViewmodel extends Notifier<Location> {
         permission == LocationPermission.deniedForever) {
       // 사용자에게 권한 허용을 요청하여 시스템 팝업이 뜨고 사용자가 '허용' 또는 '거부'를 선택할 수 있게함
       permission = await Geolocator.requestPermission();
+      // 위치권한을 거부하면 해당 텍스트 출력하고 진행 중단, 하지 않으면 계속 진행
+      if (permission != LocationPermission.whileInUse &&
+          permission != LocationPermission.always) {
+        print("위치 권한이 거부되었습니다.");
+        return;
+      }
     }
     // 2. gps가져와서 로케이션 세팅
 
