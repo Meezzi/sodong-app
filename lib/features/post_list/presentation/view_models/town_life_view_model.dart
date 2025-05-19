@@ -181,27 +181,22 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         }
       }
 
-      // 데이터가 충분하지 않으면 더미 데이터 추가
-      if (allPosts.isEmpty || allPosts.length < 10) {
-        print('실제 데이터가 부족하여 더미 데이터 추가');
-        var dummyPosts = generateDummyPosts(20, startIndex: 0);
-
-        // 기존 포스트와 더미 데이터 합치기
-        allPosts.addAll(dummyPosts);
+      // 데이터가 충분하지 않은 경우 (실제 DB 데이터 부족)
+      if (allPosts.isEmpty) {
+        print('데이터가 없습니다.');
       }
 
-      // 중복 제거 후 날짜순 정렬
-      allPosts = allPosts.toSet().toList();
-
-      // 카테고리 별로 골고루 섞이도록 정렬
-      allPosts.sort((a, b) {
-        // 카테고리가 다르면 카테고리 ID 기준으로 정렬
-        if (a.category != b.category) {
-          return a.category.compareTo(b.category);
-        }
-        // 카테고리가 같으면 댓글 수 기준으로 정렬
-        return b.commentCount.compareTo(a.commentCount);
-      });
+      // 카테고리별로 정렬 (카테고리 ID 기준)
+      if (allPosts.isNotEmpty) {
+        allPosts.sort((a, b) {
+          // 카테고리가 다르면 카테고리 ID 기준으로 정렬
+          if (a.category != b.category) {
+            return a.category.compareTo(b.category);
+          }
+          // 카테고리가 같으면 댓글 수 기준으로 정렬
+          return b.commentCount.compareTo(a.commentCount);
+        });
+      }
 
       print('전체 카테고리 데이터 로드 완료: ${allPosts.length}개 게시물');
 
