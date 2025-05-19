@@ -1,8 +1,16 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/presentation/pages/town_life_page.dart';
+import 'package:sodong_app/features/auth/presentation/pages/login/login_page.dart';
+import 'package:sodong_app/features/auth/presentation/pages/splash/splash_page.dart';
+import 'package:sodong_app/firebase_options.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  
   runApp(const ProviderScope(child: MyApp()));
 }
 
@@ -11,9 +19,13 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: TownLifePage(),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashPage(),
+        '/login': (context) => const LoginPage(),
+      },
     );
   }
 }
