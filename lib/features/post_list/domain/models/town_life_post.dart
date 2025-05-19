@@ -13,6 +13,7 @@ class TownLifePost {
     required this.commentCount,
     required this.likeCount,
     this.imageUrl,
+    this.imageUrls = const [],
   });
   final String category; // 카테고리 (우리동네질문, 동네소식 등)
   final String title; // 게시글 제목
@@ -23,7 +24,8 @@ class TownLifePost {
   final String timeAgo; // 게시 시간 (예: 10분 전, 1시간 전 등)
   final int commentCount; // 댓글 수
   final int likeCount; // 좋아요 수
-  final String? imageUrl; // 이미지 URL (null일 경우 이미지 없음)
+  final String? imageUrl; // 대표 이미지 URL (null일 경우 이미지 없음)
+  final List<String> imageUrls; // 모든 이미지 URL 목록
 
   // 카테고리 문자열을 enum으로 변환
   TownLifeCategory get categoryEnum {
@@ -99,6 +101,20 @@ List<TownLifePost> generateDummyPosts(int count, {int startIndex = 0}) {
     final region = regionList[regionIndex];
     final subRegionIndex = (startIndex + i) % region.subRegions.length;
 
+    // 이미지 처리
+    final hasImages = (startIndex + i) % 3 == 0;
+    String? mainImageUrl;
+    List<String> allImageUrls = [];
+
+    if (hasImages) {
+      mainImageUrl = imageUrls[(startIndex + i) % imageUrls.length];
+      // 랜덤하게 1~3개의 이미지 추가
+      final imageCount = 1 + (startIndex + i) % 3;
+      for (int j = 0; j < imageCount; j++) {
+        allImageUrls.add(imageUrls[(startIndex + i + j) % imageUrls.length]);
+      }
+    }
+
     result.add(TownLifePost(
       category: categories[(startIndex + i) % categories.length],
       title: titles[(startIndex + i) % titles.length],
@@ -109,9 +125,8 @@ List<TownLifePost> generateDummyPosts(int count, {int startIndex = 0}) {
       timeAgo: timeAgos[(startIndex + i) % timeAgos.length],
       commentCount: (startIndex + i) % 40,
       likeCount: (startIndex + i) % 50,
-      imageUrl: (startIndex + i) % 3 == 0
-          ? imageUrls[(startIndex + i) % imageUrls.length]
-          : null,
+      imageUrl: mainImageUrl,
+      imageUrls: allImageUrls,
     ));
   }
 
