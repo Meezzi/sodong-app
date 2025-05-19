@@ -68,4 +68,39 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
   void setCategory(TownLifeCategory category) {
     state = state.copyWith(category: category);
   }
+
+  Future<void> submit(
+    String location,
+  ) async {
+    state = state.copyWith(isLoading: true, error: null);
+
+    final post = Post(
+      postId: '',
+      title: state.title,
+      content: state.content,
+      imageUrls: state.imageUrls,
+      createdAt: DateTime.now(),
+      isAnonymous: state.isAnonymous,
+      category: state.category,
+      region: Region(codeName: 'codeName', displayName: 'displayName'),
+      userId: '',
+      nickname: '',
+      commentCount: 0,
+    );
+
+    final result = await _createPostUsecase.execute(
+      location: location,
+      category: state.category,
+      post: post,
+      imageUrls: state.imageUrls,
+    );
+
+    if (result is Ok) {
+      state = CreatePostState();
+    } else if (result is Error) {
+      final e = (result as Error).error;
+      state = state.copyWith(error: e.toString(), isLoading: false);
+      return;
+    }
+  }
 }
