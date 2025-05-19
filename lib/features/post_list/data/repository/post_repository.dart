@@ -408,4 +408,81 @@ class PostRepository {
     }
     return _cachedPosts.where((post) => post.categoryEnum == category).toList();
   }
+
+  // 전체 카테고리 데이터 로드를 위한 메서드 (모든 지역 데이터 포함)
+  Future<List<TownLifePost>> fetchAllRegionsCategoryPosts(
+      String category) async {
+    try {
+      print('전체 지역에서 $category 카테고리 데이터 로드 시작');
+
+      // 기본 지역 리스트 (현재는 서울, 부산만 포함하지만 필요에 따라 확장 가능)
+      List<String> regions = ['seoul', 'busan'];
+      List<TownLifePost> allPosts = [];
+
+      // 각 지역별로 처리
+      for (String region in regions) {
+        // 원래 지역 정보 저장
+        final originalRegion = _currentRegionId;
+        final originalSubRegion = _currentSubRegion;
+
+        // 임시로 지역 변경 (원래 선택된 지역은 변경되지 않음)
+        _currentRegionId = region;
+
+        // 해당 지역의 메인 지역 가져오기 (첫 번째 하위 지역)
+        final regionObj = regionList.firstWhere(
+          (r) => r.id == region,
+          orElse: () => regionList.first,
+        );
+
+        if (regionObj.subRegions.isNotEmpty) {
+          _currentSubRegion = regionObj.subRegions.first;
+
+          // 문서 ID 생성
+          final docId = _getDocumentId();
+          print('전체 카테고리 검색: posts/$docId/$category');
+
+          try {
+            // 해당 지역의 카테고리 게시물 가져오기
+            final querySnapshot = await _firestore
+                .collection('posts')
+                .doc(docId)
+                .collection(category)
+                .orderBy('createdAt', descending: true)
+                .limit(5) // 각 지역별로 일부 게시물만 가져옴
+                .get();
+
+            if (!querySnapshot.docs.isEmpty) {
+              final posts = querySnapshot.docs.map((doc) {
+                print('문서 처리: ${doc.id}, 지역: $region, 카테고리: $category');
+                final firestorePost = FirestorePost.fromFirestore(doc);
+                return firestorePost.toTownLifePost();
+              }).toList();
+
+              allPosts.addAll(posts);
+              print('$region 지역에서 ${posts.length}개 게시물 로드됨');
+            }
+          } catch (e) {
+            print('$region 지역 $category 카테고리 로드 중 오류: $e');
+          }
+        }
+
+        // 원래 지역으로 복원
+        _currentRegionId = originalRegion;
+        _currentSubRegion = originalSubRegion;
+      }
+
+      // 최신순 정렬 (timeAgo 기준으로)
+      allPosts.sort((a, b) {
+        // 문자열 형태의 timeAgo를 비교하기 어려우므로
+        // 댓글 수 기준으로 대체 정렬 (임시 방편)
+        return b.commentCount.compareTo(a.commentCount);
+      });
+
+      print('전체 지역에서 총 ${allPosts.length}개 게시물 로드 완료');
+      return allPosts;
+    } catch (e) {
+      print('전체 지역 데이터 로드 중 오류 발생: $e');
+      return [];
+    }
+  }
 }
