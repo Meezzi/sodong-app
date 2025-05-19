@@ -65,12 +65,12 @@ class PostDetailPage extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     SizedBox(height: 12),
-                    CommentItem(text: '카페 추천해요!', time: '20분 전'),
-                    CommentItem(text: '진짜 맛있어요~', time: '1시간 전'),
+                    DetailCommentItem(text: '카페 추천해요!', time: '20분 전'),
+                    DetailCommentItem(text: '진짜 맛있어요~', time: '1시간 전'),
                   ],
                 ),
               ),
-              CommentInput(),
+              DetailCommentInput(),
             ],
           );
         },
