@@ -107,6 +107,14 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
       }
     });
 
+    // 하위 지역 선택이 변경될 때 게시물 다시 불러오기
+    _ref.listen(selectedSubRegionProvider, (previous, next) {
+      if (previous != next) {
+        _postService.setSubRegion(next);
+        fetchInitialPosts();
+      }
+    });
+
     // 카테고리 선택이 변경될 때 처리
     _ref.listen(selectedCategoryProvider, (previous, next) {
       if (previous != next) {
@@ -117,6 +125,24 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
             break;
           case TownLifeCategory.news:
             categoryStr = 'news';
+            break;
+          case TownLifeCategory.daily:
+            categoryStr = 'daily';
+            break;
+          case TownLifeCategory.food:
+            categoryStr = 'food';
+            break;
+          case TownLifeCategory.help:
+            categoryStr = 'help';
+            break;
+          case TownLifeCategory.lost:
+            categoryStr = 'lost';
+            break;
+          case TownLifeCategory.meeting:
+            categoryStr = 'meeting';
+            break;
+          case TownLifeCategory.together:
+            categoryStr = 'together';
             break;
           // 필요한 만큼 카테고리 매핑 추가
           default:
