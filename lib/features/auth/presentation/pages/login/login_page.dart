@@ -7,7 +7,6 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        // 중앙 정렬 보장
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -16,11 +15,11 @@ class LoginPage extends StatelessWidget {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
               decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey), // 테두리 추가
-                borderRadius: BorderRadius.circular(8), // 둥근 모서리
+                border: Border.all(color: Colors.grey),
+                borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
-                mainAxisSize: MainAxisSize.min, // 내용 크기만큼만 차지
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Image.asset('assets/google.png', height: 30),
                   const SizedBox(width: 16),
