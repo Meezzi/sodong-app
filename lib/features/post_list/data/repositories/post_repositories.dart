@@ -1,13 +1,13 @@
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
-class PostService {
+class PostRepositories {
   // 싱글톤으로 구성
-  static final PostService _instance = PostService._internal();
+  static final PostRepositories _instance = PostRepositories._internal();
 
   // 생성자를 다른 멤버 선언 전에 배치
-  factory PostService() => _instance;
-  PostService._internal();
+  factory PostRepositories() => _instance;
+  PostRepositories._internal();
 
   static const int pageSize = 10;
   int _currentPage = 0;
