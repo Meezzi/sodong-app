@@ -299,14 +299,16 @@ class PostRepository {
 
       return posts;
     } catch (e) {
-      // 에러 발생 시 더미 데이터 반환 (개발 중에는 유용)
+      // 에러 발생 시 로그 출력
       print('Firestore 데이터 로드 에러: $e');
       print(
           '카테고리: $_currentCategory, 지역: $_currentRegionId $_currentSubRegion');
 
-      // 개발 환경이라면 더미 데이터 반환
-      if (true) {
-        var posts = generateDummyPosts(pageSize, startIndex: 0);
+      // 개발 환경일 때만 더미 데이터 반환 (나중에 배포 시에는 false로 변경)
+      const bool isDevelopment = true;
+      if (isDevelopment) {
+        // town_life_post.dart의 함수 사용
+        var posts = generateDummyPosts(pageSize);
         _cachedPosts.addAll(posts);
         _currentPage++;
         return posts;
