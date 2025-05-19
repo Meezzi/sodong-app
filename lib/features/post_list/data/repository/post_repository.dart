@@ -11,6 +11,56 @@ class PostRepository {
   // 싱글톤으로 구성
   static final PostRepository _instance = PostRepository._internal();
 
+  // 한글 지역명을 영문으로 변환하는 매핑 테이블
+  static const Map<String, String> _koToEnRegionMap = {
+    // 서울
+    '강남': 'gangnam',
+    '강동': 'gangdong',
+    '강북': 'gangbuk',
+    '강서': 'gangseo',
+    '관악': 'gwanak',
+    '광진': 'gwangjin',
+    '구로': 'guro',
+    '금천': 'geumcheon',
+    '노원': 'nowon',
+    '도봉': 'dobong',
+    '동대문': 'dongdaemun',
+    '동작': 'dongjak',
+    '마포': 'mapo',
+    '서대문': 'seodaemun',
+    '서초': 'seocho',
+    '성동': 'seongdong',
+    '성북': 'seongbuk',
+    '송파': 'songpa',
+    '양천': 'yangcheon',
+    '영등포': 'yeongdeungpo',
+    '용산': 'yongsan',
+    '은평': 'eunpyeong',
+    '종로': 'jongno',
+    '중구': 'junggu',
+    '중랑': 'jungnang',
+  };
+
+  // 부산 지역 매핑 테이블 (중복 방지)
+  static const Map<String, String> _busanRegionMap = {
+    '강서': 'gangseo',
+    '금정': 'geumjeong',
+    '기장': 'gijang',
+    '남구': 'namgu',
+    '동구': 'donggu',
+    '동래': 'dongnae',
+    '부산진': 'busanjin',
+    '북구': 'bukgu',
+    '사상': 'sasang',
+    '사하': 'saha',
+    '서구': 'seogu',
+    '수영': 'suyeong',
+    '연제': 'yeonje',
+    '영도': 'yeongdo',
+    '중구': 'junggu',
+    '해운대': 'haeundae',
+  };
+
   static const int pageSize = 10;
   int _currentPage = 0;
   bool _hasMore = true;
@@ -20,6 +70,7 @@ class PostRepository {
 
   // 현재 선택된 지역과 카테고리
   String _currentRegionId = 'seoul';
+  String _currentSubRegion = '';
   String _currentCategory = 'question';
 
   // Firestore 인스턴스
@@ -29,7 +80,21 @@ class PostRepository {
   void setRegion(Region region) {
     if (_currentRegionId != region.id) {
       _currentRegionId = region.id;
+      _currentSubRegion = region.subRegions.first;
       // 지역이 변경되면 캐시를 초기화
+      _cachedPosts.clear();
+      _lastDocument = null;
+      _currentPage = 0;
+      _hasMore = true;
+      _totalItemCount = 0;
+    }
+  }
+
+  // 선택된 하위 지역 설정
+  void setSubRegion(String subRegion) {
+    if (_currentSubRegion != subRegion) {
+      _currentSubRegion = subRegion;
+      // 하위 지역이 변경되면 캐시를 초기화
       _cachedPosts.clear();
       _lastDocument = null;
       _currentPage = 0;
@@ -51,6 +116,34 @@ class PostRepository {
     }
   }
 
+  // 문서 ID 생성 (지역_하위지역 형식)
+  String _getDocumentId() {
+    // 하위 지역이 없으면 그냥 지역 ID 반환
+    if (_currentSubRegion.isEmpty) {
+      return _currentRegionId;
+    }
+
+    // 하위 지역에서 '구', '군', '시' 제거
+    String koreanName = _currentSubRegion
+        .replaceAll('구', '')
+        .replaceAll('시', '')
+        .replaceAll('군', '');
+
+    // 한글 지역명을 영문으로 변환 (지역에 따라 다른 매핑 테이블 사용)
+    String englishName;
+    if (_currentRegionId == 'busan') {
+      englishName = _busanRegionMap[koreanName] ?? koreanName.toLowerCase();
+    } else {
+      englishName = _koToEnRegionMap[koreanName] ?? koreanName.toLowerCase();
+    }
+
+    print(
+        '지역 변환: $_currentRegionId, $koreanName -> ${_currentRegionId}_$englishName');
+
+    // {도시}_{구} 형식으로 반환 (seoul_gangnam, busan_haeundae 등)
+    return '${_currentRegionId}_$englishName';
+  }
+
   // 초기 게시물 가져오기
   Future<List<TownLifePost>> fetchInitialPosts() async {
     _currentPage = 0;
@@ -60,18 +153,24 @@ class PostRepository {
     _totalItemCount = 0;
 
     try {
+      // 문서 ID 생성
+      final docId = _getDocumentId();
+      print('Fetching initial posts from path: posts/$docId/$_currentCategory');
+
       // 먼저 컬렉션에 있는 문서 수를 가져옵니다
       final countQuery = await _firestore
           .collection('posts')
-          .doc(_currentRegionId)
+          .doc(docId)
           .collection(_currentCategory)
           .count()
           .get();
 
       _totalItemCount = countQuery.count ?? 0;
+      print('Total documents count: $_totalItemCount');
 
       // 데이터가 없으면 빈 리스트 반환
       if (_totalItemCount == 0) {
+        print('No documents found in posts/$docId/$_currentCategory');
         _hasMore = false;
         return [];
       }
@@ -79,20 +178,23 @@ class PostRepository {
       // 선택된 지역의 선택된 카테고리 게시물을 최신순으로 가져오기
       final querySnapshot = await _firestore
           .collection('posts')
-          .doc(_currentRegionId)
+          .doc(docId)
           .collection(_currentCategory)
           .orderBy('createdAt', descending: true)
           .limit(pageSize)
           .get();
 
       if (querySnapshot.docs.isEmpty) {
+        print('Query returned empty results');
         _hasMore = false;
         return [];
       }
 
+      print('Fetched ${querySnapshot.docs.length} documents');
       _lastDocument = querySnapshot.docs.last;
 
       final posts = querySnapshot.docs.map((doc) {
+        print('Processing document ID: ${doc.id}');
         final firestorePost = FirestorePost.fromFirestore(doc);
         return firestorePost.toTownLifePost();
       }).toList();
@@ -109,10 +211,17 @@ class PostRepository {
     } catch (e) {
       // 에러 발생 시 더미 데이터 반환 (개발 중에는 유용)
       print('Firestore 데이터 로드 에러: $e');
-      var posts = generateDummyPosts(pageSize, startIndex: 0);
-      _cachedPosts.addAll(posts);
-      _currentPage++;
-      return posts;
+
+      // 개발 환경이라면 더미 데이터 반환
+      if (true) {
+        var posts = generateDummyPosts(pageSize, startIndex: 0);
+        _cachedPosts.addAll(posts);
+        _currentPage++;
+        return posts;
+      }
+
+      _hasMore = false;
+      return [];
     }
   }
 
@@ -129,10 +238,14 @@ class PostRepository {
     }
 
     try {
+      // 문서 ID 생성
+      final docId = _getDocumentId();
+      print('Fetching more posts from path: posts/$docId/$_currentCategory');
+
       // 이전에 가져온 마지막 문서 이후부터 가져오기
       final querySnapshot = await _firestore
           .collection('posts')
-          .doc(_currentRegionId)
+          .doc(docId)
           .collection(_currentCategory)
           .orderBy('createdAt', descending: true)
           .startAfterDocument(_lastDocument!)
@@ -140,13 +253,16 @@ class PostRepository {
           .get();
 
       if (querySnapshot.docs.isEmpty) {
+        print('No more documents found');
         _hasMore = false;
         return [];
       }
 
+      print('Fetched ${querySnapshot.docs.length} more documents');
       _lastDocument = querySnapshot.docs.last;
 
       final posts = querySnapshot.docs.map((doc) {
+        print('Processing document ID: ${doc.id}');
         final firestorePost = FirestorePost.fromFirestore(doc);
         return firestorePost.toTownLifePost();
       }).toList();
