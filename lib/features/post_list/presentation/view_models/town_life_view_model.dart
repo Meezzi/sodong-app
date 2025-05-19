@@ -81,18 +81,11 @@ class LikedPostsNotifier extends StateNotifier<Map<int, bool>> {
   }
 }
 
-// 필터링된 게시물 목록 프로바이더
+// 필터링된 게시물 목록 프로바이더 (수정: 더 이상 사용하지 않음)
+// 카테고리 필터링은 이제 Firestore 쿼리에서 직접 처리됨
 final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
-  var selectedCategory = ref.watch(selectedCategoryProvider);
   var townLifeState = ref.watch(townLifeStateProvider);
-
-  if (selectedCategory == TownLifeCategory.all) {
-    return townLifeState.posts;
-  }
-
-  return townLifeState.posts
-      .where((post) => post.categoryEnum == selectedCategory)
-      .toList();
+  return townLifeState.posts;
 });
 
 // 게시물 상태 관리를 위한 Notifier
@@ -118,40 +111,22 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
     // 카테고리 선택이 변경될 때 처리
     _ref.listen(selectedCategoryProvider, (previous, next) {
       if (previous != next) {
-        String categoryStr;
-        switch (next) {
-          case TownLifeCategory.question:
-            categoryStr = 'question';
-            break;
-          case TownLifeCategory.news:
-            categoryStr = 'news';
-            break;
-          case TownLifeCategory.daily:
-            categoryStr = 'daily';
-            break;
-          case TownLifeCategory.food:
-            categoryStr = 'food';
-            break;
-          case TownLifeCategory.help:
-            categoryStr = 'help';
-            break;
-          case TownLifeCategory.lost:
-            categoryStr = 'lost';
-            break;
-          case TownLifeCategory.meeting:
-            categoryStr = 'meeting';
-            break;
-          case TownLifeCategory.together:
-            categoryStr = 'together';
-            break;
-          // 필요한 만큼 카테고리 매핑 추가
-          default:
-            categoryStr = 'question'; // 기본값
+        // 카테고리가 변경될 때마다 해당 카테고리의 데이터 로드
+        if (next == TownLifeCategory.all) {
+          // '전체' 카테고리를 선택했을 때도 특정 카테고리로 로드
+          _postService.setCategory('question');
+        } else {
+          // 선택한 카테고리의 ID를 Firestore 경로로 사용
+          _postService.setCategory(next.id);
         }
-        _postService.setCategory(categoryStr);
+
+        print('카테고리 변경: ${next.id}, ${next.text}');
         fetchInitialPosts();
       }
     });
+
+    // 초기 데이터 로드
+    fetchInitialPosts();
   }
 
   final PostRepository _postService;
@@ -171,6 +146,7 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         hasMorePosts: _postService.hasMorePosts,
       );
     } catch (e) {
+      print('초기 게시물 로드 오류: $e');
       state = state.copyWith(
         isLoading: false,
         errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
@@ -192,6 +168,7 @@ class TownLifeStateNotifier extends StateNotifier<TownLifeState> {
         hasMorePosts: _postService.hasMorePosts,
       );
     } catch (e) {
+      print('추가 게시물 로드 오류: $e');
       state = state.copyWith(
         isLoading: false,
         errorMessage: '추가 게시물을 불러오는 중 오류가 발생했습니다.',
