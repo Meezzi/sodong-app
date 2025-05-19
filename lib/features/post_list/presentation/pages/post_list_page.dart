@@ -160,9 +160,22 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
                 : const SizedBox.shrink();
           }
           var post = filteredPosts[index];
-          return TownLifePostItem(
-            post: post,
-            index: index,
+          return Column(
+            children: [
+              TownLifePostItem(
+                post: post,
+                index: index,
+              ),
+              if (index < filteredPosts.length - 1)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color.fromARGB(255, 229, 160, 197),
+                  ),
+                ),
+            ],
           );
         },
         childCount: filteredPosts.length + (townLifeState.hasMorePosts ? 1 : 0),
