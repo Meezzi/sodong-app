@@ -29,21 +29,106 @@ class FirestorePost {
   });
 
   factory FirestorePost.fromFirestore(DocumentSnapshot doc) {
-    final data = doc.data() as Map<String, dynamic>;
+    try {
+      final data = doc.data() as Map<String, dynamic>? ?? {};
+      print('Document data: $data');
 
-    return FirestorePost(
-      id: doc.id,
-      category: data['category'] ?? '',
-      content: data['content'] ?? '',
-      commentCount: data['commentCount'] ?? 0,
-      createdAt: data['createdAt'] as Timestamp,
-      imageUrls: List<String>.from(data['imageUrls'] ?? []),
-      isAnonymous: data['isAnonymous'] ?? false,
-      nickname: data['nickname'] ?? '',
-      title: data['title'] ?? '',
-      userId: data['userId'] ?? '',
-      region: RegionInfo.fromMap(data['region'] as Map<String, dynamic>),
-    );
+      // 데이터가 없는 경우에도 기본값으로 생성할 수 있도록 함
+      Timestamp timestamp;
+      try {
+        timestamp = data['createdAt'] as Timestamp? ?? Timestamp.now();
+      } catch (e) {
+        print('Error parsing createdAt: $e');
+        timestamp = Timestamp.now();
+      }
+
+      List<String> images = [];
+      try {
+        if (data['imageUrls'] != null) {
+          images = List<String>.from(data['imageUrls']);
+        } else if (data['imageUrl'] != null && data['imageUrl'] is String) {
+          // 단일 이미지 URL을 리스트로 변환
+          images = [data['imageUrl'] as String];
+        }
+      } catch (e) {
+        print('Error parsing image URLs: $e');
+      }
+
+      RegionInfo regionInfo;
+      try {
+        if (data['region'] != null && data['region'] is Map) {
+          regionInfo =
+              RegionInfo.fromMap(data['region'] as Map<String, dynamic>);
+        } else {
+          // 지역 정보가 없으면 기본값 사용
+          final docPath = doc.reference.path;
+          print('Document path: $docPath');
+
+          // 경로에서 지역 ID 추출 (posts/seoul_gangnam/question/docId)
+          final parts = docPath.split('/');
+          String regionId = parts.length > 1 ? parts[1] : '';
+
+          // seoul_gangnam -> Seoul Gangnam 형식으로 변환
+          final regionParts = regionId.split('_');
+          String regionName = regionId;
+          String subRegion = '';
+
+          if (regionParts.length > 1) {
+            regionName = regionParts[0].substring(0, 1).toUpperCase() +
+                regionParts[0].substring(1);
+            subRegion = regionParts[1].substring(0, 1).toUpperCase() +
+                regionParts[1].substring(1);
+          }
+
+          regionInfo = RegionInfo(
+            codeName: regionId,
+            displayName: subRegion,
+            title: '$regionName $subRegion',
+          );
+        }
+      } catch (e) {
+        print('Error parsing region info: $e');
+        regionInfo = RegionInfo(
+          codeName: 'unknown',
+          displayName: 'Unknown',
+          title: 'Unknown Location',
+        );
+      }
+
+      return FirestorePost(
+        id: doc.id,
+        category: data['category'] as String? ?? '',
+        content: data['content'] as String? ?? '',
+        commentCount: data['commentCount'] as int? ?? 0,
+        createdAt: timestamp,
+        imageUrls: images,
+        isAnonymous: data['isAnonymous'] as bool? ?? false,
+        nickname: data['nickname'] as String? ?? '익명',
+        title: data['title'] as String? ?? '',
+        userId: data['userId'] as String? ?? '',
+        region: regionInfo,
+      );
+    } catch (e) {
+      print('전체 파싱 오류: $e');
+      // 기본값으로 생성
+      return FirestorePost(
+        id: doc.id,
+        category: 'question',
+        content: '내용 없음',
+        commentCount: 0,
+        createdAt: Timestamp.now(),
+        imageUrls: [],
+        isAnonymous: false,
+        nickname: '익명',
+        title: '제목 없음',
+        userId: '',
+        region: RegionInfo(
+          codeName: 'unknown',
+          displayName: 'Unknown',
+          title: 'Unknown Location',
+        ),
+      );
+    }
   }
 
   // Firestore Post를 앱에서 사용하는 TownLifePost로 변환
@@ -94,9 +179,9 @@ class RegionInfo {
 
   factory RegionInfo.fromMap(Map<String, dynamic> map) {
     return RegionInfo(
-      codeName: map['codeName'] ?? '',
-      displayName: map['displayName'] ?? '',
-      title: map['title'] ?? '',
+      codeName: map['codeName'] as String? ?? '',
+      displayName: map['displayName'] as String? ?? '',
+      title: map['title'] as String? ?? '',
     );
   }
 }
