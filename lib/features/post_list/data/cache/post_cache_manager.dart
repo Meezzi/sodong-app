@@ -1,4 +1,4 @@
-import '../../domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 /// TownLife 게시물 캐시 관리 클래스
 ///

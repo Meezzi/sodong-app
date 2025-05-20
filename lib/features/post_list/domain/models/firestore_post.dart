@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'town_life_post.dart';
+import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 class FirestorePost {
   FirestorePost({

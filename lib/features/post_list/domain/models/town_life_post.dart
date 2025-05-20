@@ -1,5 +1,5 @@
-import 'category.dart';
-import 'region.dart';
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post_list/domain/models/region.dart';
 
 class TownLifePost {
   TownLifePost({

@@ -1,10 +1,10 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/category.dart';
-import '../../domain/models/town_life_post.dart';
-import '../../domain/models/region.dart';
-import 'region_view_model.dart';
-import '../../data/repository/post_repository.dart';
+import 'package:sodong_app/features/post_list/data/repository/post_repository.dart';
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 /// 동네 생활 게시물 상태 관리 클래스
 ///

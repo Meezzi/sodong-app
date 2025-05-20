@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
-import '../../domain/models/category.dart';
-import '../../domain/models/town_life_post.dart';
-import '../view_models/region_view_model.dart';
-import '../view_models/town_life_view_model.dart';
-import '../widgets/category_selector.dart';
-import '../widgets/region_selector.dart';
-import '../widgets/town_life_post_item.dart';
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/category_selector.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/region_selector.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/town_life_post_item.dart';
 
 class PostListPage extends ConsumerStatefulWidget {
   const PostListPage({super.key});
