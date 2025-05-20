@@ -1,28 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/models/town_life_post.dart';
-import '../view_models/town_life_view_model.dart';
-import '../widgets/category_selector.dart';
-import '../widgets/region_selector.dart';
-import '../widgets/town_life_post_item.dart';
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/category_selector.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/region_selector.dart';
+import 'package:sodong_app/features/post_list/presentation/widgets/town_life_post_item.dart';
 
-class TownLifePage extends ConsumerStatefulWidget {
-  const TownLifePage({super.key});
+class PostListPage extends ConsumerStatefulWidget {
+  const PostListPage({super.key});
 
   @override
-  ConsumerState<TownLifePage> createState() => _TownLifePageState();
+  ConsumerState<PostListPage> createState() => _TownLifePageState();
 }
 
-class _TownLifePageState extends ConsumerState<TownLifePage> {
+class _TownLifePageState extends ConsumerState<PostListPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
 
   @override
   void initState() {
     super.initState();
-    // 초기 게시물 가져오기
-    Future.microtask(
-        () => ref.read(townLifeStateProvider.notifier).fetchInitialPosts());
+
+    // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
+    Future.microtask(() {
+      final initialRegion = ref.read(selectedRegionProvider);
+      final initialSubRegion = ref.read(selectedSubRegionProvider);
+      final postService = ref.read(postServiceProvider);
+
+      postService.setRegion(initialRegion);
+      postService.setSubRegion(initialSubRegion);
+
+      // 초기 게시물 가져오기
+      ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
+    });
 
     // 스크롤 이벤트 감지
     _scrollController.addListener(_scrollListener);
@@ -42,8 +54,23 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
 
     return TownLifeScaffold(
       scrollController: _scrollController,
-      onRefresh: () =>
-          ref.read(townLifeStateProvider.notifier).fetchInitialPosts(),
+      onRefresh: () {
+        // 현재 선택된 카테고리
+        final selectedCategory = ref.read(selectedCategoryProvider);
+
+        // 항상 모든 카테고리 데이터를 로드하는 방식으로 변경
+        if (selectedCategory == TownLifeCategory.all) {
+          // 전체 카테고리인 경우 해당 메서드 호출
+          return ref
+              .read(townLifeStateProvider.notifier)
+              .refreshAllCategoryData();
+        } else {
+          // 다른 카테고리를 보고 있더라도 전체 데이터 새로고침
+          return ref
+              .read(townLifeStateProvider.notifier)
+              .refreshAllCategoryData();
+        }
+      },
       appBar: _buildAppBar(),
       regionSelector: _buildRegionSelector(),
       categorySelector: _buildCategorySelector(),
@@ -133,9 +160,22 @@ class _TownLifePageState extends ConsumerState<TownLifePage> {
                 : const SizedBox.shrink();
           }
           var post = filteredPosts[index];
-          return TownLifePostItem(
-            post: post,
-            index: index,
+          return Column(
+            children: [
+              TownLifePostItem(
+                post: post,
+                index: index,
+              ),
+              if (index < filteredPosts.length - 1)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Divider(
+                    height: 1,
+                    thickness: 1,
+                    color: Color.fromARGB(255, 229, 160, 197),
+                  ),
+                ),
+            ],
           );
         },
         childCount: filteredPosts.length + (townLifeState.hasMorePosts ? 1 : 0),
