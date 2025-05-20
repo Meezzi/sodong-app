@@ -26,8 +26,6 @@ class VWorlLocationdRepository {
           .map((e) => e['title'].toString())
           .toList();
     }
-
-    print('findByName error: ${response.statusCode} / ${response.data}');
     return [];
   }
 
@@ -54,8 +52,6 @@ class VWorlLocationdRepository {
           .map((e) => e['properties']['full_nm'].toString())
           .toList();
     }
-
-    print('findByLatLng error: ${response.statusCode} / ${response.data}');
     return [];
   }
 }
