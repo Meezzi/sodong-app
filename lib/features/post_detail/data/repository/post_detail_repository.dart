@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sodong_app/post_detail/data/dtos/post_detail_dto.dart';
+import 'package:sodong_app/features/post_detail/data/dtos/post_detail_dto.dart';
 
 class PostDetailRepository {
   Stream<PostDetail> getPostStream(
