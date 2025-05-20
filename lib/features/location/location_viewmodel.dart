@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:sodong_app/features/auth/data/repository/vworld_repositiry.dart';
 
 class Location {
-  double x;
-  double y;
-  String? region;
+  final double x;
+  final double y;
+  final String? region;
   Location({required this.x, required this.y, this.region});
 }
 
@@ -31,8 +33,42 @@ class LocationViewmodel extends Notifier<Location> {
       }
     }
     // 2. gps가져와서 로케이션 세팅
+    LocationSettings locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.high,
+    );
+
+    Position position = await Geolocator.getCurrentPosition(
+      locationSettings: locationSettings,
+    );
+    // position 객체에서 위도를 추출
+    double latitude = position.latitude;
+    // position 객체에서 경도를 추출
+    double longitude = position.longitude;
+
+    print("현재 위치: 위도 $latitude, 경도 $longitude");
 
     // 3. 위도 경도로 한국의 지역명 가져오기
+    final results = await VWorldRepository().findByLatLng(
+      lat: latitude,
+      lng: longitude,
+    );
+    final fullRegion = results.isNotEmpty ? results.first : null;
+    String? region;
+    if (fullRegion != null) {
+      final parts = fullRegion.split(' ');
+      if (parts.length >= 2) {
+        region = '${parts[0]} ${parts[1]}'; // 시 + 구단위 까지만 나오도록 설정
+      } else {
+        region = fullRegion; // 예외 처리
+      }
+    }
+
     // 4. 로케이션 뷰모델에 한국의 지역명 저장하기
+    state = Location(x: longitude, y: latitude, region: region);
   }
 }
+
+// provider 선언
+final locationProvider = NotifierProvider<LocationViewmodel, Location>(
+  () => LocationViewmodel(),
+);
