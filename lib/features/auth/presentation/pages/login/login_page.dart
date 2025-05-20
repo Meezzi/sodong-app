@@ -1,7 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:sodong_app/features/location/location_viewmodel.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
@@ -11,48 +12,69 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
-  @override
-  void initState() {
-    super.initState();
-    // 첫 진입 시 위치 정보 자동 가져오기
-    Future.microtask(() {
-      ref.read(locationProvider.notifier).getLocation();
-    });
+  Future<void> signInWithGoogle(BuildContext context) async {
+    try {
+      final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+      final googleUser = await googleSignIn.signIn();
+
+      if (googleUser == null) return;
+
+      final googleAuth = await googleUser.authentication;
+
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      final userCredential =
+          await FirebaseAuth.instance.signInWithCredential(credential);
+
+      final user = userCredential.user;
+
+      if (user != null) {
+        print('로그인 성공: uid=${user.uid}, name=${user.displayName}');
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        throw Exception("Firebase 로그인 실패");
+      }
+    } catch (e) {
+      print('로그인 중 오류 발생: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('로그인에 실패했습니다. 다시 시도해주세요.')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final location = ref.watch(locationProvider);
-
     return Scaffold(
       body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Image.asset('assets/login.png'),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisSize: MainAxisSize.min,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                SvgPicture.asset(
-                  'assets/auth/light/google_login_button_light.svg',
-                  height: 60,
+                Image.asset('assets/login.png'),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () => signInWithGoogle(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.white,
+                    elevation: 2,
+                    padding: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                  child: SvgPicture.asset(
+                    'assets/auth/light/google_login_button_light.svg',
+                    height: 60,
+                  ),
                 ),
               ],
             ),
-            const SizedBox(height: 40),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(locationProvider.notifier).getLocation();
-              },
-              child: const Text('위치 다시 불러오기'),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              '위도: ${location.y}\n경도: ${location.x}\n지역: ${location.region ?? "불러오는 중..."}',
-              textAlign: TextAlign.center,
-            )
-          ],
+          ),
         ),
       ),
     );
