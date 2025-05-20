@@ -8,15 +8,24 @@ import 'package:sodong_app/post_detail/presentation/widgets/detail_header.dart';
 import 'package:sodong_app/post_detail/presentation/widgets/detail_image_view.dart';
 import 'package:sodong_app/post_detail/presentation/widgets/detail_loctaion.dart';
 import 'package:sodong_app/post_detail/presentation/widgets/detail_title.dart';
+import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {
+  final String location;
+  final String category;
   final String postId;
 
-  const PostDetailPage({Key? key, required this.postId}) : super(key: key);
+  const PostDetailPage({
+    Key? key,
+    required this.location,
+    required this.category,
+    required this.postId,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(postIdProvider.notifier).state = postId;
+    ref.read(postInfoProvider.notifier).state =
+        Tuple3(location, category, postId);
 
     final postAsync = ref.watch(postStreamProvider);
 
@@ -43,7 +52,7 @@ class PostDetailPage extends ConsumerWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    DetailImageView(imageUrl: post.imageUrl),
+                    DetailImageView(imageUrl: post.imageUrl.first),
                     const SizedBox(height: 16),
                     const DetailHeader(),
                     const SizedBox(height: 16),
