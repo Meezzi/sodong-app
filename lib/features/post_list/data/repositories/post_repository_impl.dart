@@ -45,7 +45,8 @@ class PostRepositoryImpl implements PostRepository {
         category: _currentCategory,
       );
 
-      _hasMore = posts.isNotEmpty;
+      // 게시물이 비어있거나 예상 페이지 크기보다 적은 경우 더 이상 불러올 게시물이 없음
+      _hasMore = posts.length >= PostRemoteDataSource.pageSize;
 
       // 캐시 업데이트
       _cacheDataSource.updateCategoryCache(_currentCategory, posts);
@@ -55,10 +56,12 @@ class PostRepositoryImpl implements PostRepository {
       // 에러 발생 시 캐시된 데이터 반환 시도
       final cachedPosts = _cacheDataSource.getCategoryPosts(_currentCategory);
       if (cachedPosts.isNotEmpty) {
+        _hasMore = false; // 에러 발생 시 더 이상 불러올 게시물이 없다고 설정
         return cachedPosts;
       }
 
       // 캐시도 없으면 빈 리스트 반환
+      _hasMore = false;
       return [];
     }
   }
@@ -74,7 +77,8 @@ class PostRepositoryImpl implements PostRepository {
         category: _currentCategory,
       );
 
-      _hasMore = posts.isNotEmpty;
+      // 게시물이 비어있거나 예상 페이지 크기보다 적은 경우 더 이상 불러올 게시물이 없음
+      _hasMore = posts.length >= PostRemoteDataSource.pageSize;
 
       // 캐시에 새 게시물 추가
       final currentCache = _cacheDataSource.getCategoryPosts(_currentCategory);
@@ -84,6 +88,7 @@ class PostRepositoryImpl implements PostRepository {
       return posts;
     } catch (e) {
       // 에러 발생 시 빈 리스트 반환
+      _hasMore = false;
       return [];
     }
   }
@@ -91,8 +96,9 @@ class PostRepositoryImpl implements PostRepository {
   @override
   Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(
       String categoryId) async {
-    // 원래 카테고리 저장
+    // 원래 카테고리와 hasMore 상태 저장
     final originalCategory = _currentCategory;
+    final originalHasMore = _hasMore;
 
     // 요청된 카테고리로 변경
     _currentCategory = categoryId;
@@ -101,13 +107,20 @@ class PostRepositoryImpl implements PostRepository {
       // 해당 카테고리의 게시물 로드
       final posts = await fetchInitialPosts();
 
+      // 게시물이 있는 경우 hasMore 값이 업데이트되었을 것이므로 그대로 유지
+      final currentHasMore = _hasMore;
+
       // 원래 카테고리로 복원
       _currentCategory = originalCategory;
 
+      // 원래 카테고리의 hasMore 상태 복원 (현재 카테고리의 결과가 영향을 주지 않도록)
+      _hasMore = originalHasMore;
+
       return posts;
     } catch (e) {
-      // 원래 카테고리로 복원하고 에러 전파
+      // 원래 카테고리와 hasMore 상태로 복원
       _currentCategory = originalCategory;
+      _hasMore = originalHasMore;
       return [];
     }
   }
