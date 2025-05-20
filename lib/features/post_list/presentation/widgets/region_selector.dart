@@ -13,7 +13,8 @@ class RegionSelector extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
