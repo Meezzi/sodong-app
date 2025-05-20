@@ -79,13 +79,23 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
     var townLifeState = ref.read(townLifeStateProvider);
     // 추가 게시물이 없거나 현재 게시물이 없으면 스크롤 이벤트 무시
-    if (!townLifeState.hasMorePosts || townLifeState.posts.isEmpty) return;
+    if (!townLifeState.hasMorePosts || townLifeState.posts.isEmpty) {
+      // 로딩 상태 명시적으로 초기화 (안전장치)
+      if (_isLoadingMore) {
+        _isLoadingMore = false;
+      }
+      return;
+    }
 
     // 게시물이 충분히 있는 경우에만 스크롤 이벤트 처리
+    // 현재 스크롤 위치가 하단에 도달했는지 확인
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       _isLoadingMore = true;
       ref.read(townLifeStateProvider.notifier).fetchMorePosts().then((_) {
+        _isLoadingMore = false;
+      }).catchError((error) {
+        // 에러 발생 시 로딩 상태 초기화
         _isLoadingMore = false;
       });
     }
@@ -165,12 +175,14 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
           // 마지막 아이템인 경우 로딩 인디케이터 표시 여부 결정
           if (index == filteredPosts.length) {
             // 게시물이 있고 더 불러올 게시물이 있는 경우에만 로딩 인디케이터 표시
-            return townLifeState.hasMorePosts
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : const SizedBox.shrink();
+            if (townLifeState.hasMorePosts && !townLifeState.isLoading) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
           }
 
           var post = filteredPosts[index];
@@ -192,9 +204,13 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
             ],
           );
         },
-        // 추가 게시물이 있는 경우에만 +1 (로딩 인디케이터 위치용)
+        // 추가 게시물이 있고 로딩 중이 아닌 경우에만 +1 (로딩 인디케이터 위치용)
         childCount: filteredPosts.length +
-            (townLifeState.hasMorePosts && filteredPosts.isNotEmpty ? 1 : 0),
+            (townLifeState.hasMorePosts &&
+                    !townLifeState.isLoading &&
+                    filteredPosts.isNotEmpty
+                ? 1
+                : 0),
       ),
     );
   }
