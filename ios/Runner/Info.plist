@@ -2,6 +2,19 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1054184778978-0vfe6v3j93s3vtru1m491c024oeh53c3</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>1054184778978-0vfe6v3j93s3vtru1m491c024oeh53c3.apps.googleusercontent.com</string>
     <key>NSLocationWhenInUseUsageDescription</key>
     <string>동네 정보를 가져오기 위해 위치 권한을 허용해 주세요</string>
 	<key>CFBundleDevelopmentRegion</key>
