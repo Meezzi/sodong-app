@@ -16,23 +16,25 @@ class PostDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postAsync = ref.watch(postStreamProvider(postId));
+    ref.read(postIdProvider.notifier).state = postId;
+
+    final postAsync = ref.watch(postStreamProvider);
 
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        backgroundColor: Color(0xFFFFE4E8),
+        backgroundColor: const Color(0xFFFFE4E8),
         elevation: 0,
         centerTitle: true,
-        title: Text('게시글 상세',
+        title: const Text('게시글 상세',
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 18,
                 fontWeight: FontWeight.w600)),
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: postAsync.when(
-        loading: () => Center(child: CircularProgressIndicator()),
+        loading: () => const Center(child: CircularProgressIndicator()),
         error: (e, _) => Center(child: Text('에러: ${e.toString()}')),
         data: (post) {
           return Column(
@@ -42,25 +44,25 @@ class PostDetailPage extends ConsumerWidget {
                   padding: const EdgeInsets.all(16.0),
                   children: [
                     DetailImageView(imageUrl: post.imageUrl),
-                    SizedBox(height: 16),
-                    DetailHeader(),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
+                    const DetailHeader(),
+                    const SizedBox(height: 16),
                     DetailTitle(title: post.title),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     DetailContent(content: post.content),
-                    SizedBox(height: 16),
+                    const SizedBox(height: 16),
                     DetailLocation(location: post.location),
-                    SizedBox(height: 24),
-                    Text("댓글",
+                    const SizedBox(height: 24),
+                    const Text("댓글",
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
-                    SizedBox(height: 12),
-                    DetailCommentItem(text: '카페 추천해요!', time: '20분 전'),
-                    DetailCommentItem(text: '진짜 맛있어요~', time: '1시간 전'),
+                    const SizedBox(height: 12),
+                    const DetailCommentItem(text: '카페 추천해요!', time: '20분 전'),
+                    const DetailCommentItem(text: '진짜 맛있어요~', time: '1시간 전'),
                   ],
                 ),
               ),
-              DetailCommentInput(),
+              const DetailCommentInput(),
             ],
           );
         },
