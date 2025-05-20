@@ -4,10 +4,10 @@ import 'package:sodong_app/features/auth/data/repository/vworld_Location_reposit
 import 'package:sodong_app/features/auth/data/repository/vworld_location_repository_provider.dart';
 
 class Location {
+  Location({required this.x, required this.y, this.region});
   final double x;
   final double y;
   final String? region;
-  Location({required this.x, required this.y, this.region});
 }
 
 class LocationViewmodel extends Notifier<Location> {
