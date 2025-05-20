@@ -1,13 +1,13 @@
 import 'package:dio/dio.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class VWorldLocationRepository {
   final Dio _client = Dio(BaseOptions(
     validateStatus: (status) => true,
   ));
 
-  static const String _apiKey = '4CD4C156-1D16-3B17-AFF0-E99C90DDDACE';
-
   Future<List<String>> findByName(String query) async {
+    final String _apiKey = dotenv.env['VWORLD_API_KEY'] ?? '';
     final response = await _client.get(
       'https://api.vworld.kr/req/search',
       queryParameters: {
@@ -33,6 +33,7 @@ class VWorldLocationRepository {
     required double lat,
     required double lng,
   }) async {
+    final String _apiKey = dotenv.env['VWORLD_API_KEY'] ?? '';
     final response = await _client.get(
       'https://api.vworld.kr/req/data',
       queryParameters: {
