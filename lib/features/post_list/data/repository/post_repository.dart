@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
-import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
-import 'package:sodong_app/features/post_list/domain/models/firestore_post.dart';
-import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import '../../domain/models/category.dart';
+import '../../domain/models/town_life_post.dart';
+import '../../domain/models/firestore_post.dart';
+import '../../domain/models/region.dart';
 
 class PostRepository {
   PostRepository._internal() {
