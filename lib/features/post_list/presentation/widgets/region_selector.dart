@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/domain/models/region.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
+import '../../domain/models/region.dart';
+import '../view_models/region_view_model.dart';
 
 class RegionSelector extends ConsumerWidget {
   const RegionSelector({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var regions = ref.watch(regionsProvider);
     var selectedRegion = ref.watch(selectedRegionProvider);
     var selectedSubRegion = ref.watch(selectedSubRegionProvider);
 
