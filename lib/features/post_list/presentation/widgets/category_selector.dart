@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import '../view_models/town_life_view_model.dart';
 
 class CategorySelector extends ConsumerWidget {
   const CategorySelector({super.key});
