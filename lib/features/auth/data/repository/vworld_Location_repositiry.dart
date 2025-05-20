@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 
-class VWorlLocationdRepository {
+class VWorldLocationRepository {
   final Dio _client = Dio(BaseOptions(
     validateStatus: (status) => true,
   ));
