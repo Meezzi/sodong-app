@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/post_detail/data/providers/chat_detail_providers.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_comment_input.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_comment_item.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_content.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_header.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_image_view.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_loctaion.dart';
-import 'package:sodong_app/post_detail/presentation/widgets/detail_title.dart';
+import 'package:sodong_app/features/post_detail/data/providers/chat_detail_providers.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_comment_input.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_comment_item.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_content.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_header.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_image_view.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_loctaion.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_title.dart';
 import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {
