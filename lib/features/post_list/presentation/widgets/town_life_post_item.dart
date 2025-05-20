@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import '../../domain/models/town_life_post.dart';
+import '../view_models/town_life_view_model.dart';
 
 class TownLifePostItem extends ConsumerWidget {
   const TownLifePostItem({
@@ -191,7 +191,7 @@ class TownLifePostItem extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Colors.black.withOpacity(0.6),
+                        color: Color.fromRGBO(0, 0, 0, 0.6),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
