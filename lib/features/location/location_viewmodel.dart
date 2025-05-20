@@ -1,26 +1,22 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:sodong_app/features/auth/data/repository/vworld_Location_repositiry.dart';
-import 'package:sodong_app/features/auth/data/repository/vworld_location_repository_provider.dart';
 
 class Location {
-  Location({required this.x, required this.y, this.region});
   final double x;
   final double y;
   final String? region;
+  Location({required this.x, required this.y, this.region});
 }
 
 class LocationViewmodel extends Notifier<Location> {
-  late final VWorldLocationRepository _repository =
-      ref.read(vworldRepositoryProvider);
-
   @override
   Location build() {
     // 초기의 기본 위치값 설정(초기 위치 일단 null로 지정)
     return Location(x: 129.0823133, y: 35.2202216, region: null);
   }
 
-  Future<void> getLocation() async {
+  void getLocation() async {
     // 1. 위치 권한 허용하기
     LocationPermission permission = await Geolocator.checkPermission();
     // 만약 권한이 없다면 아래에서 권한을 요청
@@ -31,20 +27,27 @@ class LocationViewmodel extends Notifier<Location> {
       // 위치권한을 거부하면 해당 텍스트 출력하고 진행 중단, 하지 않으면 계속 진행
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
+        print("위치 권한이 거부되었습니다.");
         return;
       }
     }
     // 2. gps가져와서 로케이션 세팅
+    LocationSettings locationSettings = const LocationSettings(
+      accuracy: LocationAccuracy.high,
+    );
+
     Position position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
+      locationSettings: locationSettings,
     );
     // position 객체에서 위도를 추출
     double latitude = position.latitude;
     // position 객체에서 경도를 추출
     double longitude = position.longitude;
 
+    print("현재 위치: 위도 $latitude, 경도 $longitude");
+
     // 3. 위도 경도로 한국의 지역명 가져오기
-    final results = await _repository.findByLatLng(
+    final results = await VWorldRepository().findByLatLng(
       lat: latitude,
       lng: longitude,
     );
