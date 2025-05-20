@@ -6,6 +6,6 @@ class PostDetailRepository {
     return FirebaseFirestore.instance
         .doc('posts/busan/news/$postId')
         .snapshots()
-        .map((doc) => PostDetail.fromJson(doc.data()!));
+        .map((doc) => PostDetail.fromJson(doc.data() ?? {}));
   }
 }
