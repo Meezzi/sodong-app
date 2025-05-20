@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
-import '../pages/post_detail_page.dart';
 
 class TownLifePostItem extends ConsumerWidget {
   const TownLifePostItem({
@@ -19,7 +18,7 @@ class TownLifePostItem extends ConsumerWidget {
     var isLiked = ref.watch(likedPostsProvider)[index] ?? false;
 
     return GestureDetector(
-      //todo: 
+      // TODO: 상세페이지 연결
       // onTap: () => _navigateToDetailPage(context),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
