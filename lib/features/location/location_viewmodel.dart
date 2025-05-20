@@ -1,7 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:sodong_app/features/auth/data/repository/vworld_repositiry.dart';
+import 'package:sodong_app/features/auth/data/repository/vworld_Location_repositiry.dart';
+import 'package:sodong_app/features/auth/data/repository/vworld_location_repository_provider.dart';
 
 class Location {
   final double x;
@@ -11,6 +11,9 @@ class Location {
 }
 
 class LocationViewmodel extends Notifier<Location> {
+  late final VWorldLocationRepository _repository =
+      ref.read(vworldRepositoryProvider);
+
   @override
   Location build() {
     // 초기의 기본 위치값 설정(초기 위치 일단 null로 지정)
@@ -28,27 +31,20 @@ class LocationViewmodel extends Notifier<Location> {
       // 위치권한을 거부하면 해당 텍스트 출력하고 진행 중단, 하지 않으면 계속 진행
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        print("위치 권한이 거부되었습니다.");
         return;
       }
     }
     // 2. gps가져와서 로케이션 세팅
-    LocationSettings locationSettings = const LocationSettings(
-      accuracy: LocationAccuracy.high,
-    );
-
     Position position = await Geolocator.getCurrentPosition(
-      locationSettings: locationSettings,
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
     // position 객체에서 위도를 추출
     double latitude = position.latitude;
     // position 객체에서 경도를 추출
     double longitude = position.longitude;
 
-    print("현재 위치: 위도 $latitude, 경도 $longitude");
-
     // 3. 위도 경도로 한국의 지역명 가져오기
-    final results = await VWorldRepository().findByLatLng(
+    final results = await _repository.findByLatLng(
       lat: latitude,
       lng: longitude,
     );
