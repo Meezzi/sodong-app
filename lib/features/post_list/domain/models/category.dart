@@ -10,9 +10,10 @@ enum TownLifeCategory {
   meeting('meeting', '동네모임'),
   together('together', '같이해요');
 
+  const TownLifeCategory(this.id, this.text);
+
   final String id;
   final String text;
-  const TownLifeCategory(this.id, this.text);
 
   // id로 카테고리 찾기
   static TownLifeCategory fromId(String id) {

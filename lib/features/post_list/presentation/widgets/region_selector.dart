@@ -8,7 +8,6 @@ class RegionSelector extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    var regions = ref.watch(regionsProvider);
     var selectedRegion = ref.watch(selectedRegionProvider);
     var selectedSubRegion = ref.watch(selectedSubRegionProvider);
 
