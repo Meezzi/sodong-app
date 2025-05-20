@@ -1,10 +1,11 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/data/repository/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/domain/services/post_service.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/providers/post_providers.dart';
 
 /// 동네 생활 게시물 상태 관리 클래스
 ///
@@ -175,7 +176,7 @@ class PostCacheManager {
 ///
 /// 무한 스크롤 및 게시물 추가 로드 기능 담당
 class PaginationManager {
-  final PostRepository _postService;
+  final PostService _postService;
 
   PaginationManager(this._postService);
 
@@ -183,14 +184,14 @@ class PaginationManager {
   ///
   /// Returns: 다음 페이지 게시물 목록
   Future<List<TownLifePost>> loadMorePosts() async {
-    return await _postService.fetchMorePosts();
+    return await _postService.getMorePosts();
   }
 
   /// 초기 게시물 로드 메서드
   ///
   /// Returns: 첫 페이지 게시물 목록
   Future<List<TownLifePost>> loadInitialPosts() async {
-    return await _postService.fetchInitialPosts();
+    return await _postService.getInitialPosts();
   }
 
   /// 특정 카테고리 게시물 로드 메서드
@@ -199,7 +200,7 @@ class PaginationManager {
   /// Returns: 해당 카테고리 게시물 목록
   Future<List<TownLifePost>> loadCategoryPosts(String categoryId) async {
     _postService.setCategory(categoryId);
-    return await _postService.fetchInitialPosts();
+    return await _postService.getInitialPosts();
   }
 
   /// 현재 지역 특정 카테고리 게시물 로드 메서드
@@ -208,7 +209,7 @@ class PaginationManager {
   /// Returns: 현재 지역 해당 카테고리 게시물 목록
   Future<List<TownLifePost>> loadCurrentRegionCategoryPosts(
       String categoryId) async {
-    return await _postService.fetchCurrentRegionCategoryPosts(categoryId);
+    return await _postService.getCurrentRegionCategoryPosts(categoryId);
   }
 
   /// 다음 페이지 존재 여부 확인
@@ -240,14 +241,14 @@ class PaginationManager {
 ///
 /// 상태 관리 및 각 관리 클래스 조율 담당
 class TownLifeViewModel extends StateNotifier<TownLifeState> {
-  final PostRepository _postRepository;
+  final PostService _postService;
   final Ref _ref;
   final PostCacheManager _cacheManager;
   final PaginationManager _paginationManager;
 
-  TownLifeViewModel(this._postRepository, this._ref)
+  TownLifeViewModel(this._postService, this._ref)
       : _cacheManager = PostCacheManager(),
-        _paginationManager = PaginationManager(_postRepository),
+        _paginationManager = PaginationManager(_postService),
         super(TownLifeState.initial()) {
     _setupListeners();
 
@@ -429,19 +430,31 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
       if (posts.isNotEmpty) {
         // 로드 성공 시 해당 카테고리의 캐시 업데이트
         _cacheManager.updateCategoryCache(currentCategory, posts);
+
+        state = state.copyWith(
+          posts: posts,
+          isLoading: false,
+          hasMorePosts: _paginationManager.hasMorePosts,
+        );
       } else {
         // 데이터가 없고 캐시가 있으면 캐시 사용
         final cachedPosts = _cacheManager.getCategoryPosts(currentCategory);
         if (cachedPosts.isNotEmpty) {
           posts = cachedPosts;
+          state = state.copyWith(
+            posts: posts,
+            isLoading: false,
+            hasMorePosts: _paginationManager.hasMorePosts,
+          );
+        } else {
+          // 데이터가 없고 캐시도 없으면 빈 리스트로 설정하고 hasMorePosts는 false로 설정
+          state = state.copyWith(
+            posts: [],
+            isLoading: false,
+            hasMorePosts: false, // 게시물이 없으면 추가 로드 비활성화
+          );
         }
       }
-
-      state = state.copyWith(
-        posts: posts,
-        isLoading: false,
-        hasMorePosts: _paginationManager.hasMorePosts,
-      );
     } catch (e) {
       // 에러 시 캐시된 데이터 확인
       final cachedPosts = _cacheManager.getCategoryPosts(currentCategory);
@@ -449,16 +462,19 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         state = state.copyWith(
             posts: cachedPosts,
             isLoading: false,
+            hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
             errorMessage: '데이터 새로고침에 실패했습니다.');
       } else if (previousPosts.isNotEmpty) {
         // 캐시가 없으면 이전 데이터 유지
         state = state.copyWith(
             posts: previousPosts,
             isLoading: false,
+            hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
             errorMessage: '데이터 새로고침에 실패했습니다.');
       } else {
         state = state.copyWith(
           isLoading: false,
+          hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
           errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
         );
       }
@@ -554,13 +570,10 @@ final likedPostsProvider =
   return LikedPostsViewModel();
 });
 
-/// PostRepository 제공 프로바이더
-final postServiceProvider = Provider<PostRepository>((ref) => PostRepository());
-
 /// 동네 생활 게시물 상태 관리 프로바이더
 final townLifeStateProvider =
     StateNotifierProvider<TownLifeViewModel, TownLifeState>((ref) {
-  var postService = ref.watch(postServiceProvider);
+  final postService = ref.watch(postServiceProvider);
   return TownLifeViewModel(postService, ref);
 });
 
@@ -571,14 +584,14 @@ final townLifeStateProvider =
 ///
 /// Returns: 필터링된 게시물 목록
 final filteredPostsProvider = Provider<List<TownLifePost>>((ref) {
-  var selectedCategory = ref.watch(selectedCategoryProvider);
-  var townLifeState = ref.watch(townLifeStateProvider);
+  final townLifeState = ref.watch(townLifeStateProvider);
+  final selectedCategory = ref.watch(selectedCategoryProvider);
 
   if (selectedCategory == TownLifeCategory.all) {
     return townLifeState.posts;
+  } else {
+    return townLifeState.posts
+        .where((post) => post.categoryEnum == selectedCategory)
+        .toList();
   }
-
-  return townLifeState.posts
-      .where((post) => post.category == selectedCategory.id)
-      .toList();
 });
