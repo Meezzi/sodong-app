@@ -55,8 +55,32 @@ class FirestorePost {
       RegionInfo regionInfo;
       try {
         if (data['region'] != null && data['region'] is Map) {
-          regionInfo =
-              RegionInfo.fromMap(data['region'] as Map<String, dynamic>);
+          final Map<String, dynamic> regionData =
+              data['region'] as Map<String, dynamic>;
+
+          // 실제 데이터에서 표시 형식을 적절히 조정
+          String displayName = regionData['displayName'] as String? ?? '';
+          String codeName = regionData['codeName'] as String? ?? '';
+          String title = regionData['title'] as String? ?? '';
+
+          // title이 없거나 displayName이 실제 지역명인 경우 적절히 처리
+          if (title.isEmpty || title.contains(codeName)) {
+            // 지역코드에서 실제 지역명 추출 시도
+            if (codeName.contains('_')) {
+              final parts = codeName.split('_');
+              String mainRegion = _getRegionNameFromId(parts[0]);
+              displayName = displayName.isNotEmpty
+                  ? displayName
+                  : _capitalizeFirstLetter(parts[1]);
+              title = '$mainRegion $displayName';
+            }
+          }
+
+          regionInfo = RegionInfo(
+            codeName: codeName,
+            displayName: displayName,
+            title: title.isNotEmpty ? title : '$codeName $displayName',
+          );
         } else {
           // 지역 정보가 없으면 기본값 사용
           final docPath = doc.reference.path;
@@ -71,10 +95,9 @@ class FirestorePost {
           String subRegion = '';
 
           if (regionParts.length > 1) {
-            regionName = regionParts[0].substring(0, 1).toUpperCase() +
-                regionParts[0].substring(1);
-            subRegion = regionParts[1].substring(0, 1).toUpperCase() +
-                regionParts[1].substring(1);
+            String mainRegion = _getRegionNameFromId(regionParts[0]);
+            subRegion = _capitalizeFirstLetter(regionParts[1]);
+            regionName = mainRegion;
           }
 
           regionInfo = RegionInfo(
@@ -86,8 +109,8 @@ class FirestorePost {
       } catch (e) {
         regionInfo = RegionInfo(
           codeName: 'unknown',
-          displayName: 'Unknown',
-          title: 'Unknown Location',
+          displayName: '알 수 없음',
+          title: '알 수 없는 지역',
         );
       }
 
@@ -119,10 +142,32 @@ class FirestorePost {
         userId: '',
         region: RegionInfo(
           codeName: 'unknown',
-          displayName: 'Unknown',
-          title: 'Unknown Location',
+          displayName: '알 수 없음',
+          title: '알 수 없는 지역',
         ),
       );
+    }
+  }
+
+  // 첫 글자를 대문자로 변환
+  static String _capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text.substring(0, 1).toUpperCase() + text.substring(1);
+  }
+
+  // 지역 ID에서 지역명 가져오기
+  static String _getRegionNameFromId(String regionId) {
+    switch (regionId) {
+      case 'seoul':
+        return '서울특별시';
+      case 'gyeonggi':
+        return '경기도';
+      case 'incheon':
+        return '인천광역시';
+      case 'busan':
+        return '부산광역시';
+      default:
+        return _capitalizeFirstLetter(regionId);
     }
   }
 
@@ -144,11 +189,28 @@ class FirestorePost {
       timeAgo = '${difference.inDays ~/ 30}달 전';
     }
 
+    // 지역 정보 가공 (title 사용, 이미 fromFirestore에서 적절히 가공됨)
+    String locationText = region.title;
+
+    // title이 여전히 코드네임을 포함하는 경우 추가 가공
+    if (locationText.contains(region.codeName) &&
+        region.codeName != 'unknown') {
+      // 코드네임이 지역 ID인 경우
+      if (region.codeName.contains('_')) {
+        final parts = region.codeName.split('_');
+        final mainRegion = _getRegionNameFromId(parts[0]);
+        final subRegion = region.displayName.isNotEmpty
+            ? region.displayName
+            : _capitalizeFirstLetter(parts[1]);
+        locationText = '$mainRegion $subRegion';
+      }
+    }
+
     return TownLifePost(
       category: category,
       title: title,
       content: content,
-      location: '${region.codeName} ${region.displayName}',
+      location: locationText,
       regionId: region.codeName,
       subRegion: region.displayName,
       timeAgo: timeAgo,
