@@ -37,14 +37,14 @@ class ImagePickerViewModel extends Notifier<ImagePickerState> {
     try {
       state = state.copyWith(isLoading: true);
       final imagePickerUsecase = ref.read(pickImagesUsecaseProvider);
-      final pickedFiles = await imagePickerUsecase.execute();
+      final selectedImages = await imagePickerUsecase.execute();
       state = state.copyWith(
-        imageFiles: pickedFiles,
+        imageFiles: selectedImages,
         isLoading: false,
       );
 
       final createPostNotifier = ref.read(createPostViewModelProvider.notifier);
-      for (var file in pickedFiles) {
+      for (var file in selectedImages) {
         createPostNotifier.addImage(file.path);
       }
     } catch (e) {
