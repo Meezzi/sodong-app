@@ -45,7 +45,13 @@ class ImagePickerViewModel extends Notifier<ImagePickerState> {
 
       final createPostNotifier = ref.read(createPostViewModelProvider.notifier);
       for (var file in selectedImages) {
-        createPostNotifier.addImage(file.path);
+        try {
+          createPostNotifier.addImage(file.path);
+        } catch (e) {
+          state = state.copyWith(
+            error: '이미지 추가 실패: ${file.path}',
+          );
+        }
       }
     } catch (e) {
       state = state.copyWith(
