@@ -102,7 +102,7 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   Widget _buildAppBar() {
     return SliverAppBar(
       title: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Image.asset(
             'assets/login.png',
@@ -116,6 +116,17 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
       pinned: true,
       centerTitle: true,
       backgroundColor: const Color(0xFFFFE4E8),
+      actions: [
+        IconButton(
+          onPressed: () {
+            //TODO: 마이페이지 이동
+          },
+          icon: Icon(
+            Icons.person,
+            size: 30,
+          ),
+        )
+      ],
     );
   }
 
