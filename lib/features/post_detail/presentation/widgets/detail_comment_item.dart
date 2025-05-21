@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class DetailCommentItem extends StatelessWidget {
-  final String text;
-  final String time;
 
   const DetailCommentItem({super.key, required this.text, required this.time});
+  final String text;
+  final String time;
 
   @override
   Widget build(BuildContext context) {

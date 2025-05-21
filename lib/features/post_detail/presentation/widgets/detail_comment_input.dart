@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/data/providers/comment_provider.dart';
+import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_view_model_provider.dart';
 
 class DetailCommentInput extends ConsumerStatefulWidget {
-  final String postId;
 
   const DetailCommentInput({super.key, required this.postId});
+  final String postId;
 
   @override
   ConsumerState<DetailCommentInput> createState() => _DetailCommentInputState();

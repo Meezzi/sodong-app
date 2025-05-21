@@ -1,12 +1,4 @@
 class PostDetail {
-  final String postId;
-  final String title;
-  final String content;
-  final List<String> imageUrl;
-  final String location;
-  final String category;
-  final String createdAt;
-  final String userId;
 
   PostDetail({
     required this.postId,
@@ -18,6 +10,14 @@ class PostDetail {
     required this.createdAt,
     required this.userId,
   });
+  final String postId;
+  final String title;
+  final String content;
+  final List<String> imageUrl;
+  final String location;
+  final String category;
+  final String createdAt;
+  final String userId;
 
   factory PostDetail.fromJson(Map<String, dynamic> json) {
     return PostDetail(

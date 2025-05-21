@@ -4,10 +4,6 @@ import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usec
 import 'package:sodong_app/features/post_detail/domain/usecases/get_comment_usecase.dart';
 
 class CommentViewModel extends StateNotifier<List<Comment>> {
-  final GetCommentsUseCase getCommentsUseCase;
-  final AddCommentUseCase addCommentUseCase;
-  final String postId;
-
   CommentViewModel({
     required this.getCommentsUseCase,
     required this.addCommentUseCase,
@@ -15,6 +11,9 @@ class CommentViewModel extends StateNotifier<List<Comment>> {
   }) : super([]) {
     loadComments();
   }
+  final GetCommentsUseCase getCommentsUseCase;
+  final AddCommentUseCase addCommentUseCase;
+  final String postId;
 
   Future<void> loadComments() async {
     final comments = await getCommentsUseCase(postId);

@@ -3,13 +3,11 @@ import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.d
 import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
 
 class CommentRepositoryImpl implements CommentRepository {
+  CommentRepositoryImpl(this.service);
   final CommentDataSource service;
 
-  CommentRepositoryImpl(this.service);
-
-  @override
-
   /// 댓글 추가 요청을 실제 데이터 소스에 전달하는 구현체
+  @override
   Future<List<Comment>> getComments(String postId) async {
     final result = await service.fetchComments(postId);
     return result.map((data) {

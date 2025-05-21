@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DetailLocation extends StatelessWidget {
-  final String location;
 
   const DetailLocation({super.key, required this.location});
+  final String location;
 
   @override
   Widget build(BuildContext context) {

@@ -2,10 +2,10 @@ import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.d
 import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
 
 class GetCommentsUseCase {
+  GetCommentsUseCase(this.repository);
   final CommentRepository repository;
 
-  GetCommentsUseCase(this.repository);
-
+  /// 댓글을 조회하는 유즈케이스
   Future<List<Comment>> call(String postId) {
     return repository.getComments(postId);
   }

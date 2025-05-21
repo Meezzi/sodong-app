@@ -11,9 +11,6 @@ import 'package:sodong_app/features/post_detail/presentation/widgets/detail_titl
 import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {
-  final String location;
-  final String category;
-  final String postId;
 
   const PostDetailPage({
     Key? key,
@@ -21,6 +18,9 @@ class PostDetailPage extends ConsumerWidget {
     required this.category,
     required this.postId,
   }) : super(key: key);
+  final String location;
+  final String category;
+  final String postId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -62,7 +62,7 @@ class PostDetailPage extends ConsumerWidget {
                     const SizedBox(height: 16),
                     DetailLocation(location: post.location),
                     const SizedBox(height: 24),
-                    const Text("댓글",
+                    const Text('댓글',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold)),
                     const SizedBox(height: 12),

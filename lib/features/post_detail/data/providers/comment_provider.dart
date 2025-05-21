@@ -1,23 +1,26 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_detail/data/data_sources/comment_data_source.dart';
 import 'package:sodong_app/features/post_detail/data/repository/comment_repository_impl.dart';
-import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
+import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usecase.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/get_comment_usecase.dart';
-import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_view_model.dart';
 
-final _serviceProvider = Provider((ref) => CommentDataSource());
-final _repositoryProvider =
-    Provider((ref) => CommentRepositoryImpl(ref.read(_serviceProvider)));
+/// 데이터 소스 주입
+final commentDataSourceProvider = Provider<CommentDataSource>((ref) {
+  return CommentDataSource();
+});
 
-/// 댓글 관련 ViewModel을 주입하는 Provider
-final commentViewModelProvider =
-    StateNotifierProvider.family<CommentViewModel, List<Comment>, String>(
-        (ref, postId) {
-  final repo = ref.read(_repositoryProvider);
-  return CommentViewModel(
-    getCommentsUseCase: GetCommentsUseCase(repo),
-    addCommentUseCase: AddCommentUseCase(repo),
-    postId: postId,
-  );
+/// 리포지토리 주입
+final commentRepositoryProvider = Provider<CommentRepository>((ref) {
+  final dataSource = ref.watch(commentDataSourceProvider);
+  return CommentRepositoryImpl(dataSource);
+});
+
+/// 유즈케이스 주입
+final getCommentsUseCaseProvider = Provider<GetCommentsUseCase>((ref) {
+  return GetCommentsUseCase(ref.watch(commentRepositoryProvider));
+});
+
+final addCommentUseCaseProvider = Provider<AddCommentUseCase>((ref) {
+  return AddCommentUseCase(ref.watch(commentRepositoryProvider));
 });

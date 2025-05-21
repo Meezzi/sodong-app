@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class DetailImageView extends StatelessWidget {
-  final String imageUrl;
 
   const DetailImageView({super.key, required this.imageUrl});
+  final String imageUrl;
 
   @override
   Widget build(BuildContext context) {
