@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -117,6 +118,9 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                         'profiles/${DateTime.now().millisecondsSinceEpoch}.jpg');
                     await storageRef.putFile(profileFile);
                     final imageUrl = await storageRef.getDownloadURL();
+
+                    final uid = FirebaseAuth.instance.currentUser?.uid;
+                    if (uid == null) throw Exception('로그인되지 않았습니다');
 
                     // 2. Firestore에 사용자 정보 저장
 
