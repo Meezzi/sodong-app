@@ -106,13 +106,10 @@ class PostRepositoryImpl implements PostRepository {
       // 해당 카테고리의 게시물 로드
       final posts = await fetchInitialPosts();
 
-      // 게시물이 있는 경우 hasMore 값이 업데이트되었을 것이므로 그대로 유지
-      final currentHasMore = _hasMore;
-
       // 원래 카테고리로 복원
       _currentCategory = originalCategory;
 
-      // 원래 카테고리의 hasMore 상태 복원 (현재 카테고리의 결과가 영향을 주지 않도록)
+      // 원래 카테고리의 hasMore 상태 복원
       _hasMore = originalHasMore;
 
       return posts;
