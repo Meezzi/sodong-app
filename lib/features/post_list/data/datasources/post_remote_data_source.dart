@@ -10,7 +10,6 @@ class PostRemoteDataSource {
 
   // 페이지네이션 관련 상태
   static const int pageSize = 10;
-  int _currentPage = 0;
   DocumentSnapshot? _lastDocument;
   int _totalItemCount = 0;
 
@@ -122,7 +121,6 @@ class PostRemoteDataSource {
     required String subRegion,
     required String category,
   }) async {
-    _currentPage = 0;
     _lastDocument = null;
 
     try {
@@ -162,7 +160,6 @@ class PostRemoteDataSource {
 
       // 마지막 문서 저장 (다음 페이지 로드 시 사용)
       _lastDocument = querySnapshot.docs.last;
-      _currentPage++;
 
       // Firestore 문서를 도메인 모델로 변환
       return querySnapshot.docs
@@ -206,7 +203,6 @@ class PostRemoteDataSource {
 
       // 마지막 문서 업데이트
       _lastDocument = querySnapshot.docs.last;
-      _currentPage++;
 
       // Firestore 문서를 도메인 모델로 변환
       return querySnapshot.docs
@@ -220,7 +216,6 @@ class PostRemoteDataSource {
 
   /// 페이지네이션 상태 초기화
   void resetPagination() {
-    _currentPage = 0;
     _lastDocument = null;
     _totalItemCount = 0; // 총 아이템 수도 초기화
   }
