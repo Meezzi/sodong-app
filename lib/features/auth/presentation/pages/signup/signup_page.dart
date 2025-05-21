@@ -113,6 +113,8 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
 
                   try {
                     // 1. 이미지 Firebase Storage에 업로드
+                    final storageRef = FirebaseStorage.instance.ref().child(
+                        'profiles/${DateTime.now().millisecondsSinceEpoch}.jpg');
 
                     // 2. Firestore에 사용자 정보 저장
 
