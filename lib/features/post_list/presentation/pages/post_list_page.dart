@@ -225,6 +225,14 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 }
 
 class TownLifeScaffold extends StatelessWidget {
+  final ScrollController scrollController;
+  final Future<void> Function() onRefresh;
+  final Widget appBar;
+  final Widget regionSelector;
+  final Widget categorySelector;
+  final Widget postListView;
+  final Widget floatingActionButton;
+
   const TownLifeScaffold({
     super.key,
     required this.scrollController,
@@ -235,14 +243,6 @@ class TownLifeScaffold extends StatelessWidget {
     required this.postListView,
     required this.floatingActionButton,
   });
-
-  final ScrollController scrollController;
-  final Future<void> Function() onRefresh;
-  final Widget appBar;
-  final Widget regionSelector;
-  final Widget categorySelector;
-  final Widget postListView;
-  final Widget floatingActionButton;
 
   @override
   Widget build(BuildContext context) {
