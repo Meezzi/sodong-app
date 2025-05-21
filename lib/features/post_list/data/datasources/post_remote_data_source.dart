@@ -6,6 +6,9 @@ import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart'
 ///
 /// Firestore에서 게시물 데이터를 가져오는 역할을 담당합니다.
 class PostRemoteDataSource {
+  PostRemoteDataSource({FirebaseFirestore? firestore})
+      : _firestore = firestore ?? FirebaseFirestore.instance;
+
   final FirebaseFirestore _firestore;
 
   // 페이지네이션 관련 상태
@@ -111,9 +114,6 @@ class PostRemoteDataSource {
     '강화': 'ganghwa',
     '옹진': 'ongjin',
   };
-
-  PostRemoteDataSource({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// 초기 게시물 가져오기
   Future<List<TownLifePost>> fetchInitialPosts({
