@@ -14,17 +14,17 @@ import 'package:sodong_app/features/post_list/presentation/view_models/region_vi
 /// [hasMorePosts]: 추가 로드 가능한 게시물 존재 여부
 /// [errorMessage]: 오류 발생 시 메시지
 class TownLifeState {
-  final List<TownLifePost> posts;
-  final bool isLoading;
-  final bool hasMorePosts;
-  final String? errorMessage;
-
   TownLifeState({
     required this.posts,
     required this.isLoading,
     required this.hasMorePosts,
     this.errorMessage,
   });
+
+  final List<TownLifePost> posts;
+  final bool isLoading;
+  final bool hasMorePosts;
+  final String? errorMessage;
 
   /// 상태 복사 메서드
   ///
@@ -176,9 +176,9 @@ class PostCacheManager {
 ///
 /// 무한 스크롤 및 게시물 추가 로드 기능 담당
 class PaginationManager {
-  final PostService _postService;
-
   PaginationManager(this._postService);
+
+  final PostService _postService;
 
   /// 추가 게시물 로드 메서드
   ///
