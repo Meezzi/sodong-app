@@ -241,20 +241,18 @@ class PaginationManager {
 ///
 /// 상태 관리 및 각 관리 클래스 조율 담당
 class TownLifeViewModel extends StateNotifier<TownLifeState> {
-  final PostService _postService;
-  final Ref _ref;
-  final PostCacheManager _cacheManager;
-  final PaginationManager _paginationManager;
-
-  TownLifeViewModel(this._postService, this._ref)
+  TownLifeViewModel(PostService postService, this._ref)
       : _cacheManager = PostCacheManager(),
-        _paginationManager = PaginationManager(_postService),
+        _paginationManager = PaginationManager(postService),
         super(TownLifeState.initial()) {
     _setupListeners();
 
     // 초기 데이터 로드
     _loadAllCategoriesData();
   }
+  final Ref _ref;
+  final PostCacheManager _cacheManager;
+  final PaginationManager _paginationManager;
 
   /// 이벤트 리스너 설정
   void _setupListeners() {
