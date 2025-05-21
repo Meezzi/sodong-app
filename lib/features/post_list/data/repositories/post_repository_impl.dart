@@ -6,6 +6,15 @@ import 'package:sodong_app/features/post_list/domain/repositories/post_repositor
 
 /// PostRepository 인터페이스 구현체
 class PostRepositoryImpl implements PostRepository {
+  final PostRemoteDataSource _remoteDataSource;
+  final PostCacheDataSource _cacheDataSource;
+
+  // 상태 변수들
+  bool _hasMore = true;
+  String _currentRegionId = 'seoul';
+  String _currentSubRegion = '';
+  String _currentCategory = 'question';
+
   PostRepositoryImpl({
     required PostRemoteDataSource remoteDataSource,
     required PostCacheDataSource cacheDataSource,
@@ -25,14 +34,6 @@ class PostRepositoryImpl implements PostRepository {
       }
     }
   }
-  final PostRemoteDataSource _remoteDataSource;
-  final PostCacheDataSource _cacheDataSource;
-
-  // 상태 변수들
-  bool _hasMore = true;
-  String _currentRegionId = 'seoul';
-  String _currentSubRegion = '';
-  String _currentCategory = 'question';
 
   @override
   Future<List<TownLifePost>> fetchInitialPosts() async {
