@@ -1,32 +1,31 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-/// 게시물 좋아요 상태 관리 클래스
+/// 좋아요 상태 관리 클래스
 ///
-/// 각 게시물의 좋아요 상태를 관리하는 클래스입니다.
+/// 게시물 인덱스 기반 좋아요 상태 저장 및 관리
 class LikedPostsViewModel extends StateNotifier<Map<int, bool>> {
   LikedPostsViewModel() : super({});
 
-  /// 게시물 좋아요 상태 토글
+  /// 특정 게시물의 좋아요 상태 토글
   ///
-  /// [postId]: 좋아요 상태를 토글할 게시물 ID
-  void toggleLike(int postId) {
-    final isLiked = state[postId] ?? false;
-    state = {...state, postId: !isLiked};
+  /// [index]: 대상 게시물 인덱스
+  void toggleLike(int index) {
+    var currentState = Map<int, bool>.from(state);
+    currentState[index] = !(currentState[index] ?? false);
+    state = currentState;
   }
 
-  /// 게시물 좋아요 상태 설정
+  /// 좋아요 상태 확인 메서드
   ///
-  /// [postId]: 좋아요 상태를 설정할 게시물 ID
-  /// [isLiked]: 설정할 좋아요 상태 (true: 좋아요, false: 좋아요 해제)
-  void setLike(int postId, bool isLiked) {
-    state = {...state, postId: isLiked};
-  }
-
-  /// 게시물 좋아요 상태 확인
-  ///
-  /// [postId]: 좋아요 상태를 확인할 게시물 ID
-  /// Returns: 좋아요 상태 (좋아요: true, 좋아요 안함: false)
-  bool isLiked(int postId) {
-    return state[postId] ?? false;
+  /// [index]: 확인할 게시물 인덱스
+  /// Returns: 좋아요 여부 (기본값 false)
+  bool isLiked(int index) {
+    return state[index] ?? false;
   }
 }
+
+/// 좋아요 상태 관리 프로바이더
+final likedPostsProvider =
+    StateNotifierProvider<LikedPostsViewModel, Map<int, bool>>((ref) {
+  return LikedPostsViewModel();
+});
