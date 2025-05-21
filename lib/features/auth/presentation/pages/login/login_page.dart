@@ -14,7 +14,8 @@ class LoginPage extends ConsumerStatefulWidget {
 class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> signInWithGoogle(BuildContext context) async {
     try {
-      final GoogleSignIn googleSignIn = GoogleSignIn(scopes: ['email']);
+      final GoogleSignIn googleSignIn =
+          GoogleSignIn(scopes: ['email'], clientId: '');
       final googleUser = await googleSignIn.signIn();
 
       if (googleUser == null) return;
