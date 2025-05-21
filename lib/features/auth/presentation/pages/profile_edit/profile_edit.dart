@@ -137,6 +137,9 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('프로필이 성공적으로 생성되었습니다!')),
                     );
+                    if (!mounted) return;
+                    // ignore: use_build_context_synchronously
+                    await Navigator.pushReplacementNamed(context, '/home');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('프로필 생성 중 오류가 발생했습니다')),
