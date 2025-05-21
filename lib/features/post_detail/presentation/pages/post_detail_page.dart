@@ -71,7 +71,7 @@ class PostDetailPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              const DetailCommentInput(),
+              DetailCommentInput(postId: postId),
             ],
           );
         },

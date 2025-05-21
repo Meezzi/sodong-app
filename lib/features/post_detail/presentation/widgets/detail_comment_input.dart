@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_view_model.dart';
+import 'package:sodong_app/features/post_detail/data/providers/comment_provider.dart';
 
 class DetailCommentInput extends ConsumerStatefulWidget {
   final String postId;
