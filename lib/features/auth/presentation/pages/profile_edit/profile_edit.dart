@@ -129,10 +129,7 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                         .doc(uid)
                         .set({
                       'nickname': nickname,
-                      'region': {
-                        'codeName': region.codeName,
-                        'displayName': region.displayName,
-                      },
+                      'region': region,
                       'profileImageUrl': imageUrl,
                       'createdAt': FieldValue.serverTimestamp(),
                     });

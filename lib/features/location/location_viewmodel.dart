@@ -1,19 +1,23 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:sodong_app/features/auth/data/repository/vworld_Location_repositiry.dart';
 import 'package:sodong_app/features/auth/data/repository/vworld_location_repository_provider.dart';
-import 'package:sodong_app/features/location/location_model.dart';
 
 class Location {
+  Location({
+    required this.x,
+    required this.y,
+    required this.region,
+  });
   final double x;
   final double y;
-  final LocationModel? region;
   final String? region;
-  Location({required this.x, required this.y, this.region});
 }
 
 class LocationViewmodel extends Notifier<Location> {
+  late final VWorldLocationRepository _repository =
+      ref.read(vworldRepositoryProvider);
+
   @override
   Location build() {
     // 초기의 기본 위치값 설정(초기 위치 일단 null로 지정)
@@ -31,7 +35,6 @@ class LocationViewmodel extends Notifier<Location> {
       // 위치권한을 거부하면 해당 텍스트 출력하고 진행 중단, 하지 않으면 계속 진행
       if (permission != LocationPermission.whileInUse &&
           permission != LocationPermission.always) {
-        print("위치 권한이 거부되었습니다.");
         return;
       }
     }
@@ -46,30 +49,22 @@ class LocationViewmodel extends Notifier<Location> {
     double latitude = position.latitude;
     double longitude = position.longitude;
 
-    print("현재 위치: 위도 $latitude, 경도 $longitude");
-
-    // 3. 위도 경도로 한국의 지역명 가져오기
-    final results = await VWorldRepository().findByLatLng(
+    final results = await _repository.findByLatLng(
       lat: latitude,
       lng: longitude,
     );
-    LocationModel? regionModel;
-    if (results.isNotEmpty) {
-      final fullRegion = results.first;
+
+    final fullRegion = results.isNotEmpty ? results.first : null;
+    String? region;
+    if (fullRegion != null) {
       final parts = fullRegion.split(' ');
       if (parts.length >= 2) {
-        final displayName = '${parts[0]} ${parts[1]}';
-        final codeName = '${parts[0].toLowerCase()}_${parts[1].toLowerCase()}';
-        regionModel =
-            LocationModel(codeName: codeName, displayName: displayName);
+        region = '${parts[0]} ${parts[1]}'; // 시 + 구단위 까지만 나오도록 설정
       } else {
-        regionModel = LocationModel(
-          codeName: fullRegion.toLowerCase().replaceAll(' ', '_'),
-          displayName: fullRegion,
-        );
+        region = fullRegion; // 예외 처리
       }
     } // 4. 로케이션 뷰모델에 한국의 지역명 저장하기
-    state = Location(x: longitude, y: latitude, region: regionModel);
+    state = Location(x: longitude, y: latitude, region: region);
   }
 }
 
