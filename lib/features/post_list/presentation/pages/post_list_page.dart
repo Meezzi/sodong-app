@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
@@ -121,10 +122,7 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
           onPressed: () {
             //TODO: 마이페이지 이동
           },
-          icon: Icon(
-            Icons.person,
-            size: 30,
-          ),
+          icon: Icon(CupertinoIcons.person_crop_circle, size: 30),
         )
       ],
     );
