@@ -87,14 +87,14 @@ class RegionSelector extends ConsumerWidget {
 }
 
 class RegionSelectionDialog extends ConsumerStatefulWidget {
+  final List<Region> regions;
+  final Region initialRegion;
+
   const RegionSelectionDialog({
     super.key,
     required this.regions,
     required this.initialRegion,
   });
-
-  final List<Region> regions;
-  final Region initialRegion;
 
   @override
   RegionSelectionDialogState createState() => RegionSelectionDialogState();
