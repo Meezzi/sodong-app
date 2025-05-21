@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -96,7 +97,7 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     backgroundColor: Color(0xFFFFE6E9),
                     foregroundColor: Colors.black,
                     minimumSize: Size(150, 50)),
-                onPressed: () {
+                onPressed: () async {
                   final nickname = _nicknameController.text;
                   final region = location.region ?? '';
                   final profileFile = _profileImage;
@@ -110,7 +111,13 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     return;
                   }
 
-                  // TODO: Firestore 저장 및 Storage 업로드 로직 추가
+                  try {
+                    // 1. 이미지 Firebase Storage에 업로드
+
+                    // 2. Firestore에 사용자 정보 저장
+
+                    // TODO: 다음 페이지로 이동 또는 홈으로 이동
+                  } catch (e) {}
                 },
                 child: const Text(
                   '프로필 생성',
