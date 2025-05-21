@@ -101,7 +101,17 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
   Widget _buildAppBar() {
     return SliverAppBar(
-      title: const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Image.asset(
+            'assets/login.png',
+            height: 60,
+            width: 60,
+          ),
+          const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
       floating: true,
       pinned: true,
       centerTitle: true,
