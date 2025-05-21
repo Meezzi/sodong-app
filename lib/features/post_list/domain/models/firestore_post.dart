@@ -2,6 +2,31 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 class FirestorePost {
+  final String id;
+  final String category;
+  final String content;
+  final int commentCount;
+  final Timestamp createdAt;
+  final List<String> imageUrls;
+  final bool isAnonymous;
+  final String nickname;
+  final String title;
+  final String userId;
+  final RegionInfo region;
+
+  FirestorePost({
+    required this.id,
+    required this.category,
+    required this.content,
+    required this.commentCount,
+    required this.createdAt,
+    required this.imageUrls,
+    required this.isAnonymous,
+    required this.nickname,
+    required this.title,
+    required this.userId,
+    required this.region,
+  });
 
   factory FirestorePost.fromFirestore(DocumentSnapshot doc) {
     try {
@@ -100,31 +125,6 @@ class FirestorePost {
       );
     }
   }
-  FirestorePost({
-    required this.id,
-    required this.category,
-    required this.content,
-    required this.commentCount,
-    required this.createdAt,
-    required this.imageUrls,
-    required this.isAnonymous,
-    required this.nickname,
-    required this.title,
-    required this.userId,
-    required this.region,
-  });
-
-  final String id;
-  final String category;
-  final String content;
-  final int commentCount;
-  final Timestamp createdAt;
-  final List<String> imageUrls;
-  final bool isAnonymous;
-  final String nickname;
-  final String title;
-  final String userId;
-  final RegionInfo region;
 
   // Firestore Post를 앱에서 사용하는 TownLifePost로 변환
   TownLifePost toTownLifePost() {
@@ -162,6 +162,9 @@ class FirestorePost {
 }
 
 class RegionInfo {
+  final String codeName;
+  final String displayName;
+  final String title;
 
   RegionInfo({
     required this.codeName,
@@ -176,7 +179,4 @@ class RegionInfo {
       title: map['title'] as String? ?? '',
     );
   }
-  final String codeName;
-  final String displayName;
-  final String title;
 }
