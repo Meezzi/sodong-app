@@ -39,9 +39,7 @@ class LocationViewmodel extends Notifier<Location> {
     Position position = await Geolocator.getCurrentPosition(
       locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
-    // position 객체에서 위도를 추출
     double latitude = position.latitude;
-    // position 객체에서 경도를 추출
     double longitude = position.longitude;
 
     // 3. 위도 경도로 한국의 지역명 가져오기
@@ -50,25 +48,21 @@ class LocationViewmodel extends Notifier<Location> {
       lng: longitude,
     );
     LocationModel? regionModel;
-
     if (results.isNotEmpty) {
-      final displayName = results.first; // ex: "서울특별시 강남구"
-      final codeName =
-          displayName.toLowerCase().replaceAll(RegExp(r'[\s]'), '_');
-      regionModel = LocationModel(codeName: codeName, displayName: displayName);
-    }
-    // final fullRegion = results.isNotEmpty ? results.first : null;
-    // String? region;
-    // if (fullRegion != null) {
-    //   final parts = fullRegion.split(' ');
-    //   if (parts.length >= 2) {
-    //     region = '${parts[0]} ${parts[1]}'; // 시 + 구단위 까지만 나오도록 설정
-    //   } else {
-    //     region = fullRegion; // 예외 처리
-    //   }
-    // }
-
-    // 4. 로케이션 뷰모델에 한국의 지역명 저장하기
+      final fullRegion = results.first;
+      final parts = fullRegion.split(' ');
+      if (parts.length >= 2) {
+        final displayName = '${parts[0]} ${parts[1]}';
+        final codeName = '${parts[0].toLowerCase()}_${parts[1].toLowerCase()}';
+        regionModel =
+            LocationModel(codeName: codeName, displayName: displayName);
+      } else {
+        regionModel = LocationModel(
+          codeName: fullRegion.toLowerCase().replaceAll(' ', '_'),
+          displayName: fullRegion,
+        );
+      }
+    } // 4. 로케이션 뷰모델에 한국의 지역명 저장하기
     state = Location(x: longitude, y: latitude, region: regionModel);
   }
 }

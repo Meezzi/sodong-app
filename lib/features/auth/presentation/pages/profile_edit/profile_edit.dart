@@ -101,12 +101,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                     minimumSize: Size(150, 50)),
                 onPressed: () async {
                   final nickname = _nicknameController.text;
-                  final region = location.region ?? '';
+                  final region = location.region;
                   final profileFile = _profileImage;
 
                   if (nickname.isEmpty ||
                       profileFile == null ||
-                      region.isEmpty) {
+                      region == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('모든 정보를 입력해주세요')),
                     );
@@ -129,7 +129,10 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                         .doc(uid)
                         .set({
                       'nickname': nickname,
-                      'region': region,
+                      'region': {
+                        'codeName': region.codeName,
+                        'displayName': region.displayName,
+                      },
                       'profileImageUrl': imageUrl,
                       'createdAt': FieldValue.serverTimestamp(),
                     });

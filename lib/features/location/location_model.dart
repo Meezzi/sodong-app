@@ -5,4 +5,7 @@ class LocationModel {
   });
   final String codeName;
   final String displayName;
+
+  @override
+  String toString() => displayName;
 }
