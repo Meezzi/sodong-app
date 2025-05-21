@@ -32,13 +32,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final user = userCredential.user;
 
       if (user != null) {
-        print('로그인 성공: uid=${user.uid}, name=${user.displayName}');
-        Navigator.pushReplacementNamed(context, '/signup');
+        // ignore: use_build_context_synchronously
+        await Navigator.pushReplacementNamed(context, '/signup');
       } else {
-        throw Exception("Firebase 로그인 실패");
+        throw Exception('Firebase 로그인 실패');
       }
     } catch (e) {
-      print('로그인 중 오류 발생: $e');
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('로그인에 실패했습니다. 다시 시도해주세요.')),
       );
