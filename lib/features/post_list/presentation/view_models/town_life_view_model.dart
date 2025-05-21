@@ -176,9 +176,9 @@ class PostCacheManager {
 ///
 /// 무한 스크롤 및 게시물 추가 로드 기능 담당
 class PaginationManager {
-  PaginationManager(this._postService);
-
   final PostService _postService;
+
+  PaginationManager(this._postService);
 
   /// 추가 게시물 로드 메서드
   ///
@@ -241,6 +241,10 @@ class PaginationManager {
 ///
 /// 상태 관리 및 각 관리 클래스 조율 담당
 class TownLifeViewModel extends StateNotifier<TownLifeState> {
+  final Ref _ref;
+  final PostCacheManager _cacheManager;
+  final PaginationManager _paginationManager;
+
   TownLifeViewModel(PostService postService, this._ref)
       : _cacheManager = PostCacheManager(),
         _paginationManager = PaginationManager(postService),
@@ -250,9 +254,6 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
     // 초기 데이터 로드
     _loadAllCategoriesData();
   }
-  final Ref _ref;
-  final PostCacheManager _cacheManager;
-  final PaginationManager _paginationManager;
 
   /// 이벤트 리스너 설정
   void _setupListeners() {
