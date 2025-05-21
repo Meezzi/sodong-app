@@ -34,7 +34,7 @@ class RegionSelector extends ConsumerWidget {
           const Icon(Icons.location_on, size: 16, color: Color(0xFFFF7B8E)),
           const SizedBox(width: 4),
           Text(
-            '${selectedRegion.name} ${selectedSubRegion}',
+            '${selectedRegion.name} $selectedSubRegion',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -97,10 +97,10 @@ class RegionSelectionDialog extends ConsumerStatefulWidget {
   final Region initialRegion;
 
   @override
-  _RegionSelectionDialogState createState() => _RegionSelectionDialogState();
+  RegionSelectionDialogState createState() => RegionSelectionDialogState();
 }
 
-class _RegionSelectionDialogState extends ConsumerState<RegionSelectionDialog> {
+class RegionSelectionDialogState extends ConsumerState<RegionSelectionDialog> {
   late Region _selectedRegion;
   late String _selectedSubRegion;
 
