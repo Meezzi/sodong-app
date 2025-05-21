@@ -11,20 +11,22 @@ class PostRepositoryImpl implements PostRepository {
     required PostCacheDataSource cacheDataSource,
   })  : _remoteDataSource = remoteDataSource,
         _cacheDataSource = cacheDataSource {
-    // 초기화 시 기본 선택된 지역에 대한 하위 지역 설정
+    _initializeDefaultSubRegion();
+  }
+
+  void _initializeDefaultSubRegion() {
     if (_currentSubRegion.isEmpty && regionList.isNotEmpty) {
-      // regionList에서 현재 선택된 지역 ID에 맞는 지역 찾기
       final region = regionList.firstWhere(
         (r) => r.id == _currentRegionId,
         orElse: () => regionList.first,
       );
 
-      // 해당 지역의 첫 번째 하위 지역 선택
       if (region.subRegions.isNotEmpty) {
         _currentSubRegion = region.subRegions.first;
       }
     }
   }
+
   final PostRemoteDataSource _remoteDataSource;
   final PostCacheDataSource _cacheDataSource;
 
