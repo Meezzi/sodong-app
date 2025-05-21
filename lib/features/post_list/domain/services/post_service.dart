@@ -4,9 +4,9 @@ import 'package:sodong_app/features/post_list/domain/repositories/post_repositor
 
 /// 게시물 관련 비즈니스 로직을 담당하는 서비스
 class PostService {
-  final PostRepository _repository;
-
   PostService(this._repository);
+
+  final PostRepository _repository;
 
   /// 초기 게시물 조회 UseCase
   Future<List<TownLifePost>> getInitialPosts() async {
