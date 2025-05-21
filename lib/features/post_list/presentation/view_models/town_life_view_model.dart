@@ -4,8 +4,8 @@ import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/domain/services/post_service.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 import 'package:sodong_app/features/post_list/presentation/providers/post_providers.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 /// 동네 생활 게시물 상태 관리 클래스
 ///
