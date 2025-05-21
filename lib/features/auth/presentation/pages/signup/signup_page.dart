@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
@@ -123,6 +124,15 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                     if (uid == null) throw Exception('로그인되지 않았습니다');
 
                     // 2. Firestore에 사용자 정보 저장
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(uid)
+                        .set({
+                      'nickname': nickname,
+                      'region': region,
+                      'profileImageUrl': imageUrl,
+                      'createdAt': FieldValue.serverTimestamp(),
+                    });
 
                     // TODO: 다음 페이지로 이동 또는 홈으로 이동
                   } catch (e) {}
