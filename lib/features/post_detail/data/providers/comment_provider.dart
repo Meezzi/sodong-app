@@ -10,6 +10,7 @@ final _serviceProvider = Provider((ref) => CommentDataSource());
 final _repositoryProvider =
     Provider((ref) => CommentRepositoryImpl(ref.read(_serviceProvider)));
 
+/// 댓글 관련 ViewModel을 주입하는 Provider
 final commentViewModelProvider =
     StateNotifierProvider.family<CommentViewModel, List<Comment>, String>(
         (ref, postId) {

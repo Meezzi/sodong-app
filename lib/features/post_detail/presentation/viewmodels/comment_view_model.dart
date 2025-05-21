@@ -21,6 +21,7 @@ class CommentViewModel extends StateNotifier<List<Comment>> {
     state = comments;
   }
 
+  /// 뷰모델에서 댓글 추가 유즈케이스 호출하는 메서드
   Future<void> addComment(String content) async {
     await addCommentUseCase(postId, content);
     await loadComments();

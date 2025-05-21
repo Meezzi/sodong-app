@@ -14,6 +14,7 @@ class DetailCommentInput extends ConsumerStatefulWidget {
 class _DetailCommentInputState extends ConsumerState<DetailCommentInput> {
   final TextEditingController _controller = TextEditingController();
 
+  /// 입력된 댓글을 ViewModel에 전달하여 저장하는 함수
   void _sendComment() async {
     if (_controller.text.trim().isEmpty) return;
 
