@@ -2,18 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 class FirestorePost {
-  final String id;
-  final String category;
-  final String content;
-  final int commentCount;
-  final Timestamp createdAt;
-  final List<String> imageUrls;
-  final bool isAnonymous;
-  final String nickname;
-  final String title;
-  final String userId;
-  final RegionInfo region;
-
   FirestorePost({
     required this.id,
     required this.category,
@@ -27,6 +15,18 @@ class FirestorePost {
     required this.userId,
     required this.region,
   });
+
+  final String id;
+  final String category;
+  final String content;
+  final int commentCount;
+  final Timestamp createdAt;
+  final List<String> imageUrls;
+  final bool isAnonymous;
+  final String nickname;
+  final String title;
+  final String userId;
+  final RegionInfo region;
 
   factory FirestorePost.fromFirestore(DocumentSnapshot doc) {
     try {
@@ -224,15 +224,15 @@ class FirestorePost {
 }
 
 class RegionInfo {
-  final String codeName;
-  final String displayName;
-  final String title;
-
   RegionInfo({
     required this.codeName,
     required this.displayName,
     required this.title,
   });
+
+  final String codeName;
+  final String displayName;
+  final String title;
 
   factory RegionInfo.fromMap(Map<String, dynamic> map) {
     return RegionInfo(
