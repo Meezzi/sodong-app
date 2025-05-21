@@ -8,14 +8,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sodong_app/features/location/location_viewmodel.dart';
 
-class SignUpPage extends ConsumerStatefulWidget {
-  const SignUpPage({super.key});
+class ProfileEdit extends ConsumerStatefulWidget {
+  const ProfileEdit({super.key});
 
   @override
-  ConsumerState<SignUpPage> createState() => _SignUpPageState();
+  ConsumerState<ProfileEdit> createState() => _ProfileEditPageState();
 }
 
-class _SignUpPageState extends ConsumerState<SignUpPage> {
+class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
   final TextEditingController _nicknameController = TextEditingController();
   File? _profileImage;
 
@@ -133,9 +133,15 @@ class _SignUpPageState extends ConsumerState<SignUpPage> {
                       'profileImageUrl': imageUrl,
                       'createdAt': FieldValue.serverTimestamp(),
                     });
-
-                    // TODO: 다음 페이지로 이동 또는 홈으로 이동
-                  } catch (e) {}
+                    // 다음 페이지로 이동 또는 홈으로 이동
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('프로필이 성공적으로 생성되었습니다!')),
+                    );
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('프로필 생성 중 오류가 발생했습니다')),
+                    );
+                  }
                 },
                 child: const Text(
                   '프로필 생성',
