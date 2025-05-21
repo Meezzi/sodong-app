@@ -122,7 +122,11 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
           onPressed: () {
             //TODO: 마이페이지 이동
           },
-          icon: Icon(CupertinoIcons.person_crop_circle, size: 30),
+          icon: Icon(
+            CupertinoIcons.person_crop_circle,
+            size: 30,
+            color: const Color(0xFFFF7B8E),
+          ),
         )
       ],
     );
