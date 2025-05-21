@@ -33,7 +33,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
       if (user != null) {
         print('로그인 성공: uid=${user.uid}, name=${user.displayName}');
-        Navigator.pushReplacementNamed(context, '/home');
+        Navigator.pushReplacementNamed(context, '/signup');
       } else {
         throw Exception("Firebase 로그인 실패");
       }
