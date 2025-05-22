@@ -9,6 +9,7 @@ class CategorySelector extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var categories = ref.watch(categoriesProvider);
     var selectedCategory = ref.watch(selectedCategoryProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Container(
       height: 48,
@@ -20,14 +21,14 @@ class CategorySelector extends ConsumerWidget {
           var category = categories[index];
           var isSelected = selectedCategory == category;
 
-          return _buildCategoryItem(context, ref, category, isSelected);
+          return _buildCategoryItem(context, ref, category, isSelected, isDark);
         },
       ),
     );
   }
 
-  Widget _buildCategoryItem(
-      BuildContext context, WidgetRef ref, dynamic category, bool isSelected) {
+  Widget _buildCategoryItem(BuildContext context, WidgetRef ref,
+      dynamic category, bool isSelected, bool isDark) {
     return GestureDetector(
       onTap: () {
         ref.read(selectedCategoryProvider.notifier).state = category;
@@ -35,28 +36,48 @@ class CategorySelector extends ConsumerWidget {
       child: Container(
         margin: const EdgeInsets.only(left: 12, right: 4),
         padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: _buildCategoryDecoration(isSelected),
+        decoration: _buildCategoryDecoration(isSelected, isDark),
         alignment: Alignment.center,
-        child: _buildCategoryText(category.text, isSelected),
+        child: _buildCategoryText(category.text, isSelected, isDark),
       ),
     );
   }
 
-  BoxDecoration _buildCategoryDecoration(bool isSelected) {
+  BoxDecoration _buildCategoryDecoration(bool isSelected, bool isDark) {
+    final mainColor = isSelected
+        ? isDark
+            ? const Color(0xFFE0677A)
+            : const Color(0xFFFF7B8E)
+        : isDark
+            ? const Color(0xFF1E1E1E)
+            : const Color(0xFFFFE4E8);
+
+    final borderColor = isSelected
+        ? isDark
+            ? const Color(0xFFE0677A)
+            : const Color(0xFFFF7B8E)
+        : isDark
+            ? Colors.grey[700]!
+            : const Color(0xFFFFD5DE);
+
     return BoxDecoration(
-      color: isSelected ? const Color(0xffFF7B8E) : Colors.white,
+      color: mainColor,
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
-        color: isSelected ? const Color(0xffFF7B8E) : Colors.grey[300]!,
+        color: borderColor,
       ),
     );
   }
 
-  Widget _buildCategoryText(String text, bool isSelected) {
+  Widget _buildCategoryText(String text, bool isSelected, bool isDark) {
     return Text(
       text,
       style: TextStyle(
-        color: isSelected ? Colors.white : Colors.black87,
+        color: isSelected
+            ? Colors.white
+            : isDark
+                ? Colors.white70
+                : Colors.black87,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
     );
