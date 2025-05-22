@@ -127,7 +127,8 @@ class PostRemoteDataSource {
       // 문서 ID 생성
       final docId = _getDocumentId(regionId, subRegion);
 
-      // 먼저 컬렉션에 있는 문서 수를 가져옵니다
+      // 새로운 Firestore 구조에 맞게 쿼리 수정
+      // 'posts' 컬렉션 -> 지역 문서(docId) -> 카테고리 컬렉션
       final countQuery = await _firestore
           .collection('posts')
           .doc(docId)
@@ -139,7 +140,7 @@ class PostRemoteDataSource {
 
       // 데이터가 없으면 빈 리스트 반환
       if (_totalItemCount == 0) {
-        _lastDocument = null; // 명시적으로 null 설정
+        _lastDocument = null;
         return [];
       }
 
@@ -154,7 +155,7 @@ class PostRemoteDataSource {
       final querySnapshot = await query.get();
 
       if (querySnapshot.docs.isEmpty) {
-        _lastDocument = null; // 데이터가 없으면 명시적으로 null 설정
+        _lastDocument = null;
         return [];
       }
 
@@ -166,8 +167,7 @@ class PostRemoteDataSource {
           .map((doc) => FirestorePost.fromFirestore(doc).toTownLifePost())
           .toList();
     } catch (e) {
-      // 오류 발생 시 빈 리스트 반환
-      _lastDocument = null; // 오류 발생 시 명시적으로 null 설정
+      _lastDocument = null;
       return [];
     }
   }
@@ -209,7 +209,6 @@ class PostRemoteDataSource {
           .map((doc) => FirestorePost.fromFirestore(doc).toTownLifePost())
           .toList();
     } catch (e) {
-      // 오류 발생 시 빈 리스트 반환
       return [];
     }
   }
@@ -220,31 +219,33 @@ class PostRemoteDataSource {
     _totalItemCount = 0; // 총 아이템 수도 초기화
   }
 
-  /// 문서 ID 생성 (지역_하위지역 형식)
+  /// 문서 ID 생성 (지역_하위지역 형식에서 '서울특별시 강남구' 형식으로 변경)
   String _getDocumentId(String regionId, String subRegion) {
-    // 하위 지역이 없으면 지역 ID만 반환
+    // 지역 ID를 한글 지역명으로 변환
+    String mainRegion;
+    switch (regionId) {
+      case 'seoul':
+        mainRegion = '서울특별시';
+        break;
+      case 'busan':
+        mainRegion = '부산광역시';
+        break;
+      case 'gyeonggi':
+        mainRegion = '경기도';
+        break;
+      case 'incheon':
+        mainRegion = '인천광역시';
+        break;
+      default:
+        mainRegion = regionId; // 변환 규칙이 없는 경우 그대로 사용
+    }
+
+    // 하위 지역이 없으면 한글 지역명만 반환
     if (subRegion.isEmpty) {
-      return regionId;
+      return mainRegion;
     }
 
-    // 하위 지역에서 '구', '군', '시' 제거
-    String koreanName =
-        subRegion.replaceAll('구', '').replaceAll('시', '').replaceAll('군', '');
-
-    // 한글 지역명을 영문으로 변환 (지역에 따라 다른 매핑 테이블 사용)
-    String englishName;
-
-    if (regionId == 'busan') {
-      englishName = _busanRegionMap[koreanName] ?? koreanName.toLowerCase();
-    } else if (regionId == 'gyeonggi') {
-      englishName = _gyeonggiRegionMap[koreanName] ?? koreanName.toLowerCase();
-    } else if (regionId == 'incheon') {
-      englishName = _incheonRegionMap[koreanName] ?? koreanName.toLowerCase();
-    } else {
-      englishName = _koToEnRegionMap[koreanName] ?? koreanName.toLowerCase();
-    }
-
-    // {도시}_{구} 형식으로 반환 (seoul_gangnam, busan_haeundae 등)
-    return '${regionId}_$englishName';
+    // '지역명 하위지역명' 형식으로 반환 (예: '서울특별시 강남구')
+    return '$mainRegion $subRegion';
   }
 }
