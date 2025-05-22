@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/create_post_view_model.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/image_picker_view_model.dart';
 import 'package:sodong_app/features/location/location_viewmodel.dart';
+import 'package:sodong_app/features/post_detail/presentation/pages/post_detail_page.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 part 'widgets/category_dropdown.dart';
 part 'widgets/image_preview.dart';
@@ -33,21 +34,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
           TextButton(
             onPressed: createPostState.isLoading
                 ? null
-                : () async {
-                    final region = ref.watch(locationProvider).region;
-
-                    if (region == null) {
-                      // 지역 정보를 불러오지 못할 때 스낵바 표시
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('위치 정보를 불러오고 있습니다. 잠시만 기다려주세요.')),
-                      );
-                      return;
-                    }
-
-                    await createPostViewModel.submit(region);
-                    // TODO : 작성한 게시물 상세 화면으로 이동
-                  },
+                : () => _handleCreatePost(context, ref),
             child: const Text('완료'),
           ),
         ],
@@ -78,5 +65,51 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                   )),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        ref.read(locationProvider.notifier).getLocation();
+      },
+    );
+  }
+
+  Future<void> _handleCreatePost(BuildContext context, WidgetRef ref) async {
+    final region = ref.read(locationProvider).region;
+
+    if (region == null) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('위치 정보를 불러오고 있습니다. 잠시만 기다려주세요.')),
+      );
+      return;
+    }
+
+    final createPostViewModel = ref.read(createPostViewModelProvider.notifier);
+
+    try {
+      final newPost = await createPostViewModel.submit(region);
+      if (!context.mounted) return;
+
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => PostDetailPage(
+            location: region,
+            category: newPost.category.id,
+            postId: newPost.postId,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('작성 실패: ${e.toString()}')),
+      );
+    }
   }
 }
