@@ -129,7 +129,6 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
             height: 45,
             width: 45,
           ),
-          const SizedBox(width: 8),
           const Text(
             '소소한동네',
             style: TextStyle(
