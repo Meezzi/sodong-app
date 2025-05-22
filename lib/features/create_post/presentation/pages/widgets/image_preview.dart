@@ -56,7 +56,7 @@ class ImagePreview extends StatelessWidget {
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: const Color.fromRGBO(0, 0, 0, 0.05),
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),
@@ -79,7 +79,7 @@ class ImagePreview extends StatelessWidget {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
+                            color: const Color.fromRGBO(0, 0, 0, 0.6),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(

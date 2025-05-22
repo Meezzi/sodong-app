@@ -346,8 +346,8 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                                 shape: BoxShape.circle,
                                 boxShadow: [
                                   BoxShadow(
-                                    color: const Color(0xFFFF7B8E)
-                                        .withOpacity(0.2),
+                                    color: const Color.fromRGBO(
+                                        255, 123, 142, 0.2),
                                     blurRadius: 10,
                                     spreadRadius: 2,
                                   ),
