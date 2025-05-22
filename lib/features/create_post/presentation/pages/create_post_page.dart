@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/create_post_view_model.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/image_picker_view_model.dart';
+import 'package:sodong_app/features/location/location_viewmodel.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 part 'widgets/category_dropdown.dart';
 part 'widgets/image_preview.dart';
@@ -33,7 +34,18 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
             onPressed: createPostState.isLoading
                 ? null
                 : () async {
-                    await createPostViewModel.submit('seoul_gangnam');
+                    final region = ref.watch(locationProvider).region;
+
+                    if (region == null) {
+                      // 지역 정보를 불러오지 못할 때 스낵바 표시
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('위치 정보를 불러오고 있습니다. 잠시만 기다려주세요.')),
+                      );
+                      return;
+                    }
+
+                    await createPostViewModel.submit(region);
                     // TODO : 작성한 게시물 상세 화면으로 이동
                   },
             child: const Text('완료'),
@@ -42,28 +54,28 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
       ),
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0),
-          child: createPostState.isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _CategoryDropdown(),
-                    _TitleTextField(notifier: createPostViewModel),
-                    _ContentTextField(notifier: createPostViewModel),
-                    if (imagePickerState.imageFiles != null &&
-                        imagePickerState.imageFiles!.isNotEmpty)
-                      ImagePreview(imageFiles: imagePickerState.imageFiles!),
-                    _ImagePickerAndAnonymousRow(
-                      isAnonymous: createPostState.isAnonymous,
-                      toggleAnonymous: (_) => createPostViewModel.toggleAnonymous(),
-                      onPickImages: () => ref
-                          .read(imagePickerViewModelProvider.notifier)
-                          .pickImages(),
-                    ),
-                  ],
-                )
-        ),
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: createPostState.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _CategoryDropdown(),
+                      _TitleTextField(notifier: createPostViewModel),
+                      _ContentTextField(notifier: createPostViewModel),
+                      if (imagePickerState.imageFiles != null &&
+                          imagePickerState.imageFiles!.isNotEmpty)
+                        ImagePreview(imageFiles: imagePickerState.imageFiles!),
+                      _ImagePickerAndAnonymousRow(
+                        isAnonymous: createPostState.isAnonymous,
+                        toggleAnonymous: (_) =>
+                            createPostViewModel.toggleAnonymous(),
+                        onPickImages: () => ref
+                            .read(imagePickerViewModelProvider.notifier)
+                            .pickImages(),
+                      ),
+                    ],
+                  )),
       ),
     );
   }
