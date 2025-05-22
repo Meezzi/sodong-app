@@ -33,7 +33,7 @@ class _ImagePickerAndAnonymousRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: const Color(0xFFFF7B8E).withOpacity(0.2),
+            color: const Color.fromRGBO(255, 123, 142, 0.2),
             spreadRadius: 1,
             blurRadius: 4,
             offset: const Offset(0, 2),
@@ -88,8 +88,8 @@ class _ImagePickerAndAnonymousRow extends StatelessWidget {
           Theme(
             data: ThemeData(
               checkboxTheme: CheckboxThemeData(
-                fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-                  if (states.contains(MaterialState.selected)) {
+                fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+                  if (states.contains(WidgetState.selected)) {
                     return const Color(0xFFFF7B8E);
                   }
                   return Colors.grey;
