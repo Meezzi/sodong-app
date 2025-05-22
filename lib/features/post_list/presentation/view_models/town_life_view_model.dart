@@ -246,13 +246,19 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
   ///
   /// Throws: 네트워크 오류 시 예외 발생
   Future<void> _loadAllCategoriesData() async {
-    // 로딩 시작하기 전에 이전 데이터 보존
-    state = state.copyWith(isLoading: true, errorMessage: null);
-
-    // 수집된 모든 게시물을 저장할 리스트
-    List<TownLifePost> allPosts = [];
-
     try {
+      // 로딩 시작하기 전에 이전 데이터 보존
+      try {
+        state = state.copyWith(isLoading: true, errorMessage: null);
+      } catch (e) {
+        // StateNotifier가 이미 disposed된 경우
+        print('TownLifeViewModel이 이미 disposed됨 (_loadAllCategoriesData)');
+        return;
+      }
+
+      // 수집된 모든 게시물을 저장할 리스트
+      List<TownLifePost> allPosts = [];
+
       // 모든 카테고리 데이터 로드 ('all' 카테고리 제외)
       final allCategories = TownLifeCategory.values
           .where((category) => category != TownLifeCategory.all)
@@ -261,6 +267,8 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
 
       // 각 카테고리별로 현재 선택된 지역의 데이터를 가져옴
       for (var categoryId in allCategories) {
+        if (!mounted) return; // 루프 중간에 disposed 여부 확인
+
         try {
           // 현재 선택된 지역에서 해당 카테고리의 게시물 가져오기
           final posts = await _paginationManager
@@ -281,13 +289,19 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         }
       }
 
+      if (!mounted) return; // 다시 한 번 상태 확인
+
       // 데이터가 없는 경우 처리
       if (allPosts.isEmpty) {
-        state = state.copyWith(
-          posts: [],
-          isLoading: false,
-          hasMorePosts: false,
-        );
+        try {
+          state = state.copyWith(
+            posts: [],
+            isLoading: false,
+            hasMorePosts: false,
+          );
+        } catch (stateError) {
+          print('상태 업데이트 중 오류: $stateError');
+        }
         return;
       } else {
         // 새 데이터가 있으면 캐시 업데이트
@@ -303,18 +317,28 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         _cacheManager.updateAllCategoryCache(allPosts);
       }
 
-      state = state.copyWith(
-        posts: allPosts,
-        isLoading: false,
-        hasMorePosts: false, // 전체 카테고리는 무한 스크롤 비활성화
-      );
+      try {
+        state = state.copyWith(
+          posts: allPosts,
+          isLoading: false,
+          hasMorePosts: false, // 전체 카테고리는 무한 스크롤 비활성화
+        );
+      } catch (stateError) {
+        print('최종 상태 업데이트 중 오류: $stateError');
+      }
     } catch (e) {
       // 에러 발생 시 빈 리스트 반환
-      state = state.copyWith(
-        posts: [],
-        isLoading: false,
-        errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
-      );
+      if (!mounted) return;
+
+      try {
+        state = state.copyWith(
+          posts: [],
+          isLoading: false,
+          errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
+        );
+      } catch (stateError) {
+        print('에러 상태 업데이트 중 오류: $stateError');
+      }
     }
   }
 
@@ -328,66 +352,98 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
   Future<void> fetchInitialPosts() async {
     if (state.isLoading) return;
 
-    // 현재 선택된 카테고리
-    final currentCategory = _ref.read(selectedCategoryProvider).id;
-
-    // 로딩 시작하기 전에 이전 데이터 보존
-    final previousPosts = state.posts;
-    state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
+      // 현재 선택된 카테고리
+      final currentCategory = _ref.read(selectedCategoryProvider).id;
+
+      // 로딩 시작하기 전에 이전 데이터 보존
+      final previousPosts = state.posts;
+
+      // StateNotifier가 아직 살아있는지 확인 (disposed 된 경우 에러 방지)
+      try {
+        state = state.copyWith(isLoading: true, errorMessage: null);
+      } catch (e) {
+        // StateNotifier가 이미 disposed된 경우
+        print('TownLifeViewModel이 이미 disposed됨');
+        return;
+      }
+
       var posts = await _paginationManager.loadInitialPosts();
+
+      // 다시 StateNotifier 상태 확인
+      if (!mounted) return;
 
       if (posts.isNotEmpty) {
         // 로드 성공 시 해당 카테고리의 캐시 업데이트
         _cacheManager.updateCategoryCache(currentCategory, posts);
 
-        state = state.copyWith(
-          posts: posts,
-          isLoading: false,
-          hasMorePosts: _paginationManager.hasMorePosts,
-        );
-      } else {
-        // 데이터가 없고 캐시가 있으면 캐시 사용
-        final cachedPosts = _cacheManager.getCategoryPosts(currentCategory);
-        if (cachedPosts.isNotEmpty) {
-          posts = cachedPosts;
+        try {
           state = state.copyWith(
             posts: posts,
             isLoading: false,
             hasMorePosts: _paginationManager.hasMorePosts,
           );
+        } catch (e) {
+          print('상태 업데이트 중 오류: $e');
+        }
+      } else {
+        // 데이터가 없고 캐시가 있으면 캐시 사용
+        final cachedPosts = _cacheManager.getCategoryPosts(currentCategory);
+        if (cachedPosts.isNotEmpty) {
+          posts = cachedPosts;
+          try {
+            state = state.copyWith(
+              posts: posts,
+              isLoading: false,
+              hasMorePosts: _paginationManager.hasMorePosts,
+            );
+          } catch (e) {
+            print('상태 업데이트 중 오류: $e');
+          }
         } else {
           // 데이터가 없고 캐시도 없으면 빈 리스트로 설정하고 hasMorePosts는 false로 설정
-          state = state.copyWith(
-            posts: [],
-            isLoading: false,
-            hasMorePosts: false, // 게시물이 없으면 추가 로드 비활성화
-          );
+          try {
+            state = state.copyWith(
+              posts: [],
+              isLoading: false,
+              hasMorePosts: false, // 게시물이 없으면 추가 로드 비활성화
+            );
+          } catch (e) {
+            print('상태 업데이트 중 오류: $e');
+          }
         }
       }
     } catch (e) {
       // 에러 시 캐시된 데이터 확인
-      final cachedPosts = _cacheManager.getCategoryPosts(currentCategory);
-      if (cachedPosts.isNotEmpty) {
-        state = state.copyWith(
-            posts: cachedPosts,
+      if (!mounted) return;
+
+      try {
+        final currentCategory = _ref.read(selectedCategoryProvider).id;
+        final cachedPosts = _cacheManager.getCategoryPosts(currentCategory);
+        final previousPosts = state.posts;
+
+        if (cachedPosts.isNotEmpty) {
+          state = state.copyWith(
+              posts: cachedPosts,
+              isLoading: false,
+              hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
+              errorMessage: '데이터 새로고침에 실패했습니다.');
+        } else if (previousPosts.isNotEmpty) {
+          // 캐시가 없으면 이전 데이터 유지
+          state = state.copyWith(
+              posts: previousPosts,
+              isLoading: false,
+              hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
+              errorMessage: '데이터 새로고침에 실패했습니다.');
+        } else {
+          state = state.copyWith(
             isLoading: false,
             hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
-            errorMessage: '데이터 새로고침에 실패했습니다.');
-      } else if (previousPosts.isNotEmpty) {
-        // 캐시가 없으면 이전 데이터 유지
-        state = state.copyWith(
-            posts: previousPosts,
-            isLoading: false,
-            hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
-            errorMessage: '데이터 새로고침에 실패했습니다.');
-      } else {
-        state = state.copyWith(
-          isLoading: false,
-          hasMorePosts: false, // 에러 발생 시 추가 로드 비활성화
-          errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
-        );
+            errorMessage: '게시물을 불러오는 중 오류가 발생했습니다.',
+          );
+        }
+      } catch (stateError) {
+        print('상태 업데이트 중 오류: $stateError');
       }
     }
   }
@@ -407,29 +463,48 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
       return;
     }
 
-    state = state.copyWith(isLoading: true, errorMessage: null);
-
     try {
+      // StateNotifier가 아직 살아있는지 확인
+      try {
+        state = state.copyWith(isLoading: true, errorMessage: null);
+      } catch (e) {
+        print('TownLifeViewModel이 이미 disposed됨');
+        return;
+      }
+
       var newPosts = await _paginationManager.loadMorePosts();
 
-      // 현재 카테고리 캐시 업데이트
-      final currentCategory = _ref.read(selectedCategoryProvider).id;
-      final updatedCachePosts = [
-        ..._cacheManager.getCategoryPosts(currentCategory),
-        ...newPosts
-      ];
-      _cacheManager.updateCategoryCache(currentCategory, updatedCachePosts);
+      // 다시 StateNotifier 상태 확인
+      if (!mounted) return;
 
-      state = state.copyWith(
-        posts: [...state.posts, ...newPosts],
-        isLoading: false,
-        hasMorePosts: _paginationManager.hasMorePosts,
-      );
+      // 현재 카테고리 캐시 업데이트
+      try {
+        final currentCategory = _ref.read(selectedCategoryProvider).id;
+        final updatedCachePosts = [
+          ..._cacheManager.getCategoryPosts(currentCategory),
+          ...newPosts
+        ];
+        _cacheManager.updateCategoryCache(currentCategory, updatedCachePosts);
+
+        state = state.copyWith(
+          posts: [...state.posts, ...newPosts],
+          isLoading: false,
+          hasMorePosts: _paginationManager.hasMorePosts,
+        );
+      } catch (e) {
+        print('상태 업데이트 중 오류: $e');
+      }
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        errorMessage: '추가 게시물을 불러오는데 실패했습니다.',
-      );
+      if (!mounted) return;
+
+      try {
+        state = state.copyWith(
+          isLoading: false,
+          errorMessage: '추가 게시물을 불러오는데 실패했습니다.',
+        );
+      } catch (stateError) {
+        print('상태 업데이트 중 오류: $stateError');
+      }
     }
   }
 
@@ -437,28 +512,40 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
   ///
   /// 현재 카테고리와 관계없이 모든 카테고리 데이터를 가져와서 캐시합니다.
   Future<void> refreshAllCategoryData() async {
-    // 현재 카테고리와 상태를 기억
-    final currentCategory = _ref.read(selectedCategoryProvider);
-    final oldState = state;
+    try {
+      // 현재 카테고리와 상태를 기억
+      final currentCategory = _ref.read(selectedCategoryProvider);
+      final oldState = state;
 
-    // 모든 카테고리의 데이터를 로드
-    await _loadAllCategoriesData();
+      // 모든 카테고리의 데이터를 로드
+      await _loadAllCategoriesData();
 
-    // 현재 카테고리가 전체 카테고리가 아닌 경우, 해당 카테고리 데이터만 필터링하여 표시
-    if (currentCategory != TownLifeCategory.all) {
-      final filteredPosts = _cacheManager.getCategoryPosts(currentCategory.id);
+      // StateNotifier 상태 확인
+      if (!mounted) return;
 
-      if (filteredPosts.isNotEmpty) {
-        // 해당 카테고리의 최신 데이터가 있으면 표시
-        state = state.copyWith(
-          posts: filteredPosts,
-          isLoading: false,
-          hasMorePosts: false,
-        );
-      } else if (oldState.posts.isNotEmpty) {
-        // 없으면 이전 데이터 유지
-        state = oldState.copyWith(isLoading: false);
+      // 현재 카테고리가 전체 카테고리가 아닌 경우, 해당 카테고리 데이터만 필터링하여 표시
+      if (currentCategory != TownLifeCategory.all) {
+        try {
+          final filteredPosts =
+              _cacheManager.getCategoryPosts(currentCategory.id);
+
+          if (filteredPosts.isNotEmpty) {
+            // 해당 카테고리의 최신 데이터가 있으면 표시
+            state = state.copyWith(
+              posts: filteredPosts,
+              isLoading: false,
+              hasMorePosts: false,
+            );
+          } else if (oldState.posts.isNotEmpty) {
+            // 없으면 이전 데이터 유지
+            state = oldState.copyWith(isLoading: false);
+          }
+        } catch (stateError) {
+          print('상태 업데이트 중 오류: $stateError');
+        }
       }
+    } catch (e) {
+      print('새로고침 중 오류 발생: $e');
     }
   }
 }
