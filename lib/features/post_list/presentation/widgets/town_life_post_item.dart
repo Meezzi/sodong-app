@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/post_detail/presentation/pages/post_detail_page.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/liked_posts_view_model.dart';
 
@@ -18,8 +19,7 @@ class TownLifePostItem extends ConsumerWidget {
     var isLiked = ref.watch(likedPostsProvider)[index] ?? false;
 
     return GestureDetector(
-      // TODO: 상세페이지 연결
-      // onTap: () => _navigateToDetailPage(context),
+      onTap: () => _navigateToDetailPage(context),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         elevation: 0,
@@ -47,18 +47,28 @@ class TownLifePostItem extends ConsumerWidget {
       ),
     );
   }
-  // TODO: 상세페이지 연결
-  // void _navigateToDetailPage(BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => PostDetailPage(
-  //         post: post,
-  //         index: index,
-  //       ),
-  //     ),
-  //   );
-  // }
+
+  void _navigateToDetailPage(BuildContext context) {
+    // location, category, postId가 모두 유효한지 확인
+    if (post.location.isEmpty || post.category.isEmpty || post.postId.isEmpty) {
+      // 데이터가 유효하지 않으면 스낵바로 알림
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('게시물 정보가 유효하지 않습니다. 다시 시도해주세요.')),
+      );
+      return;
+    }
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostDetailPage(
+          location: post.location,
+          category: post.category,
+          postId: post.postId,
+        ),
+      ),
+    );
+  }
 
   Widget _buildCategoryTag() {
     return Container(
@@ -231,7 +241,7 @@ class TownLifePostItem extends ConsumerWidget {
     return Row(
       children: [
         Text(
-          post.subRegion,
+          post.location,
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],

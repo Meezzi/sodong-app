@@ -4,6 +4,7 @@ import 'package:sodong_app/features/post_list/domain/models/region.dart';
 class TownLifePost {
   // 모든 이미지 URL 목록
   TownLifePost({
+    required this.postId,
     required this.category,
     required this.title,
     required this.content,
@@ -17,6 +18,7 @@ class TownLifePost {
     this.imageUrls = const [],
   });
 
+  final String postId; // 게시글 ID
   final String category; // 카테고리 (카테고리 ID: question, news, help 등)
   final String title; // 게시글 제목
   final String content; // 게시글 내용
@@ -61,6 +63,7 @@ List<TownLifePost> generateDummyPosts(int count, {int startIndex = 0}) {
     final categoryIndex = (startIndex + i) % categories.length;
 
     result.add(TownLifePost(
+      postId: 'post_${startIndex + i}',
       category: categories[categoryIndex],
       title: '샘플 게시물 ${startIndex + i}',
       content: '샘플 내용 ${startIndex + i}',

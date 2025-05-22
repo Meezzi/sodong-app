@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/category_selector.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/region_selector.dart';
@@ -23,10 +24,19 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   void initState() {
     super.initState();
 
-     // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
+    // 초기화 시 작업
     WidgetsBinding.instance.addPostFrameCallback(
-      (timeStamp) {
-        // 초기 게시물 가져오기
+      (timeStamp) async {
+        // 1. 먼저 사용자의 저장된 지역 정보 로드 시도
+        await ref.read(loadUserRegionProvider.future).catchError((_) {
+          // 에러가 발생해도 계속 진행
+          print('사용자 지역 정보 로드 실패, 기본 지역 사용');
+        });
+
+        // mounted 상태 확인 - 페이지가 이미 dispose 되었을 수 있음
+        if (!mounted) return;
+
+        // 2. 초기 게시물 가져오기
         ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
       },
     );
@@ -49,21 +59,25 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
     return TownLifeScaffold(
       scrollController: _scrollController,
-      onRefresh: () {
+      onRefresh: () async {
         // 현재 선택된 카테고리
         final selectedCategory = ref.read(selectedCategoryProvider);
 
-        // 항상 모든 카테고리 데이터를 로드하는 방식으로 변경
-        if (selectedCategory == TownLifeCategory.all) {
-          // 전체 카테고리인 경우 해당 메서드 호출
-          return ref
-              .read(townLifeStateProvider.notifier)
-              .refreshAllCategoryData();
-        } else {
-          // 다른 카테고리를 보고 있더라도 전체 데이터 새로고침
-          return ref
-              .read(townLifeStateProvider.notifier)
-              .refreshAllCategoryData();
+        try {
+          // 항상 모든 카테고리 데이터를 로드하는 방식으로 변경
+          if (selectedCategory == TownLifeCategory.all) {
+            // 전체 카테고리인 경우 해당 메서드 호출
+            await ref
+                .read(townLifeStateProvider.notifier)
+                .refreshAllCategoryData();
+          } else {
+            // 다른 카테고리를 보고 있더라도 전체 데이터 새로고침
+            await ref
+                .read(townLifeStateProvider.notifier)
+                .refreshAllCategoryData();
+          }
+        } catch (e) {
+          print('새로고침 실패: $e');
         }
       },
       appBar: _buildAppBar(),
@@ -77,6 +91,7 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   // 스크롤 이벤트 리스너
   void _scrollListener() {
     if (_isLoadingMore) return;
+    if (!mounted) return; // mounted 상태 확인
 
     var townLifeState = ref.read(townLifeStateProvider);
     // 추가 게시물이 없거나 현재 게시물이 없으면 스크롤 이벤트 무시
@@ -94,8 +109,10 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
         _scrollController.position.maxScrollExtent - 200) {
       _isLoadingMore = true;
       ref.read(townLifeStateProvider.notifier).fetchMorePosts().then((_) {
+        if (!mounted) return; // mounted 상태 확인
         _isLoadingMore = false;
       }).catchError((error) {
+        if (!mounted) return; // mounted 상태 확인
         // 에러 발생 시 로딩 상태 초기화
         _isLoadingMore = false;
       });

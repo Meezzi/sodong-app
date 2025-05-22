@@ -16,105 +16,6 @@ class PostRemoteDataSource {
   DocumentSnapshot? _lastDocument;
   int _totalItemCount = 0;
 
-  // 한글 지역명을 영문으로 변환하는 매핑 테이블
-  static const Map<String, String> _koToEnRegionMap = {
-    // 서울
-    '강남': 'gangnam',
-    '강동': 'gangdong',
-    '강북': 'gangbuk',
-    '강서': 'gangseo',
-    '관악': 'gwanak',
-    '광진': 'gwangjin',
-    '구로': 'guro',
-    '금천': 'geumcheon',
-    '노원': 'nowon',
-    '도봉': 'dobong',
-    '동대문': 'dongdaemun',
-    '동작': 'dongjak',
-    '마포': 'mapo',
-    '서대문': 'seodaemun',
-    '서초': 'seocho',
-    '성동': 'seongdong',
-    '성북': 'seongbuk',
-    '송파': 'songpa',
-    '양천': 'yangcheon',
-    '영등포': 'yeongdeungpo',
-    '용산': 'yongsan',
-    '은평': 'eunpyeong',
-    '종로': 'jongno',
-    '중구': 'junggu',
-    '중랑': 'jungnang',
-  };
-
-  // 부산 지역 매핑 테이블 (중복 방지)
-  static const Map<String, String> _busanRegionMap = {
-    '강서': 'gangseo',
-    '금정': 'geumjeong',
-    '기장': 'gijang',
-    '남구': 'namgu',
-    '동구': 'donggu',
-    '동래': 'dongnae',
-    '부산진': 'busanjin',
-    '북구': 'bukgu',
-    '사상': 'sasang',
-    '사하': 'saha',
-    '서구': 'seogu',
-    '수영': 'suyeong',
-    '연제': 'yeonje',
-    '영도': 'yeongdo',
-    '중구': 'junggu',
-    '해운대': 'haeundae',
-  };
-
-  // 경기도 지역 매핑 테이블 추가
-  static const Map<String, String> _gyeonggiRegionMap = {
-    '고양': 'goyang',
-    '과천': 'gwacheon',
-    '광명': 'gwangmyeong',
-    '광주': 'gwangju',
-    '구리': 'guri',
-    '군포': 'gunpo',
-    '김포': 'gimpo',
-    '남양주': 'namyangju',
-    '동두천': 'dongducheon',
-    '부천': 'bucheon',
-    '성남': 'seongnam',
-    '수원': 'suwon',
-    '시흥': 'siheung',
-    '안산': 'ansan',
-    '안성': 'anseong',
-    '안양': 'anyang',
-    '양주': 'yangju',
-    '여주': 'yeoju',
-    '오산': 'osan',
-    '용인': 'yongin',
-    '의왕': 'uiwang',
-    '의정부': 'uijeongbu',
-    '이천': 'icheon',
-    '파주': 'paju',
-    '평택': 'pyeongtaek',
-    '포천': 'pocheon',
-    '하남': 'hanam',
-    '화성': 'hwaseong',
-    '가평': 'gapyeong',
-    '양평': 'yangpyeong',
-    '연천': 'yeoncheon',
-  };
-
-  // 인천 지역 매핑 테이블 추가
-  static const Map<String, String> _incheonRegionMap = {
-    '계양': 'gyeyang',
-    '남동': 'namdong',
-    '동구': 'donggu',
-    '미추홀': 'michuhol',
-    '부평': 'bupyeong',
-    '서구': 'seogu',
-    '연수': 'yeonsu',
-    '중구': 'junggu',
-    '강화': 'ganghwa',
-    '옹진': 'ongjin',
-  };
-
   /// 초기 게시물 가져오기
   Future<List<TownLifePost>> fetchInitialPosts({
     required String regionId,
@@ -127,7 +28,8 @@ class PostRemoteDataSource {
       // 문서 ID 생성
       final docId = _getDocumentId(regionId, subRegion);
 
-      // 먼저 컬렉션에 있는 문서 수를 가져옵니다
+      // 새로운 Firestore 구조에 맞게 쿼리 수정
+      // 'posts' 컬렉션 -> 지역 문서(docId) -> 카테고리 컬렉션
       final countQuery = await _firestore
           .collection('posts')
           .doc(docId)
@@ -139,7 +41,7 @@ class PostRemoteDataSource {
 
       // 데이터가 없으면 빈 리스트 반환
       if (_totalItemCount == 0) {
-        _lastDocument = null; // 명시적으로 null 설정
+        _lastDocument = null;
         return [];
       }
 
@@ -154,7 +56,7 @@ class PostRemoteDataSource {
       final querySnapshot = await query.get();
 
       if (querySnapshot.docs.isEmpty) {
-        _lastDocument = null; // 데이터가 없으면 명시적으로 null 설정
+        _lastDocument = null;
         return [];
       }
 
@@ -166,8 +68,7 @@ class PostRemoteDataSource {
           .map((doc) => FirestorePost.fromFirestore(doc).toTownLifePost())
           .toList();
     } catch (e) {
-      // 오류 발생 시 빈 리스트 반환
-      _lastDocument = null; // 오류 발생 시 명시적으로 null 설정
+      _lastDocument = null;
       return [];
     }
   }
@@ -209,7 +110,6 @@ class PostRemoteDataSource {
           .map((doc) => FirestorePost.fromFirestore(doc).toTownLifePost())
           .toList();
     } catch (e) {
-      // 오류 발생 시 빈 리스트 반환
       return [];
     }
   }
@@ -220,31 +120,33 @@ class PostRemoteDataSource {
     _totalItemCount = 0; // 총 아이템 수도 초기화
   }
 
-  /// 문서 ID 생성 (지역_하위지역 형식)
+  /// 문서 ID 생성 (지역_하위지역 형식에서 '서울특별시 강남구' 형식으로 변경)
   String _getDocumentId(String regionId, String subRegion) {
-    // 하위 지역이 없으면 지역 ID만 반환
+    // 지역 ID를 한글 지역명으로 변환
+    String mainRegion;
+    switch (regionId) {
+      case 'seoul':
+        mainRegion = '서울특별시';
+        break;
+      case 'busan':
+        mainRegion = '부산광역시';
+        break;
+      case 'gyeonggi':
+        mainRegion = '경기도';
+        break;
+      case 'incheon':
+        mainRegion = '인천광역시';
+        break;
+      default:
+        mainRegion = regionId; // 변환 규칙이 없는 경우 그대로 사용
+    }
+
+    // 하위 지역이 없으면 한글 지역명만 반환
     if (subRegion.isEmpty) {
-      return regionId;
+      return mainRegion;
     }
 
-    // 하위 지역에서 '구', '군', '시' 제거
-    String koreanName =
-        subRegion.replaceAll('구', '').replaceAll('시', '').replaceAll('군', '');
-
-    // 한글 지역명을 영문으로 변환 (지역에 따라 다른 매핑 테이블 사용)
-    String englishName;
-
-    if (regionId == 'busan') {
-      englishName = _busanRegionMap[koreanName] ?? koreanName.toLowerCase();
-    } else if (regionId == 'gyeonggi') {
-      englishName = _gyeonggiRegionMap[koreanName] ?? koreanName.toLowerCase();
-    } else if (regionId == 'incheon') {
-      englishName = _incheonRegionMap[koreanName] ?? koreanName.toLowerCase();
-    } else {
-      englishName = _koToEnRegionMap[koreanName] ?? koreanName.toLowerCase();
-    }
-
-    // {도시}_{구} 형식으로 반환 (seoul_gangnam, busan_haeundae 등)
-    return '${regionId}_$englishName';
+    // '지역명 하위지역명' 형식으로 반환 (예: '서울특별시 강남구')
+    return '$mainRegion $subRegion';
   }
 }

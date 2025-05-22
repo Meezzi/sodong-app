@@ -40,4 +40,17 @@ class _SplashPageState extends State<SplashPage> {
       ),
     );
   }
+
+  @override
+  void initState() {
+    super.initState();
+
+    _goToLogin();
+  }
+
+  void _goToLogin() async {
+    await Future.delayed(const Duration(seconds: 2));
+    if (!mounted) return;
+    await Navigator.pushReplacementNamed(context, '/agreement');
+  }
 }
