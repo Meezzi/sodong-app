@@ -9,13 +9,13 @@ class ProfileRepositoryImpl implements ProfileRepository {
   final ProfileDataSource remoteDataSource;
 
   @override
-  Future<ProfileEntity> getUser(String userId) async {
+  Future<Profile> getUser(String userId) async {
     final dto = await remoteDataSource.getUser(userId);
     return dto.toEntity();
   }
 
   @override
-  Future<void> updateUser(String userId, ProfileEntity user) async {
+  Future<void> updateUser(String userId, Profile user) async {
     final dto = ProfileDto.fromEntity(user);
     await remoteDataSource.updateUser(userId, dto);
   }

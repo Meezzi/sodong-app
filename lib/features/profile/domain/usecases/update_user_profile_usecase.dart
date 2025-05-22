@@ -6,7 +6,7 @@ class UpdateUserProfileUsecase {
   UpdateUserProfileUsecase(this.repository);
   final ProfileRepository repository;
 
-  Future<void> call(String userId, ProfileEntity user) {
+  Future<void> call(String userId, Profile user) {
     return repository.updateUser(userId, user);
   }
 }

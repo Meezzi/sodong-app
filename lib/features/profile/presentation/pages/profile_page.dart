@@ -64,7 +64,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                     IconButton(
                       icon: const Icon(Icons.edit, color: Color(0xFFFF7B8E)),
                       onPressed: () async {
-                        final updated = ProfileEntity(
+                        final updated = Profile(
                           nickname: nicknameController.text,
                           imageUrl: imageUrlController.text,
                           location: user.location,

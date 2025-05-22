@@ -4,7 +4,7 @@ import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart'
 import 'package:sodong_app/features/profile/domain/usecases/get_user_profile_usecase.dart';
 import 'package:sodong_app/features/profile/domain/usecases/update_user_profile_usecase.dart';
 
-class ProfileViewModel extends StateNotifier<AsyncValue<ProfileEntity>> {
+class ProfileViewModel extends StateNotifier<AsyncValue<Profile>> {
   ProfileViewModel({
     required this.getUserProfile,
     required this.updateUserProfile,
@@ -22,7 +22,7 @@ class ProfileViewModel extends StateNotifier<AsyncValue<ProfileEntity>> {
     }
   }
 
-  Future<void> updateUser(String userId, ProfileEntity user) async {
+  Future<void> updateUser(String userId, Profile user) async {
     try {
       await updateUserProfile(userId, user);
       state = AsyncValue.data(user);
@@ -33,7 +33,7 @@ class ProfileViewModel extends StateNotifier<AsyncValue<ProfileEntity>> {
 }
 
 final profileNotifierProvider =
-    StateNotifierProvider<ProfileViewModel, AsyncValue<ProfileEntity>>((ref) {
+    StateNotifierProvider<ProfileViewModel, AsyncValue<Profile>>((ref) {
   final repo = ref.watch(profileRepositoryProvider);
   return ProfileViewModel(
     getUserProfile: GetUserProfileUsecase(repo),

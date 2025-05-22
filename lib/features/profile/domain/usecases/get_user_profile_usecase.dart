@@ -6,7 +6,7 @@ class GetUserProfileUsecase {
   GetUserProfileUsecase(this.repository);
   final ProfileRepository repository;
 
-  Future<ProfileEntity> call(String userId) {
+  Future<Profile> call(String userId) {
     return repository.getUser(userId);
   }
 }

@@ -23,13 +23,13 @@ class ProfileDto {
         'location': location,
       };
 
-  ProfileEntity toEntity() => ProfileEntity(
+  Profile toEntity() => Profile(
         nickname: nickname,
         imageUrl: imageUrl,
         location: location,
       );
 
-  factory ProfileDto.fromEntity(ProfileEntity entity) => ProfileDto(
+  factory ProfileDto.fromEntity(Profile entity) => ProfileDto(
         nickname: entity.nickname,
         imageUrl: entity.imageUrl,
         location: entity.location,

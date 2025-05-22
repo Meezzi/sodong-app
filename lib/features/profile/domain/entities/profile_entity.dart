@@ -1,5 +1,5 @@
-class ProfileEntity {
-  ProfileEntity({
+class Profile {
+  Profile({
     required this.nickname,
     required this.imageUrl,
     required this.location,
