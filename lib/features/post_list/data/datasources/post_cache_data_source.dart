@@ -1,9 +1,9 @@
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
-/// TownLife 게시물 캐시 관리 클래스
+/// 게시물 캐시 데이터 소스 클래스
 ///
-/// 카테고리별로 게시물을 캐싱하고 관리합니다.
-class PostCacheManager {
+/// 게시물 데이터를 메모리에 캐싱하고 관리합니다.
+class PostCacheDataSource {
   // 카테고리별 캐시 저장소
   final Map<String, List<TownLifePost>> _categoryCache = {};
 

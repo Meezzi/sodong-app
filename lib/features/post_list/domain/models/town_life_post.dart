@@ -2,6 +2,7 @@ import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 
 class TownLifePost {
+  // 모든 이미지 URL 목록
   TownLifePost({
     required this.category,
     required this.title,
@@ -26,7 +27,7 @@ class TownLifePost {
   final int commentCount; // 댓글 수
   final int likeCount; // 좋아요 수
   final String? imageUrl; // 대표 이미지 URL (null일 경우 이미지 없음)
-  final List<String> imageUrls; // 모든 이미지 URL 목록
+  final List<String> imageUrls;
 
   // 카테고리 문자열을 enum으로 변환 (ID 기반 매핑)
   TownLifeCategory get categoryEnum {

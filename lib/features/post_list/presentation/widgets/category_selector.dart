@@ -11,8 +11,8 @@ class CategorySelector extends ConsumerWidget {
     var selectedCategory = ref.watch(selectedCategoryProvider);
 
     return Container(
-      height: 50,
-      padding: const EdgeInsets.symmetric(vertical: 8),
+      height: 48,
+      padding: const EdgeInsets.symmetric(vertical: 7),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount: categories.length,

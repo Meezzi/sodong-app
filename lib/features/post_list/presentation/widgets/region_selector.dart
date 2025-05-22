@@ -13,7 +13,8 @@ class RegionSelector extends ConsumerWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      height: 48,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 7),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
@@ -33,7 +34,7 @@ class RegionSelector extends ConsumerWidget {
           const Icon(Icons.location_on, size: 16, color: Color(0xFFFF7B8E)),
           const SizedBox(width: 4),
           Text(
-            '${selectedRegion.name} ${selectedSubRegion}',
+            '${selectedRegion.name} $selectedSubRegion',
             style: const TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -96,7 +97,8 @@ class RegionSelectionDialog extends ConsumerStatefulWidget {
   final Region initialRegion;
 
   @override
-  _RegionSelectionDialogState createState() => _RegionSelectionDialogState();
+  ConsumerState<RegionSelectionDialog> createState() =>
+      _RegionSelectionDialogState();
 }
 
 class _RegionSelectionDialogState extends ConsumerState<RegionSelectionDialog> {

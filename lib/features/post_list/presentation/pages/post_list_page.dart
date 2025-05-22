@@ -1,8 +1,8 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/category_selector.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/region_selector.dart';
@@ -25,13 +25,6 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
     // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
     Future.microtask(() {
-      final initialRegion = ref.read(selectedRegionProvider);
-      final initialSubRegion = ref.read(selectedSubRegionProvider);
-      final postService = ref.read(postServiceProvider);
-
-      postService.setRegion(initialRegion);
-      postService.setSubRegion(initialSubRegion);
-
       // 초기 게시물 가져오기
       ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
     });
@@ -84,12 +77,24 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
     if (_isLoadingMore) return;
 
     var townLifeState = ref.read(townLifeStateProvider);
-    if (!townLifeState.hasMorePosts) return;
+    // 추가 게시물이 없거나 현재 게시물이 없으면 스크롤 이벤트 무시
+    if (!townLifeState.hasMorePosts || townLifeState.posts.isEmpty) {
+      // 로딩 상태 명시적으로 초기화 (안전장치)
+      if (_isLoadingMore) {
+        _isLoadingMore = false;
+      }
+      return;
+    }
 
+    // 게시물이 충분히 있는 경우에만 스크롤 이벤트 처리
+    // 현재 스크롤 위치가 하단에 도달했는지 확인
     if (_scrollController.position.pixels >=
         _scrollController.position.maxScrollExtent - 200) {
       _isLoadingMore = true;
       ref.read(townLifeStateProvider.notifier).fetchMorePosts().then((_) {
+        _isLoadingMore = false;
+      }).catchError((error) {
+        // 에러 발생 시 로딩 상태 초기화
         _isLoadingMore = false;
       });
     }
@@ -97,11 +102,33 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
   Widget _buildAppBar() {
     return SliverAppBar(
-      title: const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+      title: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Image.asset(
+            'assets/login.png',
+            height: 60,
+            width: 60,
+          ),
+          const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+        ],
+      ),
       floating: true,
       pinned: true,
       centerTitle: true,
       backgroundColor: const Color(0xFFFFE4E8),
+      actions: [
+        IconButton(
+          onPressed: () {
+            //TODO: 마이페이지 이동
+          },
+          icon: Icon(
+            CupertinoIcons.person_crop_circle,
+            size: 30,
+            color: const Color(0xFFFF7B8E),
+          ),
+        )
+      ],
     );
   }
 
@@ -121,25 +148,39 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
 
   Widget _buildPostListView(
       TownLifeState townLifeState, List<TownLifePost> filteredPosts) {
+    // 로딩 중이고 게시물이 없을 때
     if (townLifeState.isLoading && filteredPosts.isEmpty) {
       return const SliverFillRemaining(
         child: Center(child: CircularProgressIndicator()),
       );
     }
 
+    // 게시물이 없을 때
     if (filteredPosts.isEmpty) {
       return SliverFillRemaining(
-        child: Center(
+        hasScrollBody: false, // 스크롤을 비활성화
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.only(bottom: 100), // 하단 패딩 추가하여 더 위로 올림
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.article_outlined, size: 48, color: Colors.grey[400]),
+              Icon(Icons.article_outlined, size: 64, color: Colors.grey[300]),
               const SizedBox(height: 16),
               Text(
                 '게시물이 없습니다',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
                   color: Colors.grey[600],
+                ),
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '첫 게시물을 작성해보세요',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey[500],
                 ),
               ),
             ],
@@ -148,17 +189,23 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
       );
     }
 
+    // 게시물이 있을 때
     return SliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
+          // 마지막 아이템인 경우 로딩 인디케이터 표시 여부 결정
           if (index == filteredPosts.length) {
-            return townLifeState.hasMorePosts
-                ? const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(child: CircularProgressIndicator()),
-                  )
-                : const SizedBox.shrink();
+            // 게시물이 있고 더 불러올 게시물이 있는 경우에만 로딩 인디케이터 표시
+            if (townLifeState.hasMorePosts && !townLifeState.isLoading) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Center(child: CircularProgressIndicator()),
+              );
+            } else {
+              return const SizedBox.shrink();
+            }
           }
+
           var post = filteredPosts[index];
           return Column(
             children: [
@@ -178,14 +225,22 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
             ],
           );
         },
-        childCount: filteredPosts.length + (townLifeState.hasMorePosts ? 1 : 0),
+        // 추가 게시물이 있고 로딩 중이 아닌 경우에만 +1 (로딩 인디케이터 위치용)
+        childCount: filteredPosts.length +
+            (townLifeState.hasMorePosts &&
+                    !townLifeState.isLoading &&
+                    filteredPosts.isNotEmpty
+                ? 1
+                : 0),
       ),
     );
   }
 
   Widget _buildFloatingActionButton() {
     return FloatingActionButton(
-      onPressed: () {},
+      onPressed: () {
+        //TODO: 글작성 페이지 이동
+      },
       backgroundColor: const Color(0xFFFF7B8E),
       child: const Icon(Icons.edit, color: Colors.white),
     );
@@ -250,10 +305,10 @@ class _SliverRegionHeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 57.0;
+  double get maxExtent => 49.0;
 
   @override
-  double get minExtent => 57.0;
+  double get minExtent => 49.0;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
@@ -268,15 +323,20 @@ class _SliverCategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: Colors.white,
-      child: const CategorySelector(),
+      child: const Column(
+        children: [
+          CategorySelector(),
+          Divider(height: 1),
+        ],
+      ),
     );
   }
 
   @override
-  double get maxExtent => 50;
+  double get maxExtent => 49.0;
 
   @override
-  double get minExtent => 50;
+  double get minExtent => 49.0;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {

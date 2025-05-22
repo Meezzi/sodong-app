@@ -28,7 +28,6 @@ linter:
     - sort_constructors_first
     - unawaited_futures
     - directives_ordering
-    - unnecessary_final
     - unnecessary_parenthesis
     - conditional_uri_does_not_exist
     - prefer_single_quotes

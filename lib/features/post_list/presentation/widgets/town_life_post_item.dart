@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/liked_posts_view_model.dart';
 
 class TownLifePostItem extends ConsumerWidget {
   const TownLifePostItem({
@@ -17,32 +17,48 @@ class TownLifePostItem extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     var isLiked = ref.watch(likedPostsProvider)[index] ?? false;
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildCategoryTag(),
-            const SizedBox(height: 12),
-            _buildTitle(),
-            const SizedBox(height: 8),
-            _buildContent(),
-            const SizedBox(height: 12),
-            _buildImage(),
-            _buildLocationInfo(),
-            const SizedBox(height: 16),
-            _buildInteractionBar(ref, isLiked),
-          ],
+    return GestureDetector(
+      // TODO: 상세페이지 연결
+      // onTap: () => _navigateToDetailPage(context),
+      child: Card(
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildCategoryTag(),
+              const SizedBox(height: 12),
+              _buildTitle(),
+              const SizedBox(height: 8),
+              _buildContent(),
+              const SizedBox(height: 12),
+              _buildImage(),
+              _buildLocationInfo(),
+              const SizedBox(height: 16),
+              _buildInteractionBar(ref, isLiked),
+            ],
+          ),
         ),
       ),
     );
   }
+  // TODO: 상세페이지 연결
+  // void _navigateToDetailPage(BuildContext context) {
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => PostDetailPage(
+  //         post: post,
+  //         index: index,
+  //       ),
+  //     ),
+  //   );
+  // }
 
   Widget _buildCategoryTag() {
     return Container(
@@ -215,7 +231,7 @@ class TownLifePostItem extends ConsumerWidget {
     return Row(
       children: [
         Text(
-          post.location,
+          post.subRegion,
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],
