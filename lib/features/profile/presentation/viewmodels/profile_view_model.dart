@@ -34,7 +34,7 @@ class ProfileViewModel extends StateNotifier<AsyncValue<ProfileEntity>> {
 
 final profileNotifierProvider =
     StateNotifierProvider<ProfileViewModel, AsyncValue<ProfileEntity>>((ref) {
-  final repo = ref.watch(profileProvider);
+  final repo = ref.watch(profileRepositoryProvider);
   return ProfileViewModel(
     getUserProfile: GetUserProfileUsecase(repo),
     updateUserProfile: UpdateUserProfileUsecase(repo),
