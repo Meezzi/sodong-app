@@ -3,8 +3,8 @@ import 'package:sodong_app/features/profile/data/dtos/profile_dto.dart';
 import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart';
 import 'package:sodong_app/features/profile/domain/repositories/profile_repository.dart';
 
-class UserRepositoryImpl implements ProfileRepository {
-  UserRepositoryImpl(this.remoteDataSource);
+class ProfileRepositoryImpl implements ProfileRepository {
+  ProfileRepositoryImpl(this.remoteDataSource);
   final ProfileDataSource remoteDataSource;
 
   @override
