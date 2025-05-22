@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 class Post {
@@ -21,7 +20,7 @@ class Post {
   final TownLifeCategory category;
   final String title;
   final String content;
-  final Region region;
+  final String region;
   final DateTime createdAt;
   final bool isAnonymous;
   final String userId;
@@ -36,7 +35,7 @@ class Post {
       category: TownLifeCategory.fromId(data['category'] as String),
       title: data['title'] ?? '',
       content: data['content'] ?? '',
-      region: Region.fromFirestore(data['region']),
+      region: data['region'] ?? '',
       createdAt: (data['createdAt'] as Timestamp).toDate(),
       isAnonymous: data['isAnonymous'] ?? false,
       userId: data['userId'] ?? '',
@@ -52,7 +51,7 @@ class Post {
       'category': category.id,
       'title': title,
       'content': content,
-      'region': region.toFirestore(),
+      'region': region,
       'createdAt': Timestamp.fromDate(createdAt),
       'isAnonymous': isAnonymous,
       'userId': userId,
@@ -67,7 +66,7 @@ class Post {
     TownLifeCategory? category,
     String? title,
     String? content,
-    Region? region,
+    String? region,
     DateTime? createdAt,
     bool? isAnonymous,
     String? userId,
