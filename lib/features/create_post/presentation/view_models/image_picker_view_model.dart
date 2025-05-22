@@ -27,7 +27,7 @@ class ImagePickerState {
   }
 }
 
-class ImagePickerViewModel extends Notifier<ImagePickerState> {
+class ImagePickerViewModel extends AutoDisposeNotifier<ImagePickerState> {
   @override
   ImagePickerState build() {
     return ImagePickerState();
@@ -84,9 +84,31 @@ class ImagePickerViewModel extends Notifier<ImagePickerState> {
       );
     }
   }
+
+  // 모든 이미지 초기화 메서드 추가
+  void clearAllImages() {
+    if (state.imageFiles == null || state.imageFiles!.isEmpty) {
+      return;
+    }
+
+    // CreatePostViewModel의 이미지도 함께 초기화
+    try {
+      final createPostNotifier = ref.read(createPostViewModelProvider.notifier);
+      for (var file in state.imageFiles!) {
+        createPostNotifier.removeImage(file.path);
+      }
+    } catch (e) {
+      state = state.copyWith(
+        error: '이미지 초기화 실패',
+      );
+    }
+
+    // 이미지 상태 초기화
+    state = state.copyWith(imageFiles: []);
+  }
 }
 
 final imagePickerViewModelProvider =
-    NotifierProvider<ImagePickerViewModel, ImagePickerState>(() {
+    AutoDisposeNotifierProvider<ImagePickerViewModel, ImagePickerState>(() {
   return ImagePickerViewModel();
 });
