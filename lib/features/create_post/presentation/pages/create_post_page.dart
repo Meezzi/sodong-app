@@ -40,7 +40,6 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
               height: 40,
               width: 40,
             ),
-            const SizedBox(width: 8),
             const Text(
               '소소한 이야기 작성',
               style: TextStyle(
@@ -48,6 +47,11 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                 color: Colors.black87,
                 fontSize: 18,
               ),
+            ),
+            Image.asset(
+              'assets/login.png',
+              height: 40,
+              width: 40,
             ),
           ],
         ),
