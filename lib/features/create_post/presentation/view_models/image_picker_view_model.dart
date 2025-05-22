@@ -60,6 +60,30 @@ class ImagePickerViewModel extends Notifier<ImagePickerState> {
       );
     }
   }
+
+  void removeImage(int index) {
+    if (state.imageFiles == null ||
+        index < 0 ||
+        index >= state.imageFiles!.length) {
+      return;
+    }
+
+    final updatedImages = List<XFile>.from(state.imageFiles!);
+    final removedImage = updatedImages.removeAt(index);
+
+    // 이미지 상태 업데이트
+    state = state.copyWith(imageFiles: updatedImages);
+
+    // CreatePostViewModel에서도 해당 이미지 제거
+    try {
+      final createPostNotifier = ref.read(createPostViewModelProvider.notifier);
+      createPostNotifier.removeImage(removedImage.path);
+    } catch (e) {
+      state = state.copyWith(
+        error: '이미지 제거 실패: ${removedImage.path}',
+      );
+    }
+  }
 }
 
 final imagePickerViewModelProvider =
