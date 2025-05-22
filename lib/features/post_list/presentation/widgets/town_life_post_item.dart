@@ -231,7 +231,7 @@ class TownLifePostItem extends ConsumerWidget {
     return Row(
       children: [
         Text(
-          post.subRegion,
+          post.location,
           style: TextStyle(
             fontSize: 12,
             color: Colors.grey[600],
