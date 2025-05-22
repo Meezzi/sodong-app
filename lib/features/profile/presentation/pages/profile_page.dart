@@ -28,6 +28,8 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     return Scaffold(
       appBar: AppBar(title: const Text('프로필')),
       body: userState.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('오류: $e')),
         data: (user) {
           nicknameController.text = user.nickname;
           imageUrlController.text = user.imageUrl;
@@ -84,8 +86,6 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
             ),
           );
         },
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('오류: $e')),
       ),
     );
   }
