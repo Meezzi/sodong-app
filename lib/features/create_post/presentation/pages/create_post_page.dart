@@ -95,7 +95,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
       final newPost = await createPostViewModel.submit(region);
       if (!context.mounted) return;
 
-      await Navigator.push(
+      await Navigator.pushReplacement(
         context,
         MaterialPageRoute(
           builder: (_) => PostDetailPage(
