@@ -1,12 +1,15 @@
 part of 'package:sodong_app/features/create_post/presentation/pages/create_post_page.dart';
 
-class ImagePreview extends StatelessWidget {
+class ImagePreview extends ConsumerWidget {
   const ImagePreview({super.key, required this.imageFiles});
 
   final List<XFile> imageFiles;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final imagePickerViewModel =
+        ref.read(imagePickerViewModelProvider.notifier);
+
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 20),
       child: Column(
@@ -75,17 +78,22 @@ class ImagePreview extends StatelessWidget {
                       ),
                       Positioned(
                         top: 8,
-                        right: 8,
-                        child: Container(
-                          padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: const Color.fromRGBO(0, 0, 0, 0.6),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.image,
-                            color: Colors.white,
-                            size: 14,
+                        left: 8,
+                        child: GestureDetector(
+                          onTap: () {
+                            imagePickerViewModel.removeImage(index);
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: const Color.fromRGBO(255, 123, 142, 0.8),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              Icons.close,
+                              color: Colors.white,
+                              size: 14,
+                            ),
                           ),
                         ),
                       ),
