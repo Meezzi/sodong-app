@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/auth/data/user_repository.dart';
 import 'package:sodong_app/features/auth/domain/repositories/user_repository.dart';
 
 enum UserStatus {
@@ -21,3 +23,9 @@ class CheckUserStatusUseCase {
         : UserStatus.agreementNotComplete;
   }
 }
+
+final checkUserStatusUsecaseProvider = Provider<CheckUserStatusUseCase>((ref) {
+ final repository = ref.read(remoteUserRepositoryProvider);
+ return CheckUserStatusUseCase(repository) ;
+
+});
