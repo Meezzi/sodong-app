@@ -1,3 +1,5 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/profile/data/providers/profile_provider.dart';
 import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart';
 import 'package:sodong_app/features/profile/domain/repositories/profile_repository.dart';
 
@@ -10,3 +12,10 @@ class GetUserProfileUsecase {
     return repository.getUser(userId);
   }
 }
+
+final getUserProfileUsecaseProvider = Provider<GetUserProfileUsecase>(
+  (ref) {
+    final repository = ref.read(profileRepositoryProvider);
+    return GetUserProfileUsecase(repository);
+  },
+);
