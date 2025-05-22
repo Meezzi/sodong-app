@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class SplashPage extends StatefulWidget {
@@ -9,24 +8,6 @@ class SplashPage extends StatefulWidget {
 }
 
 class _SplashPageState extends State<SplashPage> {
-  @override
-  void initState() {
-    super.initState();
-    _goToLogin();
-  }
-
-  void _goToLogin() async {
-    await Future.delayed(const Duration(seconds: 2));
-    if (!mounted) return;
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user != null) {
-      await Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      await Navigator.pushReplacementNamed(context, '/login');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
