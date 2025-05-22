@@ -5,8 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/auth/presentation/pages/login/login_page.dart';
 import 'package:sodong_app/features/auth/presentation/pages/profile_edit/profile_edit.dart';
 import 'package:sodong_app/features/auth/presentation/pages/splash/splash_page.dart';
-import 'package:sodong_app/features/firebase_options.dart';
 import 'package:sodong_app/features/post_list/presentation/pages/post_list_page.dart';
+import 'package:sodong_app/firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
