@@ -26,7 +26,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
     final userState = ref.watch(profileNotifierProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text("프로필")),
+      appBar: AppBar(title: const Text('프로필')),
       body: userState.when(
         data: (user) {
           nicknameController.text = user.nickname;
@@ -74,7 +74,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                             .updateUser(widget.userId, updated);
 
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("프로필이 수정완료.")),
+                          const SnackBar(content: Text('프로필이 수정완료.')),
                         );
                       },
                     ),
