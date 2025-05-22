@@ -125,8 +125,28 @@ class PostCacheManager {
     }
 
     // 각 카테고리 내부에서 정렬
+    // 1. 시간 정보를 분석해서 가장 최근 게시물이 먼저 오도록 정렬
     for (var categoryPosts in postsByCategory.values) {
-      categoryPosts.sort((a, b) => b.commentCount.compareTo(a.commentCount));
+      categoryPosts.sort((a, b) {
+        // 시간 정보가 '10분 전', '1시간 전', '1일 전' 등의 형태로 있으므로
+        // 여기서는 간단한 규칙으로 정렬: 숫자가 작을수록 최근 게시물
+
+        // 숫자 부분 추출 시도
+        final aTimeNumber = _extractTimeNumber(a.timeAgo);
+        final bTimeNumber = _extractTimeNumber(b.timeAgo);
+
+        // 시간 단위 비교 (일 > 시간 > 분)
+        final aTimeUnit = _getTimeUnitPriority(a.timeAgo);
+        final bTimeUnit = _getTimeUnitPriority(b.timeAgo);
+
+        // 단위가 다르면 단위로 비교
+        if (aTimeUnit != bTimeUnit) {
+          return aTimeUnit.compareTo(bTimeUnit);
+        }
+
+        // 단위가 같으면 숫자로 비교
+        return aTimeNumber.compareTo(bTimeNumber);
+      });
     }
 
     // 최종 결과 리스트 초기화
@@ -146,6 +166,27 @@ class PostCacheManager {
     }
 
     return sortedPosts;
+  }
+
+  // 시간 문자열에서 숫자 추출
+  int _extractTimeNumber(String timeAgo) {
+    // 숫자 추출 시도
+    final numberRegex = RegExp(r'(\d+)');
+    final match = numberRegex.firstMatch(timeAgo);
+    if (match != null && match.groupCount > 0) {
+      return int.tryParse(match.group(1) ?? '0') ?? 0;
+    }
+    return 0;
+  }
+
+  // 시간 단위의 우선순위 반환 (값이 작을수록 최근)
+  int _getTimeUnitPriority(String timeAgo) {
+    if (timeAgo.contains('분')) return 0;
+    if (timeAgo.contains('시간')) return 1;
+    if (timeAgo.contains('일')) return 2;
+    if (timeAgo.contains('개월')) return 3;
+    if (timeAgo.contains('년')) return 4;
+    return 5; // 기타 단위
   }
 }
 
@@ -517,6 +558,9 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
       final currentCategory = _ref.read(selectedCategoryProvider);
       final oldState = state;
 
+      // 기존 캐시를 모두 비우고 시작
+      _cacheManager.clearAllCache();
+
       // 모든 카테고리의 데이터를 로드
       await _loadAllCategoriesData();
 
@@ -530,9 +574,12 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
               _cacheManager.getCategoryPosts(currentCategory.id);
 
           if (filteredPosts.isNotEmpty) {
+            // 게시물을 날짜순으로 정렬 (최신순)
+            final sortedPosts = _sortPostsByTime(filteredPosts);
+
             // 해당 카테고리의 최신 데이터가 있으면 표시
             state = state.copyWith(
-              posts: filteredPosts,
+              posts: sortedPosts,
               isLoading: false,
               hasMorePosts: false,
             );
@@ -543,10 +590,63 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         } catch (stateError) {
           print('상태 업데이트 중 오류: $stateError');
         }
+      } else {
+        // 전체 카테고리를 보는 경우 모든 게시물을 시간순으로 정렬
+        final allPosts = _cacheManager.getAllCategoryPosts();
+        if (allPosts.isNotEmpty) {
+          final sortedPosts = _sortPostsByTime(allPosts);
+          state = state.copyWith(
+            posts: sortedPosts,
+            isLoading: false,
+            hasMorePosts: false,
+          );
+        }
       }
     } catch (e) {
       print('새로고침 중 오류 발생: $e');
     }
+  }
+
+  // 게시물을 최신순으로 정렬하는 헬퍼 메서드
+  List<TownLifePost> _sortPostsByTime(List<TownLifePost> posts) {
+    final sortedPosts = List<TownLifePost>.from(posts);
+    sortedPosts.sort((a, b) {
+      // 시간 단위 비교 (일 > 시간 > 분)
+      final aTimeUnit = _getTimeUnitPriority(a.timeAgo);
+      final bTimeUnit = _getTimeUnitPriority(b.timeAgo);
+
+      // 단위가 다르면 단위로 비교
+      if (aTimeUnit != bTimeUnit) {
+        return aTimeUnit.compareTo(bTimeUnit);
+      }
+
+      // 단위가 같으면 숫자로 비교
+      final aTimeNumber = _extractTimeNumber(a.timeAgo);
+      final bTimeNumber = _extractTimeNumber(b.timeAgo);
+      return aTimeNumber.compareTo(bTimeNumber);
+    });
+    return sortedPosts;
+  }
+
+  // 시간 문자열에서 숫자 추출
+  int _extractTimeNumber(String timeAgo) {
+    // 숫자 추출 시도
+    final numberRegex = RegExp(r'(\d+)');
+    final match = numberRegex.firstMatch(timeAgo);
+    if (match != null && match.groupCount > 0) {
+      return int.tryParse(match.group(1) ?? '0') ?? 0;
+    }
+    return 0;
+  }
+
+  // 시간 단위의 우선순위 반환 (값이 작을수록 최근)
+  int _getTimeUnitPriority(String timeAgo) {
+    if (timeAgo.contains('분')) return 0;
+    if (timeAgo.contains('시간')) return 1;
+    if (timeAgo.contains('일')) return 2;
+    if (timeAgo.contains('개월')) return 3;
+    if (timeAgo.contains('년')) return 4;
+    return 5; // 기타 단위
   }
 }
 
