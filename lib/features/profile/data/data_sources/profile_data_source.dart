@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/profile/data/dtos/profile_dto.dart';
 
 /// Firestore에서 사용자 데이터 조회 및 업데이트
@@ -15,3 +16,8 @@ class ProfileDataSource {
     await firestore.collection('users').doc(userId).update(dto.toJson());
   }
 }
+
+final profileDataSourceProvider = Provider<ProfileDataSource>((ref) {
+  final firestore = FirebaseFirestore.instance;
+  return ProfileDataSource(firestore);
+});
