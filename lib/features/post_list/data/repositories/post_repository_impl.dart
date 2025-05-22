@@ -9,8 +9,12 @@ class PostRepositoryImpl implements PostRepository {
   PostRepositoryImpl({
     required PostRemoteDataSource remoteDataSource,
     required PostCacheDataSource cacheDataSource,
+    String? initialRegionId,
+    String? initialSubRegion,
   })  : _remoteDataSource = remoteDataSource,
-        _cacheDataSource = cacheDataSource {
+        _cacheDataSource = cacheDataSource,
+        _currentRegionId = initialRegionId ?? 'seoul',
+        _currentSubRegion = initialSubRegion ?? '' {
     _initializeDefaultSubRegion();
   }
 
@@ -32,8 +36,8 @@ class PostRepositoryImpl implements PostRepository {
 
   // 상태 변수들
   bool _hasMore = true;
-  String _currentRegionId = 'seoul';
-  String _currentSubRegion = '';
+  String _currentRegionId;
+  String _currentSubRegion;
   String _currentCategory = 'question';
 
   @override

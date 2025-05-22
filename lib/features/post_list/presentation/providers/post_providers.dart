@@ -5,6 +5,7 @@ import 'package:sodong_app/features/post_list/data/datasources/post_remote_data_
 import 'package:sodong_app/features/post_list/data/repositories/post_repository_impl.dart';
 import 'package:sodong_app/features/post_list/domain/repositories/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/usecase/post_service.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 /// Firestore 인스턴스 제공
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
@@ -26,10 +27,14 @@ final postCacheDataSourceProvider = Provider<PostCacheDataSource>((ref) {
 final postRepositoryProvider = Provider<PostRepository>((ref) {
   final remoteDataSource = ref.watch(postRemoteDataSourceProvider);
   final cacheDataSource = ref.watch(postCacheDataSourceProvider);
+  final selectedRegion = ref.watch(selectedRegionProvider);
+  final selectedSubRegion = ref.watch(selectedSubRegionProvider);
 
   return PostRepositoryImpl(
     remoteDataSource: remoteDataSource,
     cacheDataSource: cacheDataSource,
+    initialRegionId: selectedRegion.id,
+    initialSubRegion: selectedSubRegion,
   );
 });
 
