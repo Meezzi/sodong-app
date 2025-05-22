@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/core/result/result.dart';
 import 'package:sodong_app/features/create_post/domain/usecase/create_post_usecase.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
-import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 final class CreatePostState {
@@ -69,7 +68,7 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
     state = state.copyWith(category: category);
   }
 
-  Future<void> submit(
+  Future<Post> submit(
     String location,
   ) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -82,7 +81,7 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
       createdAt: DateTime.now(),
       isAnonymous: state.isAnonymous,
       category: state.category,
-      region: Region(codeName: 'codeName', displayName: 'displayName'),
+      region: location,
       userId: '',
       nickname: '',
       commentCount: 0,
@@ -95,13 +94,15 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
       imageUrls: state.imageUrls,
     );
 
-    if (result is Ok) {
+    if (result is Ok<Post>) {
       state = CreatePostState();
+      return result.value;
     } else if (result is Error) {
       final e = (result as Error).error;
       state = state.copyWith(error: e.toString(), isLoading: false);
-      return;
+      throw Exception('게시물 작성 실패: $e');
     }
+    throw Exception('알 수 없는 오류 발생');
   }
 }
 

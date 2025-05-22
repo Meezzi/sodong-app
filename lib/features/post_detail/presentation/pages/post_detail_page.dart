@@ -11,23 +11,21 @@ import 'package:sodong_app/features/post_detail/presentation/widgets/detail_titl
 import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {
-
   const PostDetailPage({
-    Key? key,
+    super.key,
     required this.location,
     required this.category,
     required this.postId,
-  }) : super(key: key);
+  });
+  
   final String location;
   final String category;
   final String postId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.read(postInfoProvider.notifier).state =
-        Tuple3(location, category, postId);
-
-    final postAsync = ref.watch(postStreamProvider);
+    final postAsync =
+        ref.watch(postStreamProvider(Tuple3(location, category, postId)));
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -52,7 +50,9 @@ class PostDetailPage extends ConsumerWidget {
                 child: ListView(
                   padding: const EdgeInsets.all(16.0),
                   children: [
-                    DetailImageView(imageUrl: post.imageUrl.first),
+                    DetailImageView(
+                        imageUrl:
+                            post.imageUrl.isEmpty ? null : post.imageUrl.first),
                     const SizedBox(height: 16),
                     const DetailHeader(),
                     const SizedBox(height: 16),

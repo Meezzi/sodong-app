@@ -1,5 +1,6 @@
-class PostDetail {
+import 'package:cloud_firestore/cloud_firestore.dart';
 
+class PostDetail {
   PostDetail({
     required this.postId,
     required this.title,
@@ -16,7 +17,7 @@ class PostDetail {
   final List<String> imageUrl;
   final String location;
   final String category;
-  final String createdAt;
+  final DateTime createdAt;
   final String userId;
 
   factory PostDetail.fromJson(Map<String, dynamic> json) {
@@ -27,7 +28,7 @@ class PostDetail {
       imageUrl: List<String>.from(json['imageUrl'] ?? []),
       location: json['location'] ?? '',
       category: json['category'] ?? '',
-      createdAt: json['createdAt'] ?? '',
+      createdAt: (json['createdAt'] as Timestamp).toDate(),
       userId: json['userId'] ?? '',
     );
   }
@@ -40,7 +41,7 @@ class PostDetail {
       'imageUrl': imageUrl,
       'location': location,
       'category': category,
-      'createdAt': createdAt,
+      'createdAt': Timestamp.fromDate(createdAt),
       'userId': userId,
     };
   }
