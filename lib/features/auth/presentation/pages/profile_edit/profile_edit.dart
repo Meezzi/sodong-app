@@ -18,6 +18,7 @@ class ProfileEdit extends ConsumerStatefulWidget {
 class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
   final TextEditingController _nicknameController = TextEditingController();
   File? _profileImage;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -99,57 +100,79 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                     backgroundColor: Color(0xFFFFE6E9),
                     foregroundColor: Colors.black,
                     minimumSize: Size(150, 50)),
-                onPressed: () async {
-                  final nickname = _nicknameController.text;
-                  final region = location.region;
-                  final profileFile = _profileImage;
+                onPressed: _isLoading
+                    ? null
+                    : () async {
+                        final nickname = _nicknameController.text;
+                        final region = location.region;
+                        final profileFile = _profileImage;
 
-                  if (nickname.isEmpty ||
-                      profileFile == null ||
-                      region == null) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('모든 정보를 입력해주세요')),
-                    );
-                    return;
-                  }
+                        if (nickname.isEmpty ||
+                            profileFile == null ||
+                            region == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text('모든 정보를 입력해주세요')),
+                          );
+                          return;
+                        }
+                        setState(() {
+                          _isLoading = true;
+                        });
 
-                  try {
-                    // 1. 이미지 Firebase Storage에 업로드
-                    final storageRef = FirebaseStorage.instance.ref().child(
-                        'profiles/${DateTime.now().millisecondsSinceEpoch}.jpg');
-                    await storageRef.putFile(profileFile);
-                    final imageUrl = await storageRef.getDownloadURL();
+                        try {
+                          // 1. 이미지 Firebase Storage에 업로드
+                          final storageRef = FirebaseStorage.instance.ref().child(
+                              'profiles/${DateTime.now().millisecondsSinceEpoch}.jpg');
+                          await storageRef.putFile(profileFile);
+                          final imageUrl = await storageRef.getDownloadURL();
 
-                    final uid = FirebaseAuth.instance.currentUser?.uid;
-                    if (uid == null) throw Exception('로그인되지 않았습니다');
+                          final uid = FirebaseAuth.instance.currentUser?.uid;
+                          if (uid == null) throw Exception('로그인되지 않았습니다');
 
-                    // 2. Firestore에 사용자 정보 저장
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(uid)
-                        .set({
-                      'nickname': nickname,
-                      'region': region,
-                      'profileImageUrl': imageUrl,
-                      'createdAt': FieldValue.serverTimestamp(),
-                    });
-                    // 다음 페이지로 이동 또는 홈으로 이동
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('프로필이 성공적으로 생성되었습니다!')),
-                    );
-                    if (!mounted) return;
-                    // ignore: use_build_context_synchronously
-                    await Navigator.pushReplacementNamed(context, '/home');
-                  } catch (e) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('프로필 생성 중 오류가 발생했습니다')),
-                    );
-                  }
-                },
-                child: const Text(
-                  '프로필 생성',
-                  style: TextStyle(fontSize: 16),
-                ),
+                          // 2. Firestore에 사용자 정보 저장
+                          await FirebaseFirestore.instance
+                              .collection('users')
+                              .doc(uid)
+                              .set({
+                            'nickname': nickname,
+                            'region': region,
+                            'profileImageUrl': imageUrl,
+                            'createdAt': FieldValue.serverTimestamp(),
+                          });
+                          // 다음 페이지로 이동 또는 홈으로 이동
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('프로필이 성공적으로 생성되었습니다!')),
+                          );
+                          if (!mounted) return;
+                          // ignore: use_build_context_synchronously
+                          await Navigator.pushReplacementNamed(
+                              context, '/home');
+                        } catch (e) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text('프로필 생성 중 오류가 발생했습니다')),
+                          );
+                        } finally {
+                          if (mounted) {
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          }
+                        }
+                      },
+                child: _isLoading
+                    ? const SizedBox(
+                        width: 30,
+                        height: 30,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 3,
+                        ),
+                      )
+                    : const Text(
+                        '프로필 생성',
+                        style: TextStyle(fontSize: 16),
+                      ),
               ),
             ],
           ),
