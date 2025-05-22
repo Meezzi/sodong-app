@@ -160,120 +160,204 @@ class TownLifePostItem extends ConsumerWidget {
       // Firebase Storage URL이 포함된 이미지 처리
       if (post.imageUrl != null &&
           post.imageUrl!.contains('firebasestorage.googleapis.com')) {
-        return Container(
-          height: 200,
-          width: double.infinity,
-          decoration: const BoxDecoration(
-            color: Color(0xFFF5F5F5),
-          ),
-          child: ClipRRect(
-            child: Image.network(
-              post.imageUrl!,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        const AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            (loadingProgress.expectedTotalBytes ?? 1)
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 200,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFF7B8E).withOpacity(0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Hero(
+                tag: 'post_image_${post.postId}',
+                child: Image.network(
+                  post.imageUrl!,
+                  fit: BoxFit.cover,
                   width: double.infinity,
-                  color: const Color(0xFFFFE4E8),
-                  child: const Center(
-                    child: Icon(Icons.error_outline, color: Color(0xFFFF7B8E)),
-                  ),
-                );
-              },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF5F5F5),
+                      ),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFFFF7B8E)),
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  (loadingProgress.expectedTotalBytes ?? 1)
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFE4E8),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.error_outline,
+                            color: Color(0xFFFF7B8E), size: 40),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         );
       }
 
       // 일반 이미지
-      return Container(
-        height: 200,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: NetworkImage(post.imageUrl!),
-            fit: BoxFit.cover,
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF7B8E).withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+                spreadRadius: 1,
+              ),
+            ],
+            image: DecorationImage(
+              image: NetworkImage(post.imageUrl!),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Hero(
+              tag: 'post_image_${post.postId}',
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
           ),
         ),
       );
     }
 
     // 여러 이미지가 있는 경우 - 이미지 캐러셀 형태로 표시
-    return SizedBox(
-      height: 200,
-      width: double.infinity,
-      child: PageView.builder(
-        itemCount: post.imageUrls.length,
-        itemBuilder: (context, index) {
-          final imageUrl = post.imageUrls[index];
-          return Stack(
-            children: [
-              Image.network(
-                imageUrl,
-                width: double.infinity,
-                height: double.infinity,
-                fit: BoxFit.cover,
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Center(
-                    child: CircularProgressIndicator(
-                      valueColor: const AlwaysStoppedAnimation<Color>(
-                          Color(0xFFFF7B8E)),
-                      value: loadingProgress.expectedTotalBytes != null
-                          ? loadingProgress.cumulativeBytesLoaded /
-                              (loadingProgress.expectedTotalBytes ?? 1)
-                          : null,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF7B8E).withOpacity(0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: PageView.builder(
+            itemCount: post.imageUrls.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              final imageUrl = post.imageUrls[index];
+              return Stack(
+                children: [
+                  Hero(
+                    tag: 'post_image_${post.postId}_$index',
+                    child: Image.network(
+                      imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: const Color(0xFFF5F5F5),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFFFF7B8E)),
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      (loadingProgress.expectedTotalBytes ?? 1)
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFFFFE4E8),
+                          child: const Center(
+                            child: Icon(Icons.error_outline,
+                                color: Color(0xFFFF7B8E), size: 40),
+                          ),
+                        );
+                      },
                     ),
-                  );
-                },
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: const Color(0xFFFFE4E8),
-                    child: const Center(
-                      child:
-                          Icon(Icons.error_outline, color: Color(0xFFFF7B8E)),
-                    ),
-                  );
-                },
-              ),
-              // 이미지 인디케이터
-              if (post.imageUrls.length > 1)
-                Positioned(
-                  bottom: 12,
-                  right: 12,
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withOpacity(0.6),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Text(
-                      '${index + 1}/${post.imageUrls.length}',
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                  ),
+                  // 이미지 위에 살짝 그라데이션 효과를 주어 더 세련되게 보이도록 함
+                  Positioned.fill(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.center,
+                          colors: [
+                            Colors.black.withOpacity(0.2),
+                            Colors.transparent,
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-            ],
-          );
-        },
+                  // 이미지 인디케이터
+                  if (post.imageUrls.length > 1)
+                    Positioned(
+                      bottom: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${index + 1}/${post.imageUrls.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
+        ),
       ),
     );
   }
