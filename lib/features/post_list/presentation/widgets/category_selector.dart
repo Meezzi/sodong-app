@@ -15,6 +15,8 @@ class CategorySelector extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(vertical: 7),
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        physics: const BouncingScrollPhysics(),
         itemCount: categories.length,
         itemBuilder: (context, index) {
           var category = categories[index];
@@ -28,27 +30,49 @@ class CategorySelector extends ConsumerWidget {
 
   Widget _buildCategoryItem(
       BuildContext context, WidgetRef ref, dynamic category, bool isSelected) {
-    return GestureDetector(
-      onTap: () {
-        ref.read(selectedCategoryProvider.notifier).state = category;
-      },
-      child: Container(
-        margin: const EdgeInsets.only(left: 12, right: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        decoration: _buildCategoryDecoration(isSelected),
-        alignment: Alignment.center,
-        child: _buildCategoryText(category.text, isSelected),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            onTap: () {
+              ref.read(selectedCategoryProvider.notifier).state = category;
+            },
+            borderRadius: BorderRadius.circular(20),
+            splashColor: const Color(0xFFFFE4E8),
+            highlightColor: const Color(0xFFFFE4E8).withOpacity(0.3),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+              decoration: _buildCategoryDecoration(isSelected),
+              alignment: Alignment.center,
+              child: _buildCategoryText(category.text, isSelected),
+            ),
+          ),
+        ),
       ),
     );
   }
 
   BoxDecoration _buildCategoryDecoration(bool isSelected) {
     return BoxDecoration(
-      color: isSelected ? const Color(0xffFF7B8E) : Colors.white,
+      color: isSelected ? const Color(0xFFFF7B8E) : Colors.white,
       borderRadius: BorderRadius.circular(20),
       border: Border.all(
-        color: isSelected ? const Color(0xffFF7B8E) : Colors.grey[300]!,
+        color: isSelected ? const Color(0xFFFF7B8E) : const Color(0xFFFFD5DE),
+        width: 1.5,
       ),
+      boxShadow: isSelected
+          ? [
+              BoxShadow(
+                color: const Color(0xFFFF7B8E).withOpacity(0.2),
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ]
+          : null,
     );
   }
 
@@ -56,8 +80,9 @@ class CategorySelector extends ConsumerWidget {
     return Text(
       text,
       style: TextStyle(
-        color: isSelected ? Colors.white : Colors.black87,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        color: isSelected ? Colors.white : const Color(0xFFFF7B8E),
+        fontWeight: isSelected ? FontWeight.bold : FontWeight.w500,
+        fontSize: 14,
       ),
     );
   }
