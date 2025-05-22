@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/location/location_viewmodel.dart';
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
@@ -19,7 +20,12 @@ class RegionSelector extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           _buildRegionDisplay(context, ref, selectedRegion, selectedSubRegion),
-          _buildRegionSettingButton(context, ref),
+          Row(
+            children: [
+              _buildCurrentLocationButton(context, ref),
+              const SizedBox(width: 8),
+            ],
+          ),
         ],
       ),
     );
@@ -47,10 +53,54 @@ class RegionSelector extends ConsumerWidget {
     );
   }
 
-  Widget _buildRegionSettingButton(BuildContext context, WidgetRef ref) {
+  Widget _buildCurrentLocationButton(BuildContext context, WidgetRef ref) {
     return InkWell(
-      onTap: () {
-        _showRegionSelectionDialog(context, ref);
+      onTap: () async {
+        // 로딩 표시
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('현재 위치를 가져오는 중...'),
+            duration: Duration(seconds: 1),
+          ),
+        );
+
+        // 위치 정보 가져오기
+        final locationViewModel = ref.read(locationProvider.notifier);
+        await locationViewModel.getLocation();
+
+        // 위치 정보 적용
+        final location = ref.read(locationProvider);
+        if (location.region != null) {
+          // userRegionProvider 함수 호출 - Future를 반환하므로 await 필요
+          final setRegion = ref.read(userRegionProvider);
+          await setRegion(location.region!);
+
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('현재 위치로 설정되었습니다: ${location.region}'),
+                backgroundColor: const Color(0xFFFF7B8E),
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Text('위치 정보를 가져오지 못했습니다.'),
+                backgroundColor: Colors.red,
+                behavior: SnackBarBehavior.floating,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
+          }
+        }
       },
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
@@ -60,9 +110,9 @@ class RegionSelector extends ConsumerWidget {
         ),
         child: const Row(
           children: [
-            Icon(Icons.tune, size: 14, color: Colors.grey),
+            Icon(Icons.my_location, size: 14, color: Color(0xFFFF7B8E)),
             SizedBox(width: 2),
-            Text('지역 설정', style: TextStyle(fontSize: 12)),
+            Text('현재 위치', style: TextStyle(fontSize: 12)),
           ],
         ),
       ),

@@ -24,7 +24,7 @@ class LocationViewmodel extends Notifier<Location> {
     return Location(x: 129.0823133, y: 35.2202216, region: null);
   }
 
-  void getLocation() async {
+  Future<void> getLocation() async {
     // 1. 위치 권한 허용하기
     LocationPermission permission = await Geolocator.checkPermission();
     // 만약 권한이 없다면 아래에서 권한을 요청
