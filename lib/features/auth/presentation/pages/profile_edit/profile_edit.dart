@@ -133,6 +133,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                       'region': region,
                       'profileImageUrl': imageUrl,
                       'createdAt': FieldValue.serverTimestamp(),
+                      'agreements': {
+                        'terms': true,
+                        'privacy': true,
+                        'location': true,
+                        'agreedAt': FieldValue.serverTimestamp(),
+                      },
                     });
 
                     // 3. 위치 정보를 RegionViewModel에 설정
