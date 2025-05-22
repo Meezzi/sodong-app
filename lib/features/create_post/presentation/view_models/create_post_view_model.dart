@@ -68,7 +68,7 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
     state = state.copyWith(category: category);
   }
 
-  Future<void> submit(
+  Future<Post> submit(
     String location,
   ) async {
     state = state.copyWith(isLoading: true, error: null);
@@ -94,13 +94,15 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
       imageUrls: state.imageUrls,
     );
 
-    if (result is Ok) {
+    if (result is Ok<Post>) {
       state = CreatePostState();
+      return result.value;
     } else if (result is Error) {
       final e = (result as Error).error;
       state = state.copyWith(error: e.toString(), isLoading: false);
-      return;
+      throw Exception('게시물 작성 실패: $e');
     }
+    throw Exception('알 수 없는 오류 발생');
   }
 }
 
