@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/post_detail/presentation/pages/post_detail_page.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/liked_posts_view_model.dart';
 
@@ -18,8 +19,7 @@ class TownLifePostItem extends ConsumerWidget {
     var isLiked = ref.watch(likedPostsProvider)[index] ?? false;
 
     return GestureDetector(
-      // TODO: 상세페이지 연결
-      // onTap: () => _navigateToDetailPage(context),
+      onTap: () => _navigateToDetailPage(context),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         elevation: 0,
@@ -47,18 +47,19 @@ class TownLifePostItem extends ConsumerWidget {
       ),
     );
   }
-  // TODO: 상세페이지 연결
-  // void _navigateToDetailPage(BuildContext context) {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => PostDetailPage(
-  //         post: post,
-  //         index: index,
-  //       ),
-  //     ),
-  //   );
-  // }
+
+  void _navigateToDetailPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PostDetailPage(
+          location: post.location,
+          category: post.category,
+          postId: post.postId,
+        ),
+      ),
+    );
+  }
 
   Widget _buildCategoryTag() {
     return Container(
