@@ -192,54 +192,58 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     ImagePickerState imagePickerState,
     CreatePostState createPostState,
   ) {
-    return Card(
-      margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(24),
-        side: BorderSide(
-          color: const Color(0xFFFFD5DE),
-          width: 0.5,
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Card(
+        margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(24),
+          side: BorderSide(
+            color: const Color(0xFFFFD5DE),
+            width: 0.5,
+          ),
         ),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '카테고리 선택',
-              style: TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.bold,
-                color: Color(0xFFFF7B8E),
+        child: Padding(
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                '카테고리 선택',
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFFF7B8E),
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            _CategoryDropdown(),
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 16),
-              child: Divider(
-                color: Color(0xFFFFD5DE),
-                thickness: 1,
+              const SizedBox(height: 8),
+              _CategoryDropdown(),
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16),
+                child: Divider(
+                  color: Color(0xFFFFD5DE),
+                  thickness: 1,
+                ),
               ),
-            ),
-            _TitleTextField(notifier: createPostViewModel),
-            const Divider(
-              height: 24,
-              color: Color(0xFFFFE4E8),
-            ),
-            _ContentTextField(notifier: createPostViewModel),
-            if (imagePickerState.imageFiles != null &&
-                imagePickerState.imageFiles!.isNotEmpty)
-              ImagePreview(imageFiles: imagePickerState.imageFiles!),
-            _ImagePickerAndAnonymousRow(
-              isAnonymous: createPostState.isAnonymous,
-              toggleAnonymous: (_) => createPostViewModel.toggleAnonymous(),
-              onPickImages: () =>
-                  ref.read(imagePickerViewModelProvider.notifier).pickImages(),
-            ),
-          ],
+              _TitleTextField(notifier: createPostViewModel),
+              const Divider(
+                height: 24,
+                color: Color(0xFFFFE4E8),
+              ),
+              _ContentTextField(notifier: createPostViewModel),
+              if (imagePickerState.imageFiles != null &&
+                  imagePickerState.imageFiles!.isNotEmpty)
+                ImagePreview(imageFiles: imagePickerState.imageFiles!),
+              _ImagePickerAndAnonymousRow(
+                isAnonymous: createPostState.isAnonymous,
+                toggleAnonymous: (_) => createPostViewModel.toggleAnonymous(),
+                onPickImages: () => ref
+                    .read(imagePickerViewModelProvider.notifier)
+                    .pickImages(),
+              ),
+            ],
+          ),
         ),
       ),
     );
