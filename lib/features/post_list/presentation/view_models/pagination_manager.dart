@@ -1,6 +1,6 @@
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
-import 'package:sodong_app/features/post_list/domain/services/post_service.dart';
+import 'package:sodong_app/features/post_list/domain/usecase/post_service.dart';
 
 /// 페이지네이션 관리 클래스
 ///

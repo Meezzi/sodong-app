@@ -4,7 +4,7 @@ import 'package:sodong_app/features/post_list/data/datasources/post_cache_data_s
 import 'package:sodong_app/features/post_list/data/datasources/post_remote_data_source.dart';
 import 'package:sodong_app/features/post_list/data/repositories/post_repository_impl.dart';
 import 'package:sodong_app/features/post_list/domain/repositories/post_repository.dart';
-import 'package:sodong_app/features/post_list/domain/services/post_service.dart';
+import 'package:sodong_app/features/post_list/domain/usecase/post_service.dart';
 
 /// Firestore 인스턴스 제공
 final firestoreProvider = Provider<FirebaseFirestore>((ref) {
