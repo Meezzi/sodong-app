@@ -132,6 +132,12 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                       'region': region,
                       'profileImageUrl': imageUrl,
                       'createdAt': FieldValue.serverTimestamp(),
+                      'agreements': {
+                        'terms': true,
+                        'privacy': true,
+                        'location': true,
+                        'agreedAt': FieldValue.serverTimestamp(),
+                      },
                     });
                     // 다음 페이지로 이동 또는 홈으로 이동
                     ScaffoldMessenger.of(context).showSnackBar(
