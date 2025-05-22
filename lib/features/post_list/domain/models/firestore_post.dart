@@ -35,7 +35,13 @@ class FirestorePost {
       // 데이터가 없는 경우에도 기본값으로 생성할 수 있도록 함
       Timestamp timestamp;
       try {
-        timestamp = data['createdAt'] as Timestamp? ?? Timestamp.now();
+        // null 체크 로직 개선
+        final createdAtValue = data['createdAt'];
+        if (createdAtValue is Timestamp) {
+          timestamp = createdAtValue;
+        } else {
+          timestamp = Timestamp.now();
+        }
       } catch (e) {
         timestamp = Timestamp.now();
       }
@@ -207,6 +213,7 @@ class FirestorePost {
     }
 
     return TownLifePost(
+      postId: id,
       category: category,
       title: title,
       content: content,
