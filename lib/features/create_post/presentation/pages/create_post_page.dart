@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -28,41 +29,215 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     final imagePickerState = ref.watch(imagePickerViewModelProvider);
 
     return Scaffold(
+      backgroundColor: const Color(0xFFFFE4E8),
       appBar: AppBar(
-        title: const Text('글 쓰기'),
+        backgroundColor: const Color(0xFFFFE4E8),
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/login.png',
+              height: 40,
+              width: 40,
+            ),
+            const SizedBox(width: 8),
+            const Text(
+              '소소한 이야기 작성',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+                fontSize: 18,
+              ),
+            ),
+          ],
+        ),
+        centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
         actions: [
-          TextButton(
-            onPressed: createPostState.isLoading
-                ? null
-                : () => _handleCreatePost(context, ref),
-            child: const Text('완료'),
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: ElevatedButton(
+              onPressed: createPostState.isLoading
+                  ? null
+                  : () => _handleCreatePost(context, ref),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF7B8E),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
+              child: const Text(
+                '완료',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
           ),
         ],
       ),
       body: SafeArea(
-        child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: createPostState.isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _CategoryDropdown(),
-                      _TitleTextField(notifier: createPostViewModel),
-                      _ContentTextField(notifier: createPostViewModel),
-                      if (imagePickerState.imageFiles != null &&
-                          imagePickerState.imageFiles!.isNotEmpty)
-                        ImagePreview(imageFiles: imagePickerState.imageFiles!),
-                      _ImagePickerAndAnonymousRow(
-                        isAnonymous: createPostState.isAnonymous,
-                        toggleAnonymous: (_) =>
-                            createPostViewModel.toggleAnonymous(),
-                        onPickImages: () => ref
-                            .read(imagePickerViewModelProvider.notifier)
-                            .pickImages(),
+        child: createPostState.isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
+              ))
+            : Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x20000000),
+                            blurRadius: 10,
+                            offset: Offset(0, -2),
+                          ),
+                        ],
                       ),
-                    ],
-                  )),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        child: ListView(
+                          padding: const EdgeInsets.all(0),
+                          children: [
+                            _buildLocationInfo(),
+                            _buildPostCard(
+                              createPostViewModel,
+                              imagePickerState,
+                              createPostState,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+      ),
+    );
+  }
+
+  Widget _buildLocationInfo() {
+    final locationState = ref.watch(locationProvider);
+
+    return Container(
+      color: Colors.white,
+      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFFFE4E8),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.location_on,
+              size: 16,
+              color: Color(0xFFFF7B8E),
+            ),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  '현재 위치',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: Colors.grey,
+                  ),
+                ),
+                Text(
+                  locationState.region ?? '위치 정보 가져오는 중...',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPostCard(
+    CreatePostViewModel createPostViewModel,
+    ImagePickerState imagePickerState,
+    CreatePostState createPostState,
+  ) {
+    return Card(
+      margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(24),
+        side: BorderSide(
+          color: const Color(0xFFFFD5DE),
+          width: 0.5,
+        ),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              '카테고리 선택',
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFFFF7B8E),
+              ),
+            ),
+            const SizedBox(height: 8),
+            _CategoryDropdown(),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Divider(
+                color: Color(0xFFFFD5DE),
+                thickness: 1,
+              ),
+            ),
+            _TitleTextField(notifier: createPostViewModel),
+            const Divider(
+              height: 24,
+              color: Color(0xFFFFE4E8),
+            ),
+            _ContentTextField(notifier: createPostViewModel),
+            if (imagePickerState.imageFiles != null &&
+                imagePickerState.imageFiles!.isNotEmpty)
+              ImagePreview(imageFiles: imagePickerState.imageFiles!),
+            _ImagePickerAndAnonymousRow(
+              isAnonymous: createPostState.isAnonymous,
+              toggleAnonymous: (_) => createPostViewModel.toggleAnonymous(),
+              onPickImages: () =>
+                  ref.read(imagePickerViewModelProvider.notifier).pickImages(),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -84,7 +259,14 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     if (region == null) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('위치 정보를 불러오고 있습니다. 잠시만 기다려주세요.')),
+        const SnackBar(
+          content: Text('위치 정보를 불러오고 있습니다. 잠시만 기다려주세요.'),
+          backgroundColor: Color(0xFFFF7B8E),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
       );
       return;
     }
@@ -108,7 +290,14 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     } catch (e) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('작성 실패: ${e.toString()}')),
+        SnackBar(
+          content: Text('작성 실패: ${e.toString()}'),
+          backgroundColor: const Color(0xFFFF7B8E),
+          behavior: SnackBarBehavior.floating,
+          shape: const RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(12)),
+          ),
+        ),
       );
     }
   }
