@@ -258,6 +258,13 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
 
   Future<void> _handleCreatePost(BuildContext context, WidgetRef ref) async {
     final region = ref.read(locationProvider).region;
+    final createPostViewModel = ref.read(createPostViewModelProvider.notifier);
+
+    // ViewModel의 isFormValid 메서드를 사용하여 유효성 검사
+    if (!createPostViewModel.isFormValid()) {
+      _showEmptyFieldDialog(context);
+      return;
+    }
 
     if (region == null) {
       if (!context.mounted) return;
@@ -273,8 +280,6 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
       );
       return;
     }
-
-    final createPostViewModel = ref.read(createPostViewModelProvider.notifier);
 
     try {
       // 로딩 상태는 submit 메서드 내부에서 처리됨
@@ -300,6 +305,140 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
         ),
       );
     }
+  }
+
+  void _showEmptyFieldDialog(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: '필드 비어있음 알림',
+      pageBuilder: (_, __, ___) => Container(), // 사용하지 않음
+      transitionBuilder: (context, animation, secondaryAnimation, child) {
+        final curvedAnimation = CurvedAnimation(
+          parent: animation,
+          curve: Curves.easeInOutBack,
+        );
+
+        return ScaleTransition(
+          scale: curvedAnimation,
+          child: AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+            ),
+            contentPadding: EdgeInsets.zero,
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  decoration: const BoxDecoration(
+                    color: Color(0xFFFFE4E8),
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(24),
+                      topRight: Radius.circular(24),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      // 경고 아이콘 애니메이션
+                      TweenAnimationBuilder<double>(
+                        tween: Tween<double>(begin: 0, end: 1),
+                        duration: const Duration(milliseconds: 600),
+                        builder: (context, value, child) {
+                          return Transform.scale(
+                            scale: value,
+                            child: Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color.fromRGBO(
+                                        255, 123, 142, 0.2),
+                                    blurRadius: 10,
+                                    spreadRadius: 2,
+                                  ),
+                                ],
+                              ),
+                              child: const Icon(
+                                Icons.warning_amber_rounded,
+                                color: Color(0xFFFF7B8E),
+                                size: 48,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      const Text(
+                        '작성 내용을 확인해주세요',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFFFF7B8E),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      const Text(
+                        '제목과 내용을 모두 입력해주세요!',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        '사진은 선택사항입니다.',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            Navigator.of(context).pop(); // 다이얼로그 닫기
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFFF7B8E),
+                            foregroundColor: Colors.white,
+                            padding: const EdgeInsets.symmetric(vertical: 12),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(16),
+                            ),
+                            elevation: 0,
+                          ),
+                          child: const Text(
+                            '확인',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+      transitionDuration: const Duration(milliseconds: 400),
+    );
   }
 
   void _showSuccessDialog(BuildContext context) {
