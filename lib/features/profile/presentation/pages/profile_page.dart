@@ -18,12 +18,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    ref.read(profileNotifierProvider.notifier).fetchUser(widget.userId);
+    ref.read(profileViewModelProvider.notifier).fetchUser(widget.userId);
   }
 
   @override
   Widget build(BuildContext context) {
-    final userState = ref.watch(profileNotifierProvider);
+    final userState = ref.watch(profileViewModelProvider);
 
     return Scaffold(
       appBar: AppBar(title: const Text('프로필')),
@@ -70,7 +70,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           location: user.location,
                         );
                         await ref
-                            .read(profileNotifierProvider.notifier)
+                            .read(profileViewModelProvider.notifier)
                             .updateUser(widget.userId, updated);
 
                         ScaffoldMessenger.of(context).showSnackBar(
