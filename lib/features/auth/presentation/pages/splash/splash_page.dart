@@ -9,23 +9,8 @@ class SplashPage extends StatefulWidget {
 
 class _SplashPageState extends State<SplashPage> {
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFFFE6E9),
-      body: Center(
-        child: Image.asset(
-          'assets/splash.png',
-          width: 250,
-          height: 250,
-        ),
-      ),
-    );
-  }
-
-  @override
   void initState() {
     super.initState();
-
     _goToLogin();
   }
 
@@ -34,4 +19,18 @@ class _SplashPageState extends State<SplashPage> {
     if (!mounted) return;
     await Navigator.pushReplacementNamed(context, '/login');
   }
+}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    backgroundColor: const Color(0xFFFFE6E9),
+    body: Center(
+      child: Image.asset(
+        'assets/splash.png',
+        width: 250,
+        height: 250,
+      ),
+    ),
+  );
 }
