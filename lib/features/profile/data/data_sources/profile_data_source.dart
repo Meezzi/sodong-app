@@ -1,8 +1,8 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/profile/data/dtos/profile_dto.dart';
 
-class UserRemoteDataSource {
-  UserRemoteDataSource(this.firestore);
+class ProfileDataSource {
+  ProfileDataSource(this.firestore);
   final FirebaseFirestore firestore;
 
   Future<ProfileDto> getUser(String userId) async {
