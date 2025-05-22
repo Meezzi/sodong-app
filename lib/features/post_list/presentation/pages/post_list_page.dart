@@ -239,7 +239,7 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   Widget _buildFloatingActionButton() {
     return FloatingActionButton(
       onPressed: () {
-        //TODO: 글작성 페이지 이동
+        Navigator.pushNamed(context, '/create_post');
       },
       backgroundColor: const Color(0xFFFF7B8E),
       child: const Icon(Icons.edit, color: Colors.white),
