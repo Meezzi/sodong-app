@@ -49,6 +49,15 @@ class TownLifePostItem extends ConsumerWidget {
   }
 
   void _navigateToDetailPage(BuildContext context) {
+    // location, category, postId가 모두 유효한지 확인
+    if (post.location.isEmpty || post.category.isEmpty || post.postId.isEmpty) {
+      // 데이터가 유효하지 않으면 스낵바로 알림
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('게시물 정보가 유효하지 않습니다. 다시 시도해주세요.')),
+      );
+      return;
+    }
+
     Navigator.push(
       context,
       MaterialPageRoute(
