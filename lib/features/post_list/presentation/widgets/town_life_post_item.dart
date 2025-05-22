@@ -17,30 +17,36 @@ class TownLifePostItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     var isLiked = ref.watch(likedPostsProvider)[index] ?? false;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return GestureDetector(
       onTap: () => _navigateToDetailPage(context),
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         elevation: 0,
+        color: isDark ? const Color(0xFF2A2A2A) : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
+          side: BorderSide(
+            color: isDark ? Colors.transparent : const Color(0xFFFFD5DE),
+            width: 0.5,
+          ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildCategoryTag(),
+              _buildCategoryTag(isDark),
               const SizedBox(height: 12),
-              _buildTitle(),
+              _buildTitle(isDark),
               const SizedBox(height: 8),
-              _buildContent(),
+              _buildContent(isDark),
               const SizedBox(height: 12),
-              _buildImage(),
-              _buildLocationInfo(),
+              _buildImage(isDark),
+              _buildLocationInfo(isDark),
               const SizedBox(height: 16),
-              _buildInteractionBar(ref, isLiked),
+              _buildInteractionBar(ref, isLiked, isDark),
             ],
           ),
         ),
@@ -70,43 +76,47 @@ class TownLifePostItem extends ConsumerWidget {
     );
   }
 
-  Widget _buildCategoryTag() {
+  Widget _buildCategoryTag(bool isDark) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
+        color: isDark ? const Color(0xFF424242) : Colors.grey[200],
         borderRadius: BorderRadius.circular(4),
       ),
       child: Text(
         post.category,
         style: TextStyle(
           fontSize: 12,
-          color: Colors.grey[700],
+          color: isDark ? Colors.grey[300] : Colors.grey[700],
         ),
       ),
     );
   }
 
-  Widget _buildTitle() {
+  Widget _buildTitle(bool isDark) {
     return Text(
       post.title,
-      style: const TextStyle(
+      style: TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.bold,
+        color: isDark ? Colors.white : Colors.black,
       ),
     );
   }
 
-  Widget _buildContent() {
+  Widget _buildContent(bool isDark) {
     return Text(
       post.content,
-      style: const TextStyle(fontSize: 14),
+      style: TextStyle(
+        fontSize: 14,
+        color: isDark ? Colors.grey[300] : Colors.black87,
+      ),
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
     );
   }
 
-  Widget _buildImage() {
+  Widget _buildImage(bool isDark) {
     // 이미지가 없는 경우
     if (post.imageUrl == null && post.imageUrls.isEmpty) {
       return const SizedBox.shrink();
@@ -144,9 +154,12 @@ class TownLifePostItem extends ConsumerWidget {
                 return Container(
                   height: 200,
                   width: double.infinity,
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.error_outline, color: Colors.grey),
+                  color: isDark ? Colors.grey[800] : Colors.grey[300],
+                  child: Center(
+                    child: Icon(
+                      Icons.error_outline,
+                      color: isDark ? Colors.grey[400] : Colors.grey,
+                    ),
                   ),
                 );
               },
@@ -201,9 +214,12 @@ class TownLifePostItem extends ConsumerWidget {
                   },
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.error_outline, color: Colors.grey),
+                      color: isDark ? Colors.grey[800] : Colors.grey[300],
+                      child: Center(
+                        child: Icon(
+                          Icons.error_outline,
+                          color: isDark ? Colors.grey[400] : Colors.grey,
+                        ),
                       ),
                     );
                   },
@@ -217,7 +233,7 @@ class TownLifePostItem extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(
                           horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(0, 0, 0, 0.6),
+                        color: const Color.fromRGBO(0, 0, 0, 0.6),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Text(
@@ -237,74 +253,78 @@ class TownLifePostItem extends ConsumerWidget {
     );
   }
 
-  Widget _buildLocationInfo() {
+  Widget _buildLocationInfo(bool isDark) {
     return Row(
       children: [
         Text(
           post.location,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
           ),
         ),
-        const Text(' • ', style: TextStyle(color: Colors.grey)),
+        Text(' • ',
+            style: TextStyle(color: isDark ? Colors.grey[500] : Colors.grey)),
         Text(
           post.timeAgo,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: isDark ? Colors.grey[400] : Colors.grey[600],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildInteractionBar(WidgetRef ref, bool isLiked) {
+  Widget _buildInteractionBar(WidgetRef ref, bool isLiked, bool isDark) {
     return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        _buildCommentButton(),
-        const SizedBox(width: 16),
-        _buildLikeButton(ref, isLiked),
-      ],
-    );
-  }
-
-  Widget _buildCommentButton() {
-    return Row(
-      children: [
-        const Icon(Icons.chat_bubble_outline, size: 16, color: Colors.grey),
-        const SizedBox(width: 4),
-        Text(
-          '댓글 ${post.commentCount}',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+        Row(
+          children: [
+            Icon(
+              Icons.chat_bubble_outline,
+              size: 16,
+              color: isDark ? Colors.grey[400] : Colors.grey[600],
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '${post.commentCount}',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+          ],
         ),
-      ],
-    );
-  }
-
-  Widget _buildLikeButton(WidgetRef ref, bool isLiked) {
-    return Row(
-      children: [
-        GestureDetector(
-          onTap: () {
-            ref.read(likedPostsProvider.notifier).toggleLike(index);
-          },
-          child: Icon(
-            isLiked ? Icons.favorite : Icons.favorite_border,
-            size: 16,
-            color: isLiked ? const Color(0xFFFF7B8E) : Colors.grey,
-          ),
-        ),
-        const SizedBox(width: 4),
-        Text(
-          '좋아요 ${post.likeCount + (isLiked ? 1 : 0)}',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+        Row(
+          children: [
+            GestureDetector(
+              onTap: () {
+                // 좋아요 상태 토글
+                ref.read(likedPostsProvider.notifier).toggleLike(index);
+              },
+              child: Icon(
+                isLiked ? Icons.favorite : Icons.favorite_border,
+                size: 16,
+                color: isLiked
+                    ? isDark
+                        ? const Color(0xFFFF9CAA)
+                        : const Color(0xFFFF7B8E)
+                    : isDark
+                        ? Colors.grey[400]
+                        : Colors.grey[600],
+              ),
+            ),
+            const SizedBox(width: 4),
+            Text(
+              '${post.likeCount}',
+              style: TextStyle(
+                fontSize: 12,
+                color: isDark ? Colors.grey[400] : Colors.grey[600],
+              ),
+            ),
+          ],
         ),
       ],
     );

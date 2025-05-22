@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/core/theme/theme_helper.dart';
+import 'package:sodong_app/core/theme/theme_provider.dart';
+import 'package:sodong_app/core/theme/theme_widgets.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
@@ -120,35 +123,60 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   }
 
   Widget _buildAppBar() {
-    return SliverAppBar(
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            'assets/login.png',
-            height: 60,
-            width: 60,
-          ),
-          const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+    return Consumer(builder: (context, ref, child) {
+      // 현재 테마 모드 상태 감시
+      final currentTheme = ref.watch(themeProvider);
+
+      // 시스템 설정을 따르는 경우 플랫폼 밝기도 감시
+      final brightness = ref.watch(brightnessProvider(context));
+
+      // 현재 다크 모드인지 확인
+      final isDark = currentTheme == ThemeMode.dark ||
+          (currentTheme == ThemeMode.system && brightness == Brightness.dark);
+
+      return SliverAppBar(
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // 이미지에 조건부 불투명도 적용
+            Opacity(
+              opacity: isDark ? 0.85 : 1.0,
+              child: Image.asset(
+                'assets/login.png',
+                height: 60,
+                width: 60,
+              ),
+            ),
+            Text(
+              '소소한동네',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: isDark ? Colors.white : Colors.black,
+              ),
+            ),
+          ],
+        ),
+        floating: true,
+        pinned: true,
+        centerTitle: true,
+        backgroundColor:
+            isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFE4E8),
+        actions: [
+          const ThemeModeToggle(),
+          IconButton(
+            onPressed: () {
+              //TODO: 마이페이지 이동
+            },
+            icon: Icon(
+              CupertinoIcons.person_crop_circle,
+              size: 30,
+              // 다크모드에서는 더 부드러운 핑크 색상 사용
+              color: isDark ? const Color(0xFFFF9CAA) : const Color(0xFFFF7B8E),
+            ),
+          )
         ],
-      ),
-      floating: true,
-      pinned: true,
-      centerTitle: true,
-      backgroundColor: const Color(0xFFFFE4E8),
-      actions: [
-        IconButton(
-          onPressed: () {
-            //TODO: 마이페이지 이동
-          },
-          icon: Icon(
-            CupertinoIcons.person_crop_circle,
-            size: 30,
-            color: const Color(0xFFFF7B8E),
-          ),
-        )
-      ],
-    );
+      );
+    });
   }
 
   Widget _buildRegionSelector() {
@@ -191,7 +219,9 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
                 style: TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[400]
+                      : Colors.grey[600],
                 ),
               ),
               const SizedBox(height: 8),
@@ -199,7 +229,9 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
                 '첫 게시물을 작성해보세요',
                 style: TextStyle(
                   fontSize: 14,
-                  color: Colors.grey[500],
+                  color: Theme.of(context).brightness == Brightness.dark
+                      ? Colors.grey[500]
+                      : Colors.grey[500],
                 ),
               ),
             ],
@@ -238,7 +270,10 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
                   child: Divider(
                     height: 1,
                     thickness: 1,
-                    color: Color.fromARGB(255, 229, 160, 197),
+                    // 다크모드에서는 더 부드러운 구분선 색상 사용
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? const Color(0xFF505050)
+                        : const Color(0xFFFFD5DE),
                   ),
                 ),
             ],
@@ -256,17 +291,22 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   }
 
   Widget _buildFloatingActionButton() {
-    return FloatingActionButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/create_post');
-      },
-      backgroundColor: const Color(0xFFFF7B8E),
-      child: const Icon(Icons.edit, color: Colors.white),
-    );
+    return Consumer(builder: (context, ref, child) {
+      final isDark = Theme.of(context).brightness == Brightness.dark;
+
+      return FloatingActionButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/create_post');
+        },
+        backgroundColor:
+            isDark ? const Color(0xFFE0677A) : const Color(0xFFFF7B8E),
+        child: const Icon(Icons.edit, color: Colors.white),
+      );
+    });
   }
 }
 
-class TownLifeScaffold extends StatelessWidget {
+class TownLifeScaffold extends ConsumerWidget {
   const TownLifeScaffold({
     super.key,
     required this.scrollController,
@@ -287,9 +327,20 @@ class TownLifeScaffold extends StatelessWidget {
   final Widget floatingActionButton;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 현재 테마 모드 상태 감시
+    final currentTheme = ref.watch(themeProvider);
+
+    // 시스템 설정을 따르는 경우 플랫폼 밝기도 감시
+    final brightness = ref.watch(brightnessProvider(context));
+
+    // 현재 다크 모드인지 확인
+    final isDark = currentTheme == ThemeMode.dark ||
+        (currentTheme == ThemeMode.system && brightness == Brightness.dark);
+
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor:
+          isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFE4E8),
       body: RefreshIndicator(
         onRefresh: onRefresh,
         child: CustomScrollView(
@@ -298,6 +349,20 @@ class TownLifeScaffold extends StatelessWidget {
             appBar,
             regionSelector,
             categorySelector,
+            SliverToBoxAdapter(
+              child: Container(
+                height: 12,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: isDark
+                        ? [const Color(0xFF1E1E1E), const Color(0xFF303030)]
+                        : [const Color(0xFFFFE4E8), Colors.grey[100]!],
+                  ),
+                ),
+              ),
+            ),
             postListView,
           ],
         ),
@@ -312,12 +377,18 @@ class _SliverRegionHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 테마 상태 확인
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      color: Colors.white,
+      color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFE4E8),
       child: Column(
         children: [
           const RegionSelector(),
-          const Divider(height: 1),
+          Divider(
+            height: 1,
+            color: isDark ? Colors.grey[700] : Color(0xFFFFD5DE),
+          ),
         ],
       ),
     );
@@ -340,22 +411,28 @@ class _SliverCategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
+    // 테마 상태 확인
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Container(
-      color: Colors.white,
-      child: const Column(
+      color: isDark ? const Color(0xFF1E1E1E) : const Color(0xFFFFE4E8),
+      child: Column(
         children: [
-          CategorySelector(),
-          Divider(height: 1),
+          const CategorySelector(),
+          Divider(
+            height: 1,
+            color: isDark ? Colors.grey[700] : Color(0xFFFFD5DE),
+          ),
         ],
       ),
     );
   }
 
   @override
-  double get maxExtent => 49.0;
+  double get maxExtent => 60.0;
 
   @override
-  double get minExtent => 49.0;
+  double get minExtent => 60.0;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
