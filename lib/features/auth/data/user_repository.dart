@@ -23,7 +23,7 @@ class RemoteUserRepository implements UserRepository {
   }
 }
 
-final remoteUserRepository = Provider<UserRepository>((ref) {
+final remoteUserRepositoryProvider = Provider<UserRepository>((ref) {
   final auth = FirebaseAuth.instance;
   final firestore = FirebaseFirestore.instance;
     return RemoteUserRepository(auth: auth, firestore: firestore);
