@@ -23,11 +23,13 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
   void initState() {
     super.initState();
 
-    // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
-    Future.microtask(() {
-      // 초기 게시물 가져오기
-      ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
-    });
+     // 초기화 시 선택된 지역을 설정하고 게시물 가져오기
+    WidgetsBinding.instance.addPostFrameCallback(
+      (timeStamp) {
+        // 초기 게시물 가져오기
+        ref.read(townLifeStateProvider.notifier).fetchInitialPosts();
+      },
+    );
 
     // 스크롤 이벤트 감지
     _scrollController.addListener(_scrollListener);
