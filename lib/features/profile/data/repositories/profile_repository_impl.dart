@@ -3,6 +3,7 @@ import 'package:sodong_app/features/profile/data/dtos/profile_dto.dart';
 import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart';
 import 'package:sodong_app/features/profile/domain/repositories/profile_repository.dart';
 
+/// 추상 레포지토리 구현체
 class ProfileRepositoryImpl implements ProfileRepository {
   ProfileRepositoryImpl(this.remoteDataSource);
   final ProfileDataSource remoteDataSource;

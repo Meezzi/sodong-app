@@ -1,5 +1,6 @@
 import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart';
 
+/// DTO와 Entity 간 변환
 class ProfileDto {
   ProfileDto({
     required this.nickname,

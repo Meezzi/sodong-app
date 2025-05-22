@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/profile/data/dtos/profile_dto.dart';
 
+/// Firestore에서 사용자 데이터 조회 및 업데이트
 class ProfileDataSource {
   ProfileDataSource(this.firestore);
   final FirebaseFirestore firestore;
