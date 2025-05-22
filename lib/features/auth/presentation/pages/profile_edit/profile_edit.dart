@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sodong_app/features/location/location_viewmodel.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 class ProfileEdit extends ConsumerStatefulWidget {
   const ProfileEdit({super.key});
@@ -133,12 +134,18 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                       'profileImageUrl': imageUrl,
                       'createdAt': FieldValue.serverTimestamp(),
                     });
-                    // 다음 페이지로 이동 또는 홈으로 이동
+
+                    // 3. 위치 정보를 RegionViewModel에 설정
+                    if (region.isNotEmpty) {
+                      await ref.read(userRegionProvider)(region);
+                    }
+
+                    // 성공 메시지 표시
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('프로필이 성공적으로 생성되었습니다!')),
                     );
                     if (!mounted) return;
-                    // ignore: use_build_context_synchronously
+                    // 다음 페이지로 이동
                     await Navigator.pushReplacementNamed(context, '/home');
                   } catch (e) {
                     ScaffoldMessenger.of(context).showSnackBar(
