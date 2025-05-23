@@ -1,19 +1,20 @@
 import 'package:dio/dio.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:sodong_app/features/locations/data/data_source/vworld_location_data_source.dart';
 
-class VWorldLocationRepository {
-  final Dio _client = Dio(BaseOptions(
-    validateStatus: (status) => true,
-  ));
+class VWorldLocationDataSourceImpl implements VworldLocationDataSource {
+  VWorldLocationDataSourceImpl({required this.client});
+  final Dio client;
 
+  @override
   Future<List<String>> findByName(String query) async {
-    final String _apiKey = dotenv.env['VWORLD_API_KEY'] ?? '';
+    final String apiKey = dotenv.env['VWORLD_API_KEY'] ?? '';
     try {
-      final response = await _client.get(
+      final response = await client.get(
         'https://api.vworld.kr/req/search',
         queryParameters: {
           'request': 'search',
-          'key': _apiKey,
+          'key': apiKey,
           'query': query,
           'type': 'DISTRICT',
           'category': 'L4',
@@ -27,28 +28,26 @@ class VWorldLocationRepository {
             .map((e) => e['title'].toString())
             .toList();
       } else {
-        print(
-            'findByName 실패: status=${response.statusCode}, message=${response.data}');
         return [];
       }
     } catch (e) {
-      print('findByName 예외 발생: $e');
       return [];
     }
   }
 
+  @override
   Future<List<String>> findByLatLng({
     required double lat,
     required double lng,
   }) async {
-    final String _apiKey = dotenv.env['VWORLD_API_KEY'] ?? '';
+    final String apiKey = dotenv.env['VWORLD_API_KEY'] ?? '';
     try {
-      final response = await _client.get(
+      final response = await client.get(
         'https://api.vworld.kr/req/data',
         queryParameters: {
           'request': 'GetFeature',
           'data': 'LT_C_ADEMD_INFO',
-          'key': _apiKey,
+          'key': apiKey,
           'geomfilter': 'point($lng $lat)',
           'geometry': 'false',
           'size': 100,
@@ -62,12 +61,9 @@ class VWorldLocationRepository {
             .map((e) => e['properties']['full_nm'].toString())
             .toList();
       } else {
-        print(
-            'findByLatLng 실패: status=${response.statusCode}, message=${response.data}');
         return [];
       }
     } catch (e) {
-      print('findByLatLng 예외 발생: $e');
       return [];
     }
   }
