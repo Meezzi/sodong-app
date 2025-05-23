@@ -1,26 +1,33 @@
 import 'package:flutter/material.dart';
 
 class DetailImageView extends StatelessWidget {
-  const DetailImageView({super.key, required this.imageUrl});
-  final String? imageUrl;
-
-  Widget get errorWidget => Container(
-        height: 200,
-        color: Colors.grey[300],
-        child: Icon(Icons.broken_image, size: 50),
-      );
+  const DetailImageView({super.key, required this.imageUrls});
+  final List<String>? imageUrls;
 
   @override
   Widget build(BuildContext context) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: imageUrl == null
-          ? errorWidget
-          : Image.network(imageUrl!,
+    if (imageUrls == null || imageUrls!.isEmpty) return const SizedBox();
+
+    return Column(
+      children: imageUrls!.map((url) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12),
+            child: Image.network(
+              url,
               height: 200,
               width: double.infinity,
               fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) => errorWidget),
+              errorBuilder: (_, __, ___) => Container(
+                height: 200,
+                color: Colors.grey[300],
+                child: const Icon(Icons.broken_image, size: 50),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }

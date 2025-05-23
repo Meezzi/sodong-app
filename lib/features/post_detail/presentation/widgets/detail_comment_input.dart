@@ -1,10 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_view_model_provider.dart';
+import 'package:tuple/tuple.dart';
 
 class DetailCommentInput extends ConsumerStatefulWidget {
+  const DetailCommentInput({
+    super.key,
+    required this.location,
+    required this.category,
+    required this.postId,
+  });
 
-  const DetailCommentInput({super.key, required this.postId});
+  final String location;
+  final String category;
   final String postId;
 
   @override
@@ -14,12 +22,15 @@ class DetailCommentInput extends ConsumerStatefulWidget {
 class _DetailCommentInputState extends ConsumerState<DetailCommentInput> {
   final TextEditingController _controller = TextEditingController();
 
-  /// 입력된 댓글을 ViewModel에 전달하여 저장하는 함수
   void _sendComment() async {
     if (_controller.text.trim().isEmpty) return;
 
     await ref
-        .read(commentViewModelProvider(widget.postId).notifier)
+        .read(
+          commentViewModelProvider(
+            Tuple3(widget.location, widget.category, widget.postId),
+          ).notifier,
+        )
         .addComment(_controller.text.trim());
 
     _controller.clear();
@@ -28,9 +39,9 @@ class _DetailCommentInputState extends ConsumerState<DetailCommentInput> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       decoration: BoxDecoration(
-        color: Color(0xFFF8F8F8),
+        color: const Color(0xFFF8F8F8),
         border: Border(top: BorderSide(color: Colors.grey.shade300)),
       ),
       child: Row(
@@ -40,9 +51,9 @@ class _DetailCommentInputState extends ConsumerState<DetailCommentInput> {
               controller: _controller,
               decoration: InputDecoration(
                 hintText: '댓글을 입력하세요',
-                hintStyle: TextStyle(fontSize: 14),
+                hintStyle: const TextStyle(fontSize: 14),
                 contentPadding:
-                    EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(20),
                   borderSide: BorderSide.none,
@@ -52,9 +63,9 @@ class _DetailCommentInputState extends ConsumerState<DetailCommentInput> {
               ),
             ),
           ),
-          SizedBox(width: 8),
+          const SizedBox(width: 8),
           IconButton(
-            icon: Icon(Icons.send, color: Colors.pink),
+            icon: const Icon(Icons.send, color: Colors.pink),
             onPressed: _sendComment,
           ),
         ],

@@ -3,29 +3,43 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CommentDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  Future<List<Map<String, dynamic>>> fetchComments(String postId) async {
-    final snapshot = await _firestore
-        .collection('comments')
+  /// 특정 게시물의 댓글 스트림
+  Stream<List<Map<String, dynamic>>> fetchCommentsStream({
+    required String location,
+    required String category,
+    required String postId,
+  }) {
+    return _firestore
+        .collection('posts')
+        .doc(location.trim())
+        .collection(category)
         .doc(postId)
-        .collection('commentList')
+        .collection('comments')
         .orderBy('createdAt', descending: true)
-        .get();
-
-    return snapshot.docs.map((doc) {
-      final data = doc.data();
-      return {
-        'id': doc.id,
-        'content': data['content'],
-        'createdAt': (data['createdAt'] as Timestamp).toDate(),
-      };
-    }).toList();
+        .snapshots()
+        .map((snapshot) => snapshot.docs.map((doc) {
+              final data = doc.data();
+              return {
+                'id': doc.id,
+                'content': data['content'],
+                'createdAt': (data['createdAt'] as Timestamp).toDate(),
+              };
+            }).toList());
   }
 
-  Future<void> postComment(String postId, String content) async {
+  /// 댓글 추가
+  Future<void> postComment({
+    required String location,
+    required String category,
+    required String postId,
+    required String content,
+  }) async {
     await _firestore
-        .collection('comments')
+        .collection('posts')
+        .doc(location.trim())
+        .collection(category)
         .doc(postId)
-        .collection('commentList')
+        .collection('comments')
         .add({
       'content': content,
       'createdAt': FieldValue.serverTimestamp(),
