@@ -6,10 +6,20 @@ class CommentRepositoryImpl implements CommentRepository {
   CommentRepositoryImpl(this.service);
   final CommentDataSource service;
 
-  /// 댓글 추가 요청을 실제 데이터 소스에 전달하는 구현체
+  Stream<List<Comment>> getCommentsStream(String postId) {
+    return service.fetchCommentsStream(postId).map((list) => list
+        .map((data) => Comment(
+              id: data['id'],
+              postId: postId,
+              content: data['content'],
+              createdAt: data['createdAt'],
+            ))
+        .toList());
+  }
+
   @override
   Future<List<Comment>> getComments(String postId) async {
-    final result = await service.fetchComments(postId);
+    final result = await service.fetchCommentsStream(postId).first;
     return result.map((data) {
       return Comment(
         id: data['id'],

@@ -1,26 +1,37 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_detail/data/data_sources/comment_data_source.dart';
 import 'package:sodong_app/features/post_detail/data/repository/comment_repository_impl.dart';
+import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
 import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usecase.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/get_comment_usecase.dart';
 
-/// 데이터 소스 주입
+// 데이터 소스
 final commentDataSourceProvider = Provider<CommentDataSource>((ref) {
   return CommentDataSource();
 });
 
-/// 리포지토리 주입
+// 리포지토리
 final commentRepositoryProvider = Provider<CommentRepository>((ref) {
-  final dataSource = ref.watch(commentDataSourceProvider);
-  return CommentRepositoryImpl(dataSource);
+  final service = ref.read(commentDataSourceProvider);
+  return CommentRepositoryImpl(service);
 });
 
-/// 유즈케이스 주입
+// 댓글 조회 유즈케이스
 final getCommentsUseCaseProvider = Provider<GetCommentsUseCase>((ref) {
-  return GetCommentsUseCase(ref.watch(commentRepositoryProvider));
+  final repo = ref.read(commentRepositoryProvider);
+  return GetCommentsUseCase(repo);
 });
 
+// 댓글 추가 유즈케이스
 final addCommentUseCaseProvider = Provider<AddCommentUseCase>((ref) {
-  return AddCommentUseCase(ref.watch(commentRepositoryProvider));
+  final repo = ref.read(commentRepositoryProvider);
+  return AddCommentUseCase(repo);
+});
+
+// 댓글 스트림
+final commentStreamProvider =
+    StreamProvider.family<List<Comment>, String>((ref, postId) {
+  final useCase = ref.read(getCommentsUseCaseProvider);
+  return useCase.stream(postId);
 });

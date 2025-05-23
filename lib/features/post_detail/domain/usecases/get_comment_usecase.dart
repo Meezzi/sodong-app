@@ -5,8 +5,11 @@ class GetCommentsUseCase {
   GetCommentsUseCase(this.repository);
   final CommentRepository repository;
 
-  /// 댓글을 조회하는 유즈케이스
   Future<List<Comment>> call(String postId) {
     return repository.getComments(postId);
+  }
+
+  Stream<List<Comment>> stream(String postId) {
+    return repository.getCommentsStream(postId);
   }
 }
