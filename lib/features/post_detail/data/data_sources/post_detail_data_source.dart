@@ -23,7 +23,10 @@ class PostDetailDataSource {
           userId: '',
         );
       }
-      return PostDetailModel.fromJson(doc.data() ?? {});
+      return PostDetailModel.fromJson({
+        ...doc.data()!,
+        'location': location, // 여기서 명시적으로 넣어줌
+      });
     });
   }
 }

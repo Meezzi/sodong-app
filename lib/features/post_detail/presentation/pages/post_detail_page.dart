@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_detail/data/providers/post_detail_providers.dart';
+import 'package:sodong_app/features/post_detail/presentation/widgets/detail_category.dart';
 import 'package:sodong_app/features/post_detail/presentation/widgets/detail_comment_input.dart';
 import 'package:sodong_app/features/post_detail/presentation/widgets/detail_comment_item.dart';
 import 'package:sodong_app/features/post_detail/presentation/widgets/detail_content.dart';
@@ -59,6 +60,8 @@ class PostDetailPage extends ConsumerWidget {
                     DetailTitle(title: post.title),
                     const SizedBox(height: 16),
                     DetailContent(content: post.content),
+                    const SizedBox(height: 16),
+                    DetailCategory(category: post.category),
                     const SizedBox(height: 16),
                     DetailLocation(location: post.location),
                     const SizedBox(height: 24),
