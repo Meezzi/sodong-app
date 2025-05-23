@@ -7,12 +7,13 @@ class GetCommentsUseCase {
   final CommentRepository repository;
 
   /// 댓글 리스트를 비동기로 반환
-  Future<List<Comment>> call(String postId) {
-    return repository.getComments(postId);
+  Future<List<Comment>> call(String location, String category, String postId) {
+    return repository.getComments(location, category, postId);
   }
 
   /// 댓글 실시간 스트림을 반환
-  Stream<List<Comment>> stream(String postId) {
-    return repository.getCommentsStream(postId);
+  Stream<List<Comment>> stream(
+      String location, String category, String postId) {
+    return repository.getCommentsStream(location, category, postId);
   }
 }

@@ -5,6 +5,7 @@ import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.d
 import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usecase.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/get_comment_usecase.dart';
+import 'package:tuple/tuple.dart';
 
 // 데이터 소스
 final commentDataSourceProvider = Provider<CommentDataSource>((ref) {
@@ -31,7 +32,12 @@ final addCommentUseCaseProvider = Provider<AddCommentUseCase>((ref) {
 
 // 댓글 스트림
 final commentStreamProvider =
-    StreamProvider.family<List<Comment>, String>((ref, postId) {
+    StreamProvider.family<List<Comment>, Tuple3<String, String, String>>(
+        (ref, params) {
+  final location = params.item1;
+  final category = params.item2;
+  final postId = params.item3;
+
   final useCase = ref.read(getCommentsUseCaseProvider);
-  return useCase.stream(postId);
+  return useCase.stream(location, category, postId);
 });

@@ -26,10 +26,13 @@ class PostDetailPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postAsync =
-        ref.watch(postDetailStreamProvider(Tuple3(location, category, postId)));
+    final postAsync = ref.watch(
+      postDetailStreamProvider(Tuple3(location, category, postId)),
+    );
 
-    final comments = ref.watch(commentViewModelProvider(postId));
+    final comments = ref.watch(
+      commentViewModelProvider(Tuple3(location, category, postId)),
+    );
 
     return Scaffold(
       backgroundColor: Colors.white,
@@ -58,8 +61,9 @@ class PostDetailPage extends ConsumerWidget {
                   padding: const EdgeInsets.all(16.0),
                   children: [
                     DetailImageView(
-                        imageUrl:
-                            post.imageUrl.isEmpty ? null : post.imageUrl.first),
+                      imageUrl:
+                          post.imageUrl.isEmpty ? null : post.imageUrl.first,
+                    ),
                     const SizedBox(height: 16),
                     const DetailHeader(),
                     const SizedBox(height: 16),
@@ -102,7 +106,11 @@ class PostDetailPage extends ConsumerWidget {
                   ],
                 ),
               ),
-              DetailCommentInput(postId: postId),
+              DetailCommentInput(
+                location: location,
+                category: category,
+                postId: postId,
+              ),
             ],
           );
         },

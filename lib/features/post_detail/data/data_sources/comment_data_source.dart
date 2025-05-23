@@ -3,10 +3,16 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CommentDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// 특정 게시물(postId)의 댓글 서브컬렉션 실시간 스트림
-  Stream<List<Map<String, dynamic>>> fetchCommentsStream(String postId) {
+  /// 특정 게시물의 댓글 스트림
+  Stream<List<Map<String, dynamic>>> fetchCommentsStream({
+    required String location,
+    required String category,
+    required String postId,
+  }) {
     return _firestore
         .collection('posts')
+        .doc(location.trim())
+        .collection(category)
         .doc(postId)
         .collection('comments')
         .orderBy('createdAt', descending: true)
@@ -21,10 +27,17 @@ class CommentDataSource {
             }).toList());
   }
 
-  /// 특정 게시물에 댓글을 추가하는 비동기 메서드
-  Future<void> postComment(String postId, String content) async {
+  /// 댓글 추가
+  Future<void> postComment({
+    required String location,
+    required String category,
+    required String postId,
+    required String content,
+  }) async {
     await _firestore
         .collection('posts')
+        .doc(location.trim())
+        .collection(category)
         .doc(postId)
         .collection('comments')
         .add({
