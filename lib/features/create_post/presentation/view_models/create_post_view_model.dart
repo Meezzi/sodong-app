@@ -95,6 +95,8 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
 
   Future<Post> submit(
     String location,
+    String uid,
+    String nickname,
   ) async {
     // 유효성 검사는 호출자 측에서 이미 처리됨
     state = state.copyWith(isLoading: true, error: null);
@@ -108,8 +110,8 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
       isAnonymous: state.isAnonymous,
       category: state.category,
       region: location,
-      userId: '',
-      nickname: '',
+      userId: uid,
+      nickname: state.isAnonymous ? '익명' : nickname,
       commentCount: 0,
     );
 
