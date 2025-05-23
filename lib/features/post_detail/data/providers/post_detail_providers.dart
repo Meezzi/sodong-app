@@ -1,23 +1,20 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/data/dtos/post_detail_dto.dart';
+import 'package:sodong_app/features/post_detail/data/data_sources/post_detail_data_source.dart';
 import 'package:sodong_app/features/post_detail/data/repository/post_detail_repository_impl.dart';
+import 'package:sodong_app/features/post_detail/domain/entities/post_detail_entity.dart';
+import 'package:sodong_app/features/post_detail/domain/usecases/get_post_detail_usecase.dart';
 import 'package:tuple/tuple.dart';
 
-final postRepositoryProvider = Provider<PostDetailRepository>((ref) {
-  return PostDetailRepository();
-});
+final remoteDataSourceProvider = Provider((ref) => PostDetailDataSource());
 
-final postStreamProvider = StreamProvider.autoDispose
-    .family<PostDetail, Tuple3<String?, String?, String?>>((ref, arg) {
-  final repository = ref.read(postRepositoryProvider);
+final postDetailRepositoryProvider = Provider(
+    (ref) => PostDetailRepositoryImpl(ref.read(remoteDataSourceProvider)));
 
-  final location = arg.item1;
-  final category = arg.item2;
-  final postId = arg.item3;
+final getPostDetailProvider =
+    Provider((ref) => GetPostDetail(ref.read(postDetailRepositoryProvider)));
 
-  if (location == null || category == null || postId == null) {
-    throw Exception('location/category/postId가 설정되지 않았습니다.');
-  }
-
-  return repository.getPostStream(location, category, postId);
+final postDetailStreamProvider = StreamProvider.autoDispose
+    .family<PostDetail, Tuple3<String, String, String>>((ref, args) {
+  final usecase = ref.read(getPostDetailProvider);
+  return usecase(args.item1, args.item2, args.item3);
 });
