@@ -25,7 +25,7 @@ class PostDetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final postAsync =
-        ref.watch(postStreamProvider(Tuple3(location, category, postId)));
+        ref.watch(postDetailStreamProvider(Tuple3(location, category, postId)));
 
     return Scaffold(
       backgroundColor: Colors.white,
