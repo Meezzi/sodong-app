@@ -50,70 +50,71 @@ class PostDetailPage extends ConsumerWidget {
         ),
         iconTheme: const IconThemeData(color: Colors.black),
       ),
-      body: postAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('에러: ${e.toString()}')),
-        data: (post) {
-          return Column(
-            children: [
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.all(16.0),
-                  children: [
-                    DetailImageView(
-                      imageUrl:
-                          post.imageUrl.isEmpty ? null : post.imageUrl.first,
-                    ),
-                    const SizedBox(height: 16),
-                    const DetailHeader(),
-                    const SizedBox(height: 16),
-                    DetailTitle(title: post.title),
-                    const SizedBox(height: 16),
-                    DetailContent(content: post.content),
-                    const SizedBox(height: 16),
-                    DetailCategory(category: post.category),
-                    const SizedBox(height: 16),
-                    DetailLocation(location: post.location),
-                    const SizedBox(height: 24),
-                    const Text(
-                      '댓글',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    const SizedBox(height: 12),
-                    if (comments.isEmpty)
-                      const Text('댓글이 없습니다.')
-                    else
-                      ...comments.map((comment) {
-                        final duration =
-                            DateTime.now().difference(comment.createdAt);
-                        String timeAgo;
-                        if (duration.inMinutes < 1) {
-                          timeAgo = '방금 전';
-                        } else if (duration.inHours < 1) {
-                          timeAgo = '${duration.inMinutes}분 전';
-                        } else if (duration.inDays < 1) {
-                          timeAgo = '${duration.inHours}시간 전';
-                        } else {
-                          timeAgo = '${duration.inDays}일 전';
-                        }
+      body: SafeArea(
+        child: postAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) => Center(child: Text('에러: ${e.toString()}')),
+          data: (post) {
+            return Column(
+              children: [
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.all(16.0),
+                    children: [
+                      const DetailHeader(),
+                      const SizedBox(height: 16),
+                      DetailTitle(title: post.title),
+                      const SizedBox(height: 16),
+                      DetailContent(content: post.content),
+                      const SizedBox(height: 16),
+                      DetailImageView(imageUrls: post.imageUrl),
+                      const SizedBox(height: 16),
+                      DetailCategory(category: post.category),
+                      const SizedBox(height: 16),
+                      DetailLocation(location: post.location),
+                      const SizedBox(height: 24),
+                      const Text(
+                        '댓글',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      if (comments.isEmpty)
+                        const Text('댓글이 없습니다.')
+                      else
+                        ...comments.map((comment) {
+                          final duration =
+                              DateTime.now().difference(comment.createdAt);
+                          String timeAgo;
+                          if (duration.inMinutes < 1) {
+                            timeAgo = '방금 전';
+                          } else if (duration.inHours < 1) {
+                            timeAgo = '${duration.inMinutes}분 전';
+                          } else if (duration.inDays < 1) {
+                            timeAgo = '${duration.inHours}시간 전';
+                          } else {
+                            timeAgo = '${duration.inDays}일 전';
+                          }
 
-                        return DetailCommentItem(
-                          text: comment.content,
-                          time: timeAgo,
-                        );
-                      }).toList(),
-                  ],
+                          return DetailCommentItem(
+                            text: comment.content,
+                            time: timeAgo,
+                          );
+                        }).toList(),
+                    ],
+                  ),
                 ),
-              ),
-              DetailCommentInput(
-                location: location,
-                category: category,
-                postId: postId,
-              ),
-            ],
-          );
-        },
+                DetailCommentInput(
+                  location: location,
+                  category: category,
+                  postId: postId,
+                ),
+              ],
+            );
+          },
+        ),
       ),
     );
   }
