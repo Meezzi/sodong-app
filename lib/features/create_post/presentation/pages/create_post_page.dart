@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:sodong_app/features/auth/domain/entities/user.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/create_post_view_model.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/image_picker_view_model.dart';
-import 'package:sodong_app/features/location/location_viewmodel.dart';
+import 'package:sodong_app/features/locations/presentation/viewmodel/location_view_model.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 part 'widgets/category_dropdown.dart';

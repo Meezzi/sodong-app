@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:sodong_app/features/auth/domain/entities/user.dart';
-import 'package:sodong_app/features/location/location_viewmodel.dart';
+import 'package:sodong_app/features/locations/presentation/viewmodel/location_view_model.dart';
 
 class ProfileEdit extends ConsumerStatefulWidget {
   const ProfileEdit({super.key});
