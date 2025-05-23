@@ -1,39 +1,25 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sodong_app/features/post_detail/domain/entities/post_detail_entity.dart';
 
-class PostDetail {
-  PostDetail({
-    required this.postId,
-    required this.title,
-    required this.content,
-    required this.imageUrl,
-    required this.location,
-    required this.category,
-    required this.createdAt,
-    required this.userId,
+class PostDetailModel extends PostDetail {
+  PostDetailModel({
+    required super.postId,
+    required super.title,
+    required super.content,
+    required super.imageUrl,
+    required super.location,
+    required super.category,
+    required super.createdAt,
+    required super.userId,
   });
-  final String postId;
-  final String title;
-  final String content;
-  final List<String> imageUrl;
-  final String location;
-  final String category;
-  final DateTime createdAt;
-  final String userId;
 
-  factory PostDetail.fromJson(Map<String, dynamic> json) {
+  factory PostDetailModel.fromJson(Map<String, dynamic> json) {
     DateTime createdDate = DateTime.now();
-
-    try {
-      final createdAtValue = json['createdAt'];
-      if (createdAtValue is Timestamp) {
-        createdDate = createdAtValue.toDate();
-      }
-    } catch (e) {
-      // Timestamp 변환 실패 시 현재 시간 사용
-      print('Timestamp 변환 실패: $e');
+    if (json['createdAt'] is Timestamp) {
+      createdDate = (json['createdAt'] as Timestamp).toDate();
     }
 
-    return PostDetail(
+    return PostDetailModel(
       postId: json['postId'] ?? '',
       title: json['title'] ?? '',
       content: json['content'] ?? '',
@@ -45,16 +31,14 @@ class PostDetail {
     );
   }
 
-  Map<String, dynamic> toJson() {
-    return {
-      'postId': postId,
-      'title': title,
-      'content': content,
-      'imageUrl': imageUrl,
-      'location': location,
-      'category': category,
-      'createdAt': Timestamp.fromDate(createdAt),
-      'userId': userId,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'postId': postId,
+        'title': title,
+        'content': content,
+        'imageUrl': imageUrl,
+        'location': location,
+        'category': category,
+        'createdAt': Timestamp.fromDate(createdAt),
+        'userId': userId,
+      };
 }
