@@ -25,7 +25,9 @@ class PostDetailDataSource {
       }
       return PostDetailModel.fromJson({
         ...doc.data()!,
-        'location': location, // 여기서 명시적으로 넣어줌
+        'postId': doc.id,
+        'location': location,
+        'category': category,
       });
     });
   }
