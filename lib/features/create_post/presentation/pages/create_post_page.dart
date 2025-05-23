@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sodong_app/features/auth/domain/entities/user.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/create_post_view_model.dart';
 import 'package:sodong_app/features/create_post/presentation/view_models/image_picker_view_model.dart';
 import 'package:sodong_app/features/location/location_viewmodel.dart';
@@ -306,7 +307,23 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
 
     try {
       // 로딩 상태는 submit 메서드 내부에서 처리됨
-      final newPost = await createPostViewModel.submit(region);
+      final user = ref.read(appUserProvider.notifier).state;
+      if (user == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('로그인 정보가 없습니다. 다시 로그인해주세요.'),
+            backgroundColor: Color(0xFFFF7B8E),
+          ),
+        );
+
+        return;
+      }
+
+      final newPost = await createPostViewModel.submit(
+        region,
+        user.uid,
+        user.nickname,
+      );
       if (!context.mounted) return;
 
       // 데이터 새로고침을 위해 townLifeViewModel 접근
