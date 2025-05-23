@@ -1,5 +1,8 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/auth/domain/entities/user.dart';
 import 'package:sodong_app/features/auth/domain/usecase/check_user_status_usecase.dart';
 
 class SplashPage extends ConsumerStatefulWidget {
@@ -45,6 +48,12 @@ class _SplashPageState extends ConsumerState<SplashPage> {
         _navigateTo('/agreement');
         break;
       case UserStatus.agreementComplete:
+        final user = FirebaseAuth.instance.currentUser;
+
+        if (user != null) {
+          final appUser = await fetchUserInfoFromFirestore(user.uid);
+          ref.read(appUserProvider.notifier).state = appUser;
+        }
         _navigateTo('/home');
         break;
     }
@@ -53,5 +62,19 @@ class _SplashPageState extends ConsumerState<SplashPage> {
   void _navigateTo(String route) {
     if (!mounted) return;
     Navigator.pushReplacementNamed(context, route);
+  }
+
+  Future<AppUser?> fetchUserInfoFromFirestore(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (!doc.exists) return null;
+
+    final data = doc.data()!;
+    return AppUser(
+      uid: uid,
+      nickname: data['nickname'] ?? '',
+      region: data['region'] ?? '',
+      profileImageUrl: data['profileImageUrl'] ?? '',
+    );
   }
 }
