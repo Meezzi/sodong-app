@@ -5,6 +5,7 @@ import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.d
 import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usecase.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/get_comment_usecase.dart';
 
+/// 댓글 리스트 상태를 관리하는 ViewModel
 class CommentViewModel extends StateNotifier<List<Comment>> {
   CommentViewModel({
     required this.getCommentsUseCase,

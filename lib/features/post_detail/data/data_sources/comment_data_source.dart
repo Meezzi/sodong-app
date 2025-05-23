@@ -21,6 +21,7 @@ class CommentDataSource {
             }).toList());
   }
 
+  /// 특정 게시물에 댓글을 추가하는 비동기 메서드
   Future<void> postComment(String postId, String content) async {
     await _firestore
         .collection('posts')
