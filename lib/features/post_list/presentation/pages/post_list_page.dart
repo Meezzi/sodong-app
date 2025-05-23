@@ -126,25 +126,41 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
         children: [
           Image.asset(
             'assets/login.png',
-            height: 60,
-            width: 60,
+            height: 45,
+            width: 45,
           ),
-          const Text('소소한동네', style: TextStyle(fontWeight: FontWeight.bold)),
+          const Text(
+            '소소한동네',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 22,
+              color: Color(0xFFFF7B8E),
+            ),
+          ),
         ],
       ),
       floating: true,
       pinned: true,
       centerTitle: true,
-      backgroundColor: const Color(0xFFFFE4E8),
+      backgroundColor: Colors.white,
+      elevation: 0,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(
+          bottom: Radius.circular(20),
+        ),
+      ),
       actions: [
-        IconButton(
-          onPressed: () {
-            //TODO: 마이페이지 이동
-          },
-          icon: Icon(
-            CupertinoIcons.person_crop_circle,
-            size: 30,
-            color: const Color(0xFFFF7B8E),
+        Padding(
+          padding: const EdgeInsets.only(right: 16),
+          child: IconButton(
+            onPressed: () {
+              //TODO: 마이페이지 이동
+            },
+            icon: const Icon(
+              CupertinoIcons.person_crop_circle_fill,
+              size: 28,
+              color: Color(0xFFFF7B8E),
+            ),
           ),
         )
       ],
@@ -170,7 +186,11 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
     // 로딩 중이고 게시물이 없을 때
     if (townLifeState.isLoading && filteredPosts.isEmpty) {
       return const SliverFillRemaining(
-        child: Center(child: CircularProgressIndicator()),
+        child: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
+          ),
+        ),
       );
     }
 
@@ -184,22 +204,26 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.article_outlined, size: 64, color: Colors.grey[300]),
+              Icon(
+                Icons.article_outlined,
+                size: 80,
+                color: const Color(0xFFFF7B8E).withOpacity(0.3),
+              ),
               const SizedBox(height: 16),
-              Text(
+              const Text(
                 '게시물이 없습니다',
                 style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w500,
-                  color: Colors.grey[600],
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFFFF7B8E),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
+              const Text(
                 '첫 게시물을 작성해보세요',
                 style: TextStyle(
-                  fontSize: 14,
-                  color: Colors.grey[500],
+                  fontSize: 16,
+                  color: Colors.grey,
                 ),
               ),
             ],
@@ -209,48 +233,56 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
     }
 
     // 게시물이 있을 때
-    return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          // 마지막 아이템인 경우 로딩 인디케이터 표시 여부 결정
-          if (index == filteredPosts.length) {
-            // 게시물이 있고 더 불러올 게시물이 있는 경우에만 로딩 인디케이터 표시
-            if (townLifeState.hasMorePosts && !townLifeState.isLoading) {
-              return const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Center(child: CircularProgressIndicator()),
-              );
-            } else {
-              return const SizedBox.shrink();
-            }
-          }
-
-          var post = filteredPosts[index];
-          return Column(
-            children: [
-              TownLifePostItem(
-                post: post,
-                index: index,
-              ),
-              if (index < filteredPosts.length - 1)
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: Divider(
-                    height: 1,
-                    thickness: 1,
-                    color: Color.fromARGB(255, 229, 160, 197),
+    return SliverPadding(
+      padding: const EdgeInsets.only(bottom: 16),
+      sliver: SliverList(
+        delegate: SliverChildBuilderDelegate(
+          (context, index) {
+            // 마지막 아이템인 경우 로딩 인디케이터 표시 여부 결정
+            if (index == filteredPosts.length) {
+              // 게시물이 있고 더 불러올 게시물이 있는 경우에만 로딩 인디케이터 표시
+              if (townLifeState.hasMorePosts && !townLifeState.isLoading) {
+                return const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
+                    ),
                   ),
+                );
+              } else {
+                return const SizedBox.shrink();
+              }
+            }
+
+            var post = filteredPosts[index];
+            return Column(
+              children: [
+                TownLifePostItem(
+                  post: post,
+                  index: index,
                 ),
-            ],
-          );
-        },
-        // 추가 게시물이 있고 로딩 중이 아닌 경우에만 +1 (로딩 인디케이터 위치용)
-        childCount: filteredPosts.length +
-            (townLifeState.hasMorePosts &&
-                    !townLifeState.isLoading &&
-                    filteredPosts.isNotEmpty
-                ? 1
-                : 0),
+                if (index < filteredPosts.length - 1)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 24),
+                    child: Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: const Color(0xFFFFD5DE).withOpacity(0.5),
+                    ),
+                  ),
+              ],
+            );
+          },
+          // 추가 게시물이 있고 로딩 중이 아닌 경우에만 +1 (로딩 인디케이터 위치용)
+          childCount: filteredPosts.length +
+              (townLifeState.hasMorePosts &&
+                      !townLifeState.isLoading &&
+                      filteredPosts.isNotEmpty
+                  ? 1
+                  : 0),
+        ),
       ),
     );
   }
@@ -261,6 +293,10 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
         Navigator.pushNamed(context, '/create_post');
       },
       backgroundColor: const Color(0xFFFF7B8E),
+      elevation: 4,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+      ),
       child: const Icon(Icons.edit, color: Colors.white),
     );
   }
@@ -289,11 +325,13 @@ class TownLifeScaffold extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[100],
+      backgroundColor: const Color(0xFFFAF8F8),
       body: RefreshIndicator(
         onRefresh: onRefresh,
+        color: const Color(0xFFFF7B8E),
         child: CustomScrollView(
           controller: scrollController,
+          physics: const BouncingScrollPhysics(),
           slivers: [
             appBar,
             regionSelector,
@@ -313,11 +351,21 @@ class _SliverRegionHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Colors.white,
-      child: Column(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          if (shrinkOffset > 0)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+        ],
+      ),
+      child: const Column(
         children: [
-          const RegionSelector(),
-          const Divider(height: 1),
+          RegionSelector(),
+          Divider(height: 1, thickness: 0.5, color: Color(0xFFFFE4E8)),
         ],
       ),
     );
@@ -341,11 +389,21 @@ class _SliverCategoryHeaderDelegate extends SliverPersistentHeaderDelegate {
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
-      color: Colors.white,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          if (shrinkOffset > 0)
+            BoxShadow(
+              color: Colors.black.withOpacity(0.05),
+              blurRadius: 4,
+              offset: const Offset(0, 2),
+            ),
+        ],
+      ),
       child: const Column(
         children: [
           CategorySelector(),
-          Divider(height: 1),
+          Divider(height: 1, thickness: 0.5, color: Color(0xFFFFE4E8)),
         ],
       ),
     );

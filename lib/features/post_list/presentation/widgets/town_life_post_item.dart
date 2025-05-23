@@ -20,27 +20,57 @@ class TownLifePostItem extends ConsumerWidget {
 
     return GestureDetector(
       onTap: () => _navigateToDetailPage(context),
-      child: Card(
-        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF7B8E).withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+              spreadRadius: 0,
+            ),
+          ],
         ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _buildCategoryTag(),
-              const SizedBox(height: 12),
-              _buildTitle(),
-              const SizedBox(height: 8),
-              _buildContent(),
-              const SizedBox(height: 12),
+              // 게시물 헤더 (카테고리, 작성자, 시간 정보)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                child: Row(
+                  children: [
+                    _buildCategoryTag(),
+                    const Spacer(),
+                    _buildLocationInfo(),
+                  ],
+                ),
+              ),
+
+              // 게시물 제목
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+                child: _buildTitle(),
+              ),
+
+              // 게시물 내용
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                child: _buildContent(),
+              ),
+
+              // 게시물 이미지 (있는 경우)
               _buildImage(),
-              _buildLocationInfo(),
-              const SizedBox(height: 16),
-              _buildInteractionBar(ref, isLiked),
+
+              // 상호작용 바 (댓글, 좋아요)
+              Padding(
+                padding: const EdgeInsets.all(16),
+                child: _buildInteractionBar(ref, isLiked),
+              ),
             ],
           ),
         ),
@@ -53,7 +83,14 @@ class TownLifePostItem extends ConsumerWidget {
     if (post.location.isEmpty || post.category.isEmpty || post.postId.isEmpty) {
       // 데이터가 유효하지 않으면 스낵바로 알림
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('게시물 정보가 유효하지 않습니다. 다시 시도해주세요.')),
+        const SnackBar(
+          content: Text('게시물 정보가 유효하지 않습니다. 다시 시도해주세요.'),
+          backgroundColor: Color(0xFFFF7B8E),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+          ),
+        ),
       );
       return;
     }
@@ -72,16 +109,17 @@ class TownLifePostItem extends ConsumerWidget {
 
   Widget _buildCategoryTag() {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(4),
+        color: const Color(0xFFFFE4E8),
+        borderRadius: BorderRadius.circular(20),
       ),
       child: Text(
         post.category,
-        style: TextStyle(
+        style: const TextStyle(
           fontSize: 12,
-          color: Colors.grey[700],
+          fontWeight: FontWeight.bold,
+          color: Color(0xFFFF7B8E),
         ),
       ),
     );
@@ -91,8 +129,9 @@ class TownLifePostItem extends ConsumerWidget {
     return Text(
       post.title,
       style: const TextStyle(
-        fontSize: 16,
+        fontSize: 18,
         fontWeight: FontWeight.bold,
+        color: Colors.black87,
       ),
     );
   }
@@ -100,7 +139,11 @@ class TownLifePostItem extends ConsumerWidget {
   Widget _buildContent() {
     return Text(
       post.content,
-      style: const TextStyle(fontSize: 14),
+      style: const TextStyle(
+        fontSize: 14,
+        color: Colors.black54,
+        height: 1.4,
+      ),
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
     );
@@ -117,121 +160,203 @@ class TownLifePostItem extends ConsumerWidget {
       // Firebase Storage URL이 포함된 이미지 처리
       if (post.imageUrl != null &&
           post.imageUrl!.contains('firebasestorage.googleapis.com')) {
-        return Container(
-          height: 200,
-          width: double.infinity,
-          margin: const EdgeInsets.only(bottom: 12),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: Image.network(
-              post.imageUrl!,
-              fit: BoxFit.cover,
-              loadingBuilder: (context, child, loadingProgress) {
-                if (loadingProgress == null) return child;
-                return Center(
-                  child: CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            (loadingProgress.expectedTotalBytes ?? 1)
-                        : null,
-                  ),
-                );
-              },
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  height: 200,
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          child: Container(
+            height: 200,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFFFF7B8E).withOpacity(0.15),
+                  blurRadius: 10,
+                  offset: const Offset(0, 3),
+                  spreadRadius: 1,
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Hero(
+                tag: 'post_image_${post.postId}',
+                child: Image.network(
+                  post.imageUrl!,
+                  fit: BoxFit.cover,
                   width: double.infinity,
-                  color: Colors.grey[300],
-                  child: const Center(
-                    child: Icon(Icons.error_outline, color: Colors.grey),
-                  ),
-                );
-              },
+                  loadingBuilder: (context, child, loadingProgress) {
+                    if (loadingProgress == null) return child;
+                    return Container(
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFF5F5F5),
+                      ),
+                      child: Center(
+                        child: CircularProgressIndicator(
+                          valueColor: const AlwaysStoppedAnimation<Color>(
+                              Color(0xFFFF7B8E)),
+                          value: loadingProgress.expectedTotalBytes != null
+                              ? loadingProgress.cumulativeBytesLoaded /
+                                  (loadingProgress.expectedTotalBytes ?? 1)
+                              : null,
+                        ),
+                      ),
+                    );
+                  },
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200,
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFFE4E8),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Center(
+                        child: Icon(Icons.error_outline,
+                            color: Color(0xFFFF7B8E), size: 40),
+                      ),
+                    );
+                  },
+                ),
+              ),
             ),
           ),
         );
       }
 
       // 일반 이미지
-      return Container(
-        height: 200,
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 12),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          image: DecorationImage(
-            image: NetworkImage(post.imageUrl!),
-            fit: BoxFit.cover,
+      return Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        child: Container(
+          height: 200,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: const Color(0xFFFF7B8E).withOpacity(0.15),
+                blurRadius: 10,
+                offset: const Offset(0, 3),
+                spreadRadius: 1,
+              ),
+            ],
+            image: DecorationImage(
+              image: NetworkImage(post.imageUrl!),
+              fit: BoxFit.cover,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: Hero(
+              tag: 'post_image_${post.postId}',
+              child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+              ),
+            ),
           ),
         ),
       );
     }
 
     // 여러 이미지가 있는 경우 - 이미지 캐러셀 형태로 표시
-    return Container(
-      height: 200,
-      width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 12),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: PageView.builder(
-          itemCount: post.imageUrls.length,
-          itemBuilder: (context, index) {
-            final imageUrl = post.imageUrls[index];
-            return Stack(
-              children: [
-                Image.network(
-                  imageUrl,
-                  width: double.infinity,
-                  height: double.infinity,
-                  fit: BoxFit.cover,
-                  loadingBuilder: (context, child, loadingProgress) {
-                    if (loadingProgress == null) return child;
-                    return Center(
-                      child: CircularProgressIndicator(
-                        value: loadingProgress.expectedTotalBytes != null
-                            ? loadingProgress.cumulativeBytesLoaded /
-                                (loadingProgress.expectedTotalBytes ?? 1)
-                            : null,
-                      ),
-                    );
-                  },
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      color: Colors.grey[300],
-                      child: const Center(
-                        child: Icon(Icons.error_outline, color: Colors.grey),
-                      ),
-                    );
-                  },
-                ),
-                // 이미지 인디케이터
-                if (post.imageUrls.length > 1)
-                  Positioned(
-                    bottom: 8,
-                    right: 8,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Container(
+        height: 200,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [
+            BoxShadow(
+              color: const Color(0xFFFF7B8E).withOpacity(0.15),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: PageView.builder(
+            itemCount: post.imageUrls.length,
+            physics: const BouncingScrollPhysics(),
+            itemBuilder: (context, index) {
+              final imageUrl = post.imageUrls[index];
+              return Stack(
+                children: [
+                  Hero(
+                    tag: 'post_image_${post.postId}_$index',
+                    child: Image.network(
+                      imageUrl,
+                      width: double.infinity,
+                      height: double.infinity,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (context, child, loadingProgress) {
+                        if (loadingProgress == null) return child;
+                        return Container(
+                          color: const Color(0xFFF5F5F5),
+                          child: Center(
+                            child: CircularProgressIndicator(
+                              valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Color(0xFFFF7B8E)),
+                              value: loadingProgress.expectedTotalBytes != null
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      (loadingProgress.expectedTotalBytes ?? 1)
+                                  : null,
+                            ),
+                          ),
+                        );
+                      },
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          color: const Color(0xFFFFE4E8),
+                          child: const Center(
+                            child: Icon(Icons.error_outline,
+                                color: Color(0xFFFF7B8E), size: 40),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  // 이미지 위에 살짝 그라데이션 효과를 주어 더 세련되게 보이도록 함
+                  Positioned.fill(
+                    child: DecoratedBox(
                       decoration: BoxDecoration(
-                        color: Color.fromRGBO(0, 0, 0, 0.6),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Text(
-                        '${index + 1}/${post.imageUrls.length}',
-                        style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.center,
+                          colors: [
+                            Colors.black.withOpacity(0.2),
+                            Colors.transparent,
+                          ],
                         ),
                       ),
                     ),
                   ),
-              ],
-            );
-          },
+                  // 이미지 인디케이터
+                  if (post.imageUrls.length > 1)
+                    Positioned(
+                      bottom: 12,
+                      right: 12,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withOpacity(0.6),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          '${index + 1}/${post.imageUrls.length}',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -240,19 +365,18 @@ class TownLifePostItem extends ConsumerWidget {
   Widget _buildLocationInfo() {
     return Row(
       children: [
-        Text(
-          post.location,
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
-          ),
+        const Icon(
+          Icons.access_time_rounded,
+          size: 14,
+          color: Colors.grey,
         ),
-        const Text(' • ', style: TextStyle(color: Colors.grey)),
+        const SizedBox(width: 4),
         Text(
           post.timeAgo,
-          style: TextStyle(
+          style: const TextStyle(
             fontSize: 12,
-            color: Colors.grey[600],
+            color: Colors.grey,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -263,7 +387,7 @@ class TownLifePostItem extends ConsumerWidget {
     return Row(
       children: [
         _buildCommentButton(),
-        const SizedBox(width: 16),
+        const Spacer(),
         _buildLikeButton(ref, isLiked),
       ],
     );
@@ -272,13 +396,18 @@ class TownLifePostItem extends ConsumerWidget {
   Widget _buildCommentButton() {
     return Row(
       children: [
-        const Icon(Icons.chat_bubble_outline, size: 16, color: Colors.grey),
-        const SizedBox(width: 4),
+        const Icon(
+          Icons.chat_bubble_outline_rounded,
+          size: 18,
+          color: Color(0xFFFF7B8E),
+        ),
+        const SizedBox(width: 6),
         Text(
           '댓글 ${post.commentCount}',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.black54,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -292,18 +421,27 @@ class TownLifePostItem extends ConsumerWidget {
           onTap: () {
             ref.read(likedPostsProvider.notifier).toggleLike(index);
           },
-          child: Icon(
-            isLiked ? Icons.favorite : Icons.favorite_border,
-            size: 16,
-            color: isLiked ? const Color(0xFFFF7B8E) : Colors.grey,
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isLiked ? const Color(0xFFFFE4E8) : Colors.transparent,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              isLiked ? Icons.favorite : Icons.favorite_border_rounded,
+              size: 18,
+              color: const Color(0xFFFF7B8E),
+            ),
           ),
         ),
-        const SizedBox(width: 4),
+        const SizedBox(width: 6),
         Text(
           '좋아요 ${post.likeCount + (isLiked ? 1 : 0)}',
-          style: TextStyle(
-            fontSize: 12,
-            color: Colors.grey[600],
+          style: const TextStyle(
+            fontSize: 14,
+            color: Colors.black54,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],

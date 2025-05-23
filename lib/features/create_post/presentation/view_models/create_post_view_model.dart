@@ -13,6 +13,8 @@ final class CreatePostState {
     this.isLoading = false,
     this.error,
     this.category = TownLifeCategory.daily,
+    this.titleError,
+    this.contentError,
   });
 
   final String title;
@@ -22,6 +24,8 @@ final class CreatePostState {
   final bool isLoading;
   final String? error;
   final TownLifeCategory category;
+  final String? titleError;
+  final String? contentError;
 
   CreatePostState copyWith({
     String? title,
@@ -31,6 +35,8 @@ final class CreatePostState {
     bool? isLoading,
     String? error,
     TownLifeCategory? category,
+    String? titleError,
+    String? contentError,
   }) {
     return CreatePostState(
       title: title ?? this.title,
@@ -40,6 +46,8 @@ final class CreatePostState {
       isLoading: isLoading ?? this.isLoading,
       error: error,
       category: category ?? this.category,
+      titleError: titleError,
+      contentError: contentError,
     );
   }
 }
@@ -49,11 +57,16 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
 
   final CreatePostUsecase _createPostUsecase;
 
-  void setTitle(String title) =>
-      state = state.copyWith(title: title, error: null);
+  void setTitle(String title) {
+    final titleError = title.trim().isEmpty ? '제목을 입력해주세요' : null;
+    state = state.copyWith(title: title, error: null, titleError: titleError);
+  }
 
-  void setContent(String content) =>
-      state = state.copyWith(content: content, error: null);
+  void setContent(String content) {
+    final contentError = content.trim().isEmpty ? '내용을 입력해주세요' : null;
+    state = state.copyWith(
+        content: content, error: null, contentError: contentError);
+  }
 
   void toggleAnonymous() =>
       state = state.copyWith(isAnonymous: !state.isAnonymous);
@@ -68,9 +81,22 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
     state = state.copyWith(category: category);
   }
 
+  bool isFormValid() {
+    final titleValid = state.title.trim().isNotEmpty;
+    final contentValid = state.content.trim().isNotEmpty;
+
+    state = state.copyWith(
+      titleError: titleValid ? null : '제목을 입력해주세요',
+      contentError: contentValid ? null : '내용을 입력해주세요',
+    );
+
+    return titleValid && contentValid;
+  }
+
   Future<Post> submit(
     String location,
   ) async {
+    // 유효성 검사는 호출자 측에서 이미 처리됨
     state = state.copyWith(isLoading: true, error: null);
 
     final post = Post(
