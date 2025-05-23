@@ -6,8 +6,8 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:sodong_app/features/auth/domain/entities/user.dart';
 import 'package:sodong_app/features/location/location_viewmodel.dart';
-import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 class ProfileEdit extends ConsumerStatefulWidget {
   const ProfileEdit({super.key});
@@ -141,7 +141,15 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
                             'createdAt': FieldValue.serverTimestamp(),
                             'isAgreementComplete': true,
                           });
-                          // 다음 페이지로 이동 또는 홈으로 이동
+                          final user = FirebaseAuth.instance.currentUser;
+
+                          // 4. appUserProvider 업데이트
+                          if (user != null) {
+                            final appUser =
+                                await fetchUserInfoFromFirestore(user.uid);
+                            ref.read(appUserProvider.notifier).state = appUser;
+                          }
+
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
                                 content: Text('프로필이 성공적으로 생성되었습니다!')),
@@ -180,6 +188,20 @@ class _ProfileEditPageState extends ConsumerState<ProfileEdit> {
           ),
         ),
       ),
+    );
+  }
+
+  Future<AppUser?> fetchUserInfoFromFirestore(String uid) async {
+    final doc =
+        await FirebaseFirestore.instance.collection('users').doc(uid).get();
+    if (!doc.exists) return null;
+
+    final data = doc.data()!;
+    return AppUser(
+      uid: uid,
+      nickname: data['nickname'] ?? '',
+      region: data['region'] ?? '',
+      profileImageUrl: data['profileImageUrl'] ?? '',
     );
   }
 }
