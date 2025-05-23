@@ -6,11 +6,12 @@ class PostDetailDataSource {
       String location, String category, String postId) {
     return FirebaseFirestore.instance
         .collection('posts')
-        .doc(location)
+        .doc(location.trim())
         .collection(category)
         .doc(postId)
         .snapshots()
         .map((doc) {
+      print(doc.data());
       if (!doc.exists) {
         return PostDetailModel(
           postId: postId,
@@ -23,12 +24,7 @@ class PostDetailDataSource {
           userId: '',
         );
       }
-      return PostDetailModel.fromJson({
-        ...doc.data()!,
-        'postId': doc.id,
-        'location': location,
-        'category': category,
-      });
+      return PostDetailModel.fromJson(doc.data() ?? {});
     });
   }
 }
