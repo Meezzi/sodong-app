@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_detail/data/dtos/post_detail_dto.dart';
-import 'package:sodong_app/features/post_detail/data/repository/post_detail_repository.dart';
+import 'package:sodong_app/features/post_detail/data/repository/post_detail_repository_impl.dart';
 import 'package:tuple/tuple.dart';
 
 final postRepositoryProvider = Provider<PostDetailRepository>((ref) {
