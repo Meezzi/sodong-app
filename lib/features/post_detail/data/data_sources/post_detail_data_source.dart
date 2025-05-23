@@ -11,7 +11,6 @@ class PostDetailDataSource {
         .doc(postId)
         .snapshots()
         .map((doc) {
-      print(doc.data());
       if (!doc.exists) {
         return PostDetailModel(
           postId: postId,
