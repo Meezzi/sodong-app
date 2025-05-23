@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:sodong_app/features/auth/data/repository/vworld_Location_repositiry.dart';
-import 'package:sodong_app/features/auth/data/repository/vworld_location_repository_provider.dart';
+import 'package:sodong_app/features/locations/data/data_source/vworld_location_datasource_impl.dart';
+import 'package:sodong_app/features/locations/presentation/provider/providers.dart';
 
 class Location {
   Location({
@@ -15,8 +15,8 @@ class Location {
 }
 
 class LocationViewmodel extends Notifier<Location> {
-  late final VWorldLocationRepository _repository =
-      ref.read(vworldRepositoryProvider);
+  late final VWorldLocationDataSourceImpl _repository =
+      ref.read(vworldLocationDataSourceProvider);
 
   @override
   Location build() {
