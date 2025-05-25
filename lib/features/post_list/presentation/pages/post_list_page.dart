@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/auth/domain/entities/user.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
@@ -8,6 +9,7 @@ import 'package:sodong_app/features/post_list/presentation/view_models/town_life
 import 'package:sodong_app/features/post_list/presentation/widgets/category_selector.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/region_selector.dart';
 import 'package:sodong_app/features/post_list/presentation/widgets/town_life_post_item.dart';
+import 'package:sodong_app/features/profile/presentation/pages/profile_page.dart';
 
 class PostListPage extends ConsumerStatefulWidget {
   const PostListPage({super.key});
@@ -154,7 +156,14 @@ class _TownLifePageState extends ConsumerState<PostListPage> {
           padding: const EdgeInsets.only(right: 16),
           child: IconButton(
             onPressed: () {
-              //TODO: 마이페이지 이동
+              final appUser = ref.watch(appUserProvider);
+              if (appUser == null) return;
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfilePage(userId: appUser.uid),
+                ),
+              );
             },
             icon: const Icon(
               CupertinoIcons.person_crop_circle_fill,
