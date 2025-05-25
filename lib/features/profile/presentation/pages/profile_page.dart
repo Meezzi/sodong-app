@@ -42,7 +42,7 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                         ? NetworkImage(user.imageUrl)
                         : null,
                     radius: 60,
-                    backgroundColor: Colors.grey[300], // 이미지 없을 때 배경색
+                    backgroundColor: Colors.grey[300],
                     child: user.imageUrl.isEmpty
                         ? const Icon(Icons.person,
                             size: 60, color: Colors.white)

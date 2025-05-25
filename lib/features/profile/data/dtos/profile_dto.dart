@@ -2,6 +2,11 @@ import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart'
 
 /// DTO와 Entity 간 변환
 class ProfileDto {
+  factory ProfileDto.fromJson(Map<String, dynamic> json) => ProfileDto(
+        nickname: json['nickname'],
+        imageUrl: json['profileImageUrl'],
+        location: json['location'],
+      );
   ProfileDto({
     required this.nickname,
     required this.imageUrl,
@@ -12,17 +17,9 @@ class ProfileDto {
   final String imageUrl;
   final String location;
 
-  // JSON -> DTO 변환 시 profileImageUrl 키 사용
-  factory ProfileDto.fromJson(Map<String, dynamic> json) => ProfileDto(
-        nickname: json['nickname'],
-        imageUrl: json['profileImageUrl'], // profileImageUrl로 수정
-        location: json['location'],
-      );
-
-  // DTO -> JSON 변환 시 profileImageUrl 키 사용
   Map<String, dynamic> toJson() => {
         'nickname': nickname,
-        'profileImageUrl': imageUrl, // profileImageUrl로 수정
+        'profileImageUrl': imageUrl,
         'location': location,
       };
 
