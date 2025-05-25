@@ -16,7 +16,9 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    ref.read(profileViewModelProvider.notifier).fetchUser(widget.userId);
+    Future.microtask(() {
+      ref.read(profileViewModelProvider.notifier).fetchUser(widget.userId);
+    });
   }
 
   @override
