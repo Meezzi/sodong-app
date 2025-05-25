@@ -128,7 +128,71 @@ flutterfire configure
 flutter run
 ```
 
-## 📱 주요 화면
+## 📱 앱 스크린샷
+
+<div align="center">
+
+### 🔐 인증 플로우
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/splash_screen.png" width="250" alt="스플래시 화면"/>
+      <br/>
+      <b>🚀 스플래시 화면</b>
+      <br/>
+      <sub>앱 로딩 및 초기화</sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/login_screen.png" width="250" alt="로그인 화면"/>
+      <br/>
+      <b>🔑 로그인 화면</b>
+      <br/>
+      <sub>구글 소셜 로그인</sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/profile_edit_screen.png" width="250" alt="프로필 설정"/>
+      <br/>
+      <b>👤 프로필 설정</b>
+      <br/>
+      <sub>초기 프로필 정보 입력</sub>
+    </td>
+  </tr>
+</table>
+
+### 📝 메인 기능
+
+<table>
+  <tr>
+    <td align="center">
+      <img src="screenshots/post_list_screen.png" width="250" alt="게시물 목록"/>
+      <br/>
+      <b>🏠 홈 화면</b>
+      <br/>
+      <sub>주변 게시물 목록 표시</sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/create_post_screen.png" width="250" alt="게시물 작성"/>
+      <br/>
+      <b>✏️ 게시물 작성</b>
+      <br/>
+      <sub>위치 정보와 함께 새 게시물 작성</sub>
+    </td>
+    <td align="center">
+      <img src="screenshots/post_detail_screen.png" width="250" alt="게시물 상세"/>
+      <br/>
+      <b>📄 게시물 상세</b>
+      <br/>
+      <sub>게시물 내용 및 상호작용</sub>
+    </td>
+  </tr>
+</table>
+
+</div>
+
+> 💡 **스크린샷 추가 방법**: `screenshots/` 폴더에 위의 파일명으로 스크린샷을 추가해주세요!
+
+## 📱 주요 기능 상세
 
 ### 🔐 인증 플로우
 
