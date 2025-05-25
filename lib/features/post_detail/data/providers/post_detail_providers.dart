@@ -8,13 +8,17 @@ import 'package:tuple/tuple.dart';
 final remoteDataSourceProvider = Provider((ref) => PostDetailDataSource());
 
 final postDetailRepositoryProvider = Provider(
-    (ref) => PostDetailRepositoryImpl(ref.read(remoteDataSourceProvider)));
+  (ref) => PostDetailRepositoryImpl(ref.read(remoteDataSourceProvider)),
+);
 
-final getPostDetailProvider =
-    Provider((ref) => GetPostDetail(ref.read(postDetailRepositoryProvider)));
+final getPostDetailProvider = Provider(
+  (ref) => GetPostDetail(ref.read(postDetailRepositoryProvider)),
+);
 
 final postDetailStreamProvider = StreamProvider.autoDispose
-    .family<PostDetail, Tuple3<String, String, String>>((ref, args) {
-  final usecase = ref.read(getPostDetailProvider);
-  return usecase(args.item1, args.item2, args.item3);
-});
+    .family<PostDetail, Tuple3<String, String, String>>(
+  (ref, args) {
+    final usecase = ref.read(getPostDetailProvider);
+    return usecase(args.item1, args.item2, args.item3);
+  },
+);

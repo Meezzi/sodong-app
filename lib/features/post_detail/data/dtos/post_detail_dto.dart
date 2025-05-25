@@ -11,13 +11,22 @@ class PostDetailModel extends PostDetail {
     required super.category,
     required super.createdAt,
     required super.userId,
+    required super.nickname,
+    required super.profileImageUrl,
+    required super.isAnonymous,
   });
 
-  factory PostDetailModel.fromJson(Map<String, dynamic> json) {
+  factory PostDetailModel.fromJson(
+    Map<String, dynamic> json, {
+    required String nickname,
+    required String profileImageUrl,
+  }) {
     DateTime createdDate = DateTime.now();
     if (json['createdAt'] is Timestamp) {
       createdDate = (json['createdAt'] as Timestamp).toDate();
     }
+
+    final bool isAnonymous = json['isAnonymous'] ?? false;
 
     return PostDetailModel(
       postId: json['postId'] ?? '',
@@ -28,17 +37,11 @@ class PostDetailModel extends PostDetail {
       category: json['category'] ?? '',
       createdAt: createdDate,
       userId: json['userId'] ?? '',
+      isAnonymous: isAnonymous,
+      nickname: isAnonymous ? '익명' : nickname,
+      profileImageUrl: isAnonymous
+          ? 'https://yourdomain.com/default_anonymous.png'
+          : profileImageUrl,
     );
   }
-
-  Map<String, dynamic> toJson() => {
-        'postId': postId,
-        'title': title,
-        'content': content,
-        'imageUrl': imageUrl,
-        'location': location,
-        'category': category,
-        'createdAt': Timestamp.fromDate(createdAt),
-        'userId': userId,
-      };
 }
