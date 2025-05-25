@@ -66,18 +66,22 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
               ? LoadingView()
               : Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Expanded(
-                    child: ListView(
-                      children: [
-                        _LocationInfo(),
-                        _PostCard(
-                          createPostState: createPostState,
-                          createPostViewModel: createPostViewModel,
-                          imagePickerState: imagePickerState,
-                          imagePickerViewModel: imagePickerViewModel,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            _LocationInfo(),
+                            _PostCard(
+                              createPostState: createPostState,
+                              createPostViewModel: createPostViewModel,
+                              imagePickerState: imagePickerState,
+                              imagePickerViewModel: imagePickerViewModel,
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ),
         ),
