@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:label="sodong_app"
+        android:label="소소한 동네"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
