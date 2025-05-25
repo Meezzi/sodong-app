@@ -209,4 +209,3 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     );
   }
 }
-
