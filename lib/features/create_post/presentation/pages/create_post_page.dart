@@ -10,6 +10,7 @@ import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 part 'widgets/top_app_bar_title.dart';
 part 'widgets/current_location.dart';
+part 'widgets/post_card.dart';
 part 'widgets/category_dropdown.dart';
 part 'widgets/image_preview.dart';
 part 'widgets/title_text_field.dart';
@@ -52,94 +53,35 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: createPostState.isLoading
-            ? const Center(
-                child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
-                ),
-              )
-            : Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        children: [
-                          _LocationInfo(),
-                          _buildPostCard(
-                            createPostViewModel,
-                            imagePickerState,
-                            createPostState,
-                          ),
-                        ],
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).unfocus(),
+        child: SafeArea(
+          child: createPostState.isLoading
+              ? const Center(
+                  child: CircularProgressIndicator(
+                    valueColor:
+                        AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Column(
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          children: [
+                            _LocationInfo(),
+                            _PostCard(
+                              viewModel: createPostViewModel,
+                              imagePickerState: imagePickerState,
+                              createPostState: createPostState,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-      ),
-    );
-  }
-
-  Widget _buildPostCard(
-    CreatePostViewModel createPostViewModel,
-    ImagePickerState imagePickerState,
-    CreatePostState createPostState,
-  ) {
-    return GestureDetector(
-      onTap: () => FocusScope.of(context).unfocus(),
-      child: Card(
-        // margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(24),
-          side: BorderSide(
-            color: const Color(0xFFFFD5DE),
-            width: 0.5,
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text(
-                '카테고리 선택',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFFFF7B8E),
-                ),
-              ),
-              const SizedBox(height: 8),
-              _CategoryDropdown(),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Divider(
-                  color: Color(0xFFFFD5DE),
-                  thickness: 1,
-                ),
-              ),
-              _TitleTextField(notifier: createPostViewModel),
-              const Divider(
-                height: 24,
-                color: Color(0xFFFFE4E8),
-              ),
-              _ContentTextField(notifier: createPostViewModel),
-              if (imagePickerState.imageFiles != null &&
-                  imagePickerState.imageFiles!.isNotEmpty)
-                ImagePreview(imageFiles: imagePickerState.imageFiles!),
-              _ImagePickerAndAnonymousRow(
-                isAnonymous: createPostState.isAnonymous,
-                toggleAnonymous: (_) => createPostViewModel.toggleAnonymous(),
-                onPickImages: () => ref
-                    .read(imagePickerViewModelProvider.notifier)
-                    .pickImages(),
-              ),
-            ],
-          ),
         ),
       ),
     );
