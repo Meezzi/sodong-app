@@ -34,7 +34,11 @@ class _PostCard extends ConsumerWidget {
             createPostViewModel: createPostViewModel,
           ),
           SizedBox(height: 20),
-          _TitleTextField(notifier: createPostViewModel),
+          _TitleTextField(
+            title: createPostState.title,
+            titleError: createPostState.titleError,
+            onChanged: createPostViewModel.setTitle,
+          ),
           SizedBox(height: 20),
           _ContentTextField(notifier: createPostViewModel),
           if (imagePickerState.imageFiles != null &&
