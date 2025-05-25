@@ -3,10 +3,11 @@ import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart'
 /// DTO와 Entity 간 변환
 class ProfileDto {
   factory ProfileDto.fromJson(Map<String, dynamic> json) => ProfileDto(
-        nickname: json['nickname'],
-        imageUrl: json['profileImageUrl'],
-        location: json['location'],
+        nickname: json['nickname'] ?? '',
+        imageUrl: json['profileImageUrl'] ?? '',
+        location: json['location'] ?? '',
       );
+
   ProfileDto({
     required this.nickname,
     required this.imageUrl,
