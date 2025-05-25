@@ -23,9 +23,12 @@ class DetailHeader extends StatelessWidget {
               )
             : CircleAvatar(
                 radius: 20,
-                backgroundImage: NetworkImage(
-                  profileImageUrl ?? 'https://example.com/default_profile.png',
-                ),
+                backgroundImage: profileImageUrl != null
+                    ? NetworkImage(profileImageUrl!)
+                    : null,
+                child: profileImageUrl == null
+                    ? const Icon(Icons.person, size: 16, color: Colors.grey)
+                    : null,
               ),
         const SizedBox(width: 12),
         Text(
