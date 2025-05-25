@@ -61,7 +61,11 @@ class PostDetailPage extends ConsumerWidget {
                   child: ListView(
                     padding: const EdgeInsets.all(16.0),
                     children: [
-                      const DetailHeader(),
+                      DetailHeader(
+                        isAnonymous: post.isAnonymous,
+                        nickname: post.nickname,
+                        profileImageUrl: post.profileImageUrl,
+                      ),
                       const SizedBox(height: 16),
                       DetailTitle(title: post.title),
                       const SizedBox(height: 16),
