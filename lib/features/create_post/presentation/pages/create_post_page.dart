@@ -30,6 +30,8 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     final createPostState = ref.watch(createPostViewModelProvider);
     final createPostViewModel = ref.read(createPostViewModelProvider.notifier);
     final imagePickerState = ref.watch(imagePickerViewModelProvider);
+    final imagePickerViewModel =
+        ref.read(imagePickerViewModelProvider.notifier);
 
     return Scaffold(
       appBar: AppBar(
@@ -72,9 +74,10 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
                           children: [
                             _LocationInfo(),
                             _PostCard(
-                              viewModel: createPostViewModel,
+                              createPostViewModel: createPostViewModel,
                               imagePickerState: imagePickerState,
                               createPostState: createPostState,
+                              imagePickerViewModel: imagePickerViewModel,
                             ),
                           ],
                         ),
