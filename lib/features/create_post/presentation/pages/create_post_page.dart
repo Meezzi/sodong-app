@@ -9,6 +9,7 @@ import 'package:sodong_app/features/locations/presentation/viewmodel/location_vi
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 part 'widgets/top_app_bar_title.dart';
+part 'widgets/current_location.dart';
 part 'widgets/category_dropdown.dart';
 part 'widgets/image_preview.dart';
 part 'widgets/title_text_field.dart';
@@ -55,96 +56,29 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
         child: createPostState.isLoading
             ? const Center(
                 child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
-              ))
-            : Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      margin: const EdgeInsets.only(top: 16),
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Color(0x20000000),
-                            blurRadius: 10,
-                            offset: Offset(0, -2),
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
+                ),
+              )
+            : Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20),
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        children: [
+                          _LocationInfo(),
+                          _buildPostCard(
+                            createPostViewModel,
+                            imagePickerState,
+                            createPostState,
                           ),
                         ],
                       ),
-                      child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(30),
-                          topRight: Radius.circular(30),
-                        ),
-                        child: ListView(
-                          padding: const EdgeInsets.all(0),
-                          children: [
-                            _buildLocationInfo(),
-                            _buildPostCard(
-                              createPostViewModel,
-                              imagePickerState,
-                              createPostState,
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-      ),
-    );
-  }
-
-  Widget _buildLocationInfo() {
-    final locationState = ref.watch(locationProvider);
-
-    return Container(
-      color: Colors.white,
-      padding: const EdgeInsets.fromLTRB(20, 24, 20, 12),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: const Color(0xFFFFE4E8),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(
-              Icons.location_on,
-              size: 16,
-              color: Color(0xFFFF7B8E),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text(
-                  '현재 위치',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                  ),
-                ),
-                Text(
-                  locationState.region ?? '위치 정보 가져오는 중...',
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                    color: Colors.black87,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
       ),
     );
   }
@@ -157,7 +91,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     return GestureDetector(
       onTap: () => FocusScope.of(context).unfocus(),
       child: Card(
-        margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        // margin: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(24),
@@ -553,5 +487,3 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     );
   }
 }
-
-
