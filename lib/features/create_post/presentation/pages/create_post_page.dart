@@ -36,28 +36,16 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
         title: _TopAppBarTitle(),
         centerTitle: true,
         actions: [
-          Container(
-            margin: const EdgeInsets.only(right: 16),
-            child: ElevatedButton(
-              onPressed: createPostState.isLoading
-                  ? null
-                  : () => _handleCreatePost(context, ref),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFFFF7B8E),
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              ),
-              child: const Text(
-                '완료',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+          TextButton(
+            onPressed: createPostState.isLoading
+                ? null
+                : () => _handleCreatePost(context, ref),
+            child: Text(
+              '완료',
+              style: TextStyle(
+                color: const Color(0xFFFF7B8E),
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
               ),
             ),
           ),
