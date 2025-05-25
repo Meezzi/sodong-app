@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usecase.dart';
@@ -7,22 +8,36 @@ class CommentViewModel extends StateNotifier<List<Comment>> {
   CommentViewModel({
     required this.getCommentsUseCase,
     required this.addCommentUseCase,
+    required this.location,
+    required this.category,
     required this.postId,
   }) : super([]) {
-    loadComments();
+    _subscribeComments();
   }
+
   final GetCommentsUseCase getCommentsUseCase;
   final AddCommentUseCase addCommentUseCase;
+  final String location;
+  final String category;
   final String postId;
 
-  Future<void> loadComments() async {
-    final comments = await getCommentsUseCase(postId);
-    state = comments;
+  late final Stream<List<Comment>> _commentStream;
+  late final StreamSubscription<List<Comment>> _commentSubscription;
+
+  void _subscribeComments() {
+    _commentStream = getCommentsUseCase.stream(location, category, postId);
+    _commentSubscription = _commentStream.listen((comments) {
+      state = comments;
+    });
   }
 
-  /// 뷰모델에서 댓글 추가 유즈케이스 호출하는 메서드
   Future<void> addComment(String content) async {
-    await addCommentUseCase(postId, content);
-    await loadComments();
+    await addCommentUseCase(location, category, postId, content);
+  }
+
+  @override
+  void dispose() {
+    _commentSubscription.cancel();
+    super.dispose();
   }
 }

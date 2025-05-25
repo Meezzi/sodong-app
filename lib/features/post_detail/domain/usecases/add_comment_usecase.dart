@@ -5,7 +5,8 @@ class AddCommentUseCase {
   final CommentRepository repository;
 
   /// 댓글을 추가하는 유즈케이스
-  Future<void> call(String postId, String content) {
-    return repository.addComment(postId, content);
+  Future<void> call(
+      String location, String category, String postId, String content) {
+    return repository.addComment(location, category, postId, content);
   }
 }
