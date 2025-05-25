@@ -28,133 +28,124 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     final createPostViewModel = ref.read(createPostViewModelProvider.notifier);
     final imagePickerState = ref.watch(imagePickerViewModelProvider);
 
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
-        // 뒤로 가기 시 이미지 상태 초기화
-        if (didPop) {
-          ref.read(imagePickerViewModelProvider.notifier).clearAllImages();
-        }
-      },
-      child: Scaffold(
+    return Scaffold(
+      backgroundColor: const Color(0xFFFFE4E8),
+      appBar: AppBar(
         backgroundColor: const Color(0xFFFFE4E8),
-        appBar: AppBar(
-          backgroundColor: const Color(0xFFFFE4E8),
-          elevation: 0,
-          title: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Image.asset(
-                'assets/login.png',
-                height: 40,
-                width: 40,
-              ),
-              const Text(
-                '소소한 이야기 작성',
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  fontSize: 18,
-                ),
-              ),
-              Image.asset(
-                'assets/login.png',
-                height: 40,
-                width: 40,
-              ),
-            ],
-          ),
-          centerTitle: true,
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.vertical(
-              bottom: Radius.circular(30),
+        elevation: 0,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/login.png',
+              height: 40,
+              width: 40,
             ),
-          ),
-          // 뒤로가기 버튼 커스텀
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_new_rounded,
-                color: Colors.black87),
-            onPressed: () {
-              // 이미지 상태 초기화 후 뒤로 가기
-              ref.read(imagePickerViewModelProvider.notifier).clearAllImages();
-              Navigator.of(context).pop();
-            },
-          ),
-          actions: [
-            Container(
-              margin: const EdgeInsets.only(right: 16),
-              child: ElevatedButton(
-                onPressed: createPostState.isLoading
-                    ? null
-                    : () => _handleCreatePost(context, ref),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color(0xFFFF7B8E),
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                ),
-                child: const Text(
-                  '완료',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14,
-                  ),
-                ),
+            const Text(
+              '소소한 이야기 작성',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                color: Colors.black87,
+                fontSize: 18,
               ),
+            ),
+            Image.asset(
+              'assets/login.png',
+              height: 40,
+              width: 40,
             ),
           ],
         ),
-        body: SafeArea(
-          child: createPostState.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
-                ))
-              : Column(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        margin: const EdgeInsets.only(top: 16),
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
+        centerTitle: true,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
+        // 뒤로가기 버튼 커스텀
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios_new_rounded,
+              color: Colors.black87),
+          onPressed: () {
+            // 이미지 상태 초기화 후 뒤로 가기
+            ref.read(imagePickerViewModelProvider.notifier).clearAllImages();
+            Navigator.of(context).pop();
+          },
+        ),
+        actions: [
+          Container(
+            margin: const EdgeInsets.only(right: 16),
+            child: ElevatedButton(
+              onPressed: createPostState.isLoading
+                  ? null
+                  : () => _handleCreatePost(context, ref),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFFF7B8E),
+                foregroundColor: Colors.white,
+                elevation: 0,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              ),
+              child: const Text(
+                '완료',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+      body: SafeArea(
+        child: createPostState.isLoading
+            ? const Center(
+                child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
+              ))
+            : Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      margin: const EdgeInsets.only(top: 16),
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Color(0x20000000),
+                            blurRadius: 10,
+                            offset: Offset(0, -2),
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x20000000),
-                              blurRadius: 10,
-                              offset: Offset(0, -2),
+                        ],
+                      ),
+                      child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(30),
+                          topRight: Radius.circular(30),
+                        ),
+                        child: ListView(
+                          padding: const EdgeInsets.all(0),
+                          children: [
+                            _buildLocationInfo(),
+                            _buildPostCard(
+                              createPostViewModel,
+                              imagePickerState,
+                              createPostState,
                             ),
                           ],
                         ),
-                        child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(30),
-                            topRight: Radius.circular(30),
-                          ),
-                          child: ListView(
-                            padding: const EdgeInsets.all(0),
-                            children: [
-                              _buildLocationInfo(),
-                              _buildPostCard(
-                                createPostViewModel,
-                                imagePickerState,
-                                createPostState,
-                              ),
-                            ],
-                          ),
-                        ),
                       ),
                     ),
-                  ],
-                ),
-        ),
+                  ),
+                ],
+              ),
       ),
     );
   }
