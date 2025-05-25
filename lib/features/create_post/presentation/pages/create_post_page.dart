@@ -16,6 +16,7 @@ part 'widgets/title_text_field.dart';
 part 'widgets/content_text_field.dart';
 part 'widgets/image_picker_and_anonymous_row.dart';
 part 'widgets/custom_dialog.dart';
+part 'widgets/loading_view.dart';
 
 class CreatePostPage extends ConsumerStatefulWidget {
   const CreatePostPage({super.key});
@@ -62,30 +63,21 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
         onTap: () => FocusScope.of(context).unfocus(),
         child: SafeArea(
           child: createPostState.isLoading
-              ? const Center(
-                  child: CircularProgressIndicator(
-                    valueColor:
-                        AlwaysStoppedAnimation<Color>(Color(0xFFFF7B8E)),
-                  ),
-                )
+              ? LoadingView()
               : Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Column(
-                    children: [
-                      Expanded(
-                        child: ListView(
-                          children: [
-                            _LocationInfo(),
-                            _PostCard(
-                              createPostViewModel: createPostViewModel,
-                              imagePickerState: imagePickerState,
-                              createPostState: createPostState,
-                              imagePickerViewModel: imagePickerViewModel,
-                            ),
-                          ],
+                  child: Expanded(
+                    child: ListView(
+                      children: [
+                        _LocationInfo(),
+                        _PostCard(
+                          createPostState: createPostState,
+                          createPostViewModel: createPostViewModel,
+                          imagePickerState: imagePickerState,
+                          imagePickerViewModel: imagePickerViewModel,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
         ),
@@ -213,3 +205,4 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     );
   }
 }
+
