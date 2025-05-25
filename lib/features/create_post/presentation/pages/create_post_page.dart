@@ -57,11 +57,6 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
           ],
         ),
         centerTitle: true,
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(30),
-          ),
-        ),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
