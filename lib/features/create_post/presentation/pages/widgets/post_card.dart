@@ -51,7 +51,7 @@ class _PostCard extends ConsumerWidget {
           _ImagePickerAndAnonymousRow(
             isAnonymous: createPostState.isAnonymous,
             toggleAnonymous: (_) => createPostViewModel.toggleAnonymous(),
-            onPickImages: () => imagePickerViewModel,
+            onPickImages: () => imagePickerViewModel.pickImages(),
           ),
         ],
       ),
