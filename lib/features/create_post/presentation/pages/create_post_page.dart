@@ -62,16 +62,6 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
             bottom: Radius.circular(30),
           ),
         ),
-        // 뒤로가기 버튼 커스텀
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new_rounded,
-              color: Colors.black87),
-          onPressed: () {
-            // 이미지 상태 초기화 후 뒤로 가기
-            ref.read(imagePickerViewModelProvider.notifier).clearAllImages();
-            Navigator.of(context).pop();
-          },
-        ),
         actions: [
           Container(
             margin: const EdgeInsets.only(right: 16),
