@@ -8,6 +8,7 @@ import 'package:sodong_app/features/create_post/presentation/view_models/image_p
 import 'package:sodong_app/features/locations/presentation/viewmodel/location_view_model.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
+part 'widgets/top_app_bar_title.dart';
 part 'widgets/category_dropdown.dart';
 part 'widgets/image_preview.dart';
 part 'widgets/title_text_field.dart';
@@ -29,33 +30,10 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     final imagePickerState = ref.watch(imagePickerViewModelProvider);
 
     return Scaffold(
-      backgroundColor: const Color(0xFFFFE4E8),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFE4E8),
         elevation: 0,
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Image.asset(
-              'assets/login.png',
-              height: 40,
-              width: 40,
-            ),
-            const Text(
-              '소소한 이야기 작성',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.black87,
-                fontSize: 18,
-              ),
-            ),
-            Image.asset(
-              'assets/login.png',
-              height: 40,
-              width: 40,
-            ),
-          ],
-        ),
+        title: _TopAppBarTitle(),
         centerTitle: true,
         actions: [
           Container(
@@ -587,3 +565,5 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
     );
   }
 }
+
+
