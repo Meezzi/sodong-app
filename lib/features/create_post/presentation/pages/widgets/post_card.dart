@@ -29,7 +29,10 @@ class _PostCard extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 8),
-          _CategoryDropdown(),
+          _CategoryDropdown(
+            createPostState: createPostState,
+            createPostViewModel: createPostViewModel,
+          ),
           SizedBox(height: 20),
           _TitleTextField(notifier: createPostViewModel),
           SizedBox(height: 20),

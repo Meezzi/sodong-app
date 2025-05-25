@@ -1,16 +1,18 @@
 part of 'package:sodong_app/features/create_post/presentation/pages/create_post_page.dart';
 
-class _CategoryDropdown extends ConsumerWidget {
-  const _CategoryDropdown();
+class _CategoryDropdown extends StatelessWidget {
+  const _CategoryDropdown({
+    required this.createPostState,
+    required this.createPostViewModel,
+  });
+
+  final CreatePostState createPostState;
+  final CreatePostViewModel createPostViewModel;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.watch(createPostViewModelProvider);
-    final notifier = ref.read(createPostViewModelProvider.notifier);
-
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFFDF5F7),
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
           color: const Color(0xFFFFD5DE),
@@ -20,13 +22,12 @@ class _CategoryDropdown extends ConsumerWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<TownLifeCategory>(
-          value: viewModel.category,
+          value: createPostState.category,
           isExpanded: true,
           icon: const Icon(
             Icons.arrow_drop_down_circle_outlined,
             color: Color(0xFFFF7B8E),
           ),
-          dropdownColor: const Color(0xFFFDF5F7),
           borderRadius: BorderRadius.circular(16),
           style: const TextStyle(
             fontSize: 16,
@@ -42,7 +43,7 @@ class _CategoryDropdown extends ConsumerWidget {
           ),
           onChanged: (newCategory) {
             if (newCategory != null) {
-              notifier.setCategory(newCategory);
+              createPostViewModel.setCategory(newCategory);
             }
           },
           items: TownLifeCategory.values
@@ -50,33 +51,30 @@ class _CategoryDropdown extends ConsumerWidget {
               .map((category) {
             return DropdownMenuItem(
               value: category,
-              child: Container(
-                padding: const EdgeInsets.symmetric(vertical: 8),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(6),
-                      decoration: BoxDecoration(
-                        color: const Color(0xFFFFE4E8),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: Icon(
-                        _getCategoryIcon(category),
-                        size: 16,
-                        color: const Color(0xFFFF7B8E),
-                      ),
+              child: Row(
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFE4E8),
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                    const SizedBox(width: 12),
-                    Text(
-                      category.text,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.black87,
-                      ),
+                    child: Icon(
+                      _getCategoryIcon(category),
+                      size: 16,
+                      color: const Color(0xFFFF7B8E),
                     ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(width: 12),
+                  Text(
+                    category.text,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
+                ],
               ),
             );
           }).toList(),
