@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/profile/domain/entities/profile_entity.dart';
 import 'package:sodong_app/features/profile/presentation/viewmodels/profile_view_model.dart';
 
 class ProfilePage extends ConsumerStatefulWidget {
@@ -13,12 +12,13 @@ class ProfilePage extends ConsumerStatefulWidget {
 
 class _ProfilePageState extends ConsumerState<ProfilePage> {
   final nicknameController = TextEditingController();
-  final imageUrlController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    ref.read(profileViewModelProvider.notifier).fetchUser(widget.userId);
+    Future.microtask(() {
+      ref.read(profileViewModelProvider.notifier).fetchUser(widget.userId);
+    });
   }
 
   @override
@@ -32,19 +32,26 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
         error: (e, _) => Center(child: Text('오류: $e')),
         data: (user) {
           nicknameController.text = user.nickname;
-          imageUrlController.text = user.imageUrl;
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(
               children: [
+                const Spacer(flex: 2),
                 Center(
                   child: CircleAvatar(
-                    backgroundImage: NetworkImage(user.imageUrl),
+                    backgroundImage: user.imageUrl.isNotEmpty
+                        ? NetworkImage(user.imageUrl)
+                        : null,
                     radius: 60,
+                    backgroundColor: Colors.grey[300],
+                    child: user.imageUrl.isEmpty
+                        ? const Icon(Icons.person,
+                            size: 60, color: Colors.white)
+                        : null,
                   ),
                 ),
-                const SizedBox(height: 30),
+                const SizedBox(height: 40),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -61,27 +68,12 @@ class _ProfilePageState extends ConsumerState<ProfilePage> {
                           border: InputBorder.none,
                         ),
                         textAlign: TextAlign.center,
+                        readOnly: true,
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Color(0xFFFF7B8E)),
-                      onPressed: () async {
-                        final updated = Profile(
-                          nickname: nicknameController.text,
-                          imageUrl: imageUrlController.text,
-                          location: user.location,
-                        );
-                        await ref
-                            .read(profileViewModelProvider.notifier)
-                            .updateUser(widget.userId, updated);
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('프로필이 수정완료.')),
-                        );
-                      },
                     ),
                   ],
                 ),
+                const Spacer(flex: 3),
               ],
             ),
           );

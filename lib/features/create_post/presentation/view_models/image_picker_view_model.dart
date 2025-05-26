@@ -38,8 +38,15 @@ class ImagePickerViewModel extends AutoDisposeNotifier<ImagePickerState> {
       state = state.copyWith(isLoading: true);
       final imagePickerUsecase = ref.read(pickImagesUsecaseProvider);
       final selectedImages = await imagePickerUsecase.execute();
+
+      // 기존 이미지 + 새 이미지 합치기
+      final List<XFile> updatedImages = [
+        ...(state.imageFiles ?? []),
+        ...selectedImages,
+      ];
+
       state = state.copyWith(
-        imageFiles: selectedImages,
+        imageFiles: updatedImages,
         isLoading: false,
       );
 
