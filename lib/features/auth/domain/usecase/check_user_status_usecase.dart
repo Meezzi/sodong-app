@@ -15,7 +15,7 @@ class CheckUserStatusUseCase {
 
   Future<UserStatus> execute() async {
     final user = repository.getCurrentUser();
-    if (user == null) return UserStatus.notLoggedIn;
+    if (user == null) return UserStatus.agreementNotComplete;
 
     final isComplete = await repository.isAgreementComplete(user.uid);
     return isComplete == true
@@ -25,7 +25,6 @@ class CheckUserStatusUseCase {
 }
 
 final checkUserStatusUsecaseProvider = Provider<CheckUserStatusUseCase>((ref) {
- final repository = ref.read(remoteUserRepositoryProvider);
- return CheckUserStatusUseCase(repository) ;
-
+  final repository = ref.read(remoteUserRepositoryProvider);
+  return CheckUserStatusUseCase(repository);
 });

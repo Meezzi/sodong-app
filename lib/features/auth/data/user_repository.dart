@@ -4,12 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/auth/domain/repositories/user_repository.dart';
 
 class RemoteUserRepository implements UserRepository {
-  
   RemoteUserRepository({
     required this.auth,
     required this.firestore,
   });
-  
+
   final FirebaseAuth auth;
   final FirebaseFirestore firestore;
 
@@ -26,5 +25,5 @@ class RemoteUserRepository implements UserRepository {
 final remoteUserRepositoryProvider = Provider<UserRepository>((ref) {
   final auth = FirebaseAuth.instance;
   final firestore = FirebaseFirestore.instance;
-    return RemoteUserRepository(auth: auth, firestore: firestore);
+  return RemoteUserRepository(auth: auth, firestore: firestore);
 });
