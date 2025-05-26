@@ -1,22 +1,24 @@
 part of 'package:sodong_app/features/create_post/presentation/pages/create_post_page.dart';
 
-class _ContentTextField extends ConsumerWidget {
+class _ContentTextField extends StatelessWidget {
   const _ContentTextField({
-    required this.notifier,
+    required this.content,
+    required this.contentError,
+    required this.onChanged,
   });
 
-  final CreatePostViewModel notifier;
+  final String content;
+  final String? contentError;
+  final ValueChanged<String> onChanged;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final createPostState = ref.watch(createPostViewModelProvider);
-    final hasError = createPostState.contentError != null;
+  Widget build(BuildContext context) {
+    final hasError = contentError != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          height: 200,
           decoration: BoxDecoration(
             color: const Color(0xFFFAFAFA),
             borderRadius: BorderRadius.circular(20),
@@ -27,6 +29,17 @@ class _ContentTextField extends ConsumerWidget {
           ),
           padding: const EdgeInsets.all(16),
           child: TextField(
+            onChanged: onChanged,
+            minLines: 5,
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.newline,
+            textAlignVertical: TextAlignVertical.top,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              height: 1.5,
+            ),
             decoration: InputDecoration(
               hintText: '이야기를 들려주세요.',
               hintStyle: const TextStyle(
@@ -35,35 +48,14 @@ class _ContentTextField extends ConsumerWidget {
               ),
               border: InputBorder.none,
               contentPadding: EdgeInsets.zero,
-              enabledBorder: hasError
-                  ? OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    )
-                  : null,
-              focusedBorder: hasError
-                  ? OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: const BorderSide(color: Colors.transparent),
-                    )
-                  : null,
             ),
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-              height: 1.5,
-            ),
-            maxLines: null,
-            expands: true,
-            textAlignVertical: TextAlignVertical.top,
-            onChanged: notifier.setContent,
           ),
         ),
         if (hasError)
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 16),
             child: Text(
-              createPostState.contentError!,
+              contentError!,
               style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12,
@@ -74,3 +66,4 @@ class _ContentTextField extends ConsumerWidget {
     );
   }
 }
+

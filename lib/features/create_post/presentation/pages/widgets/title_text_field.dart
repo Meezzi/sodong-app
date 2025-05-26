@@ -1,16 +1,19 @@
 part of 'package:sodong_app/features/create_post/presentation/pages/create_post_page.dart';
 
-class _TitleTextField extends ConsumerWidget {
+class _TitleTextField extends StatelessWidget {
   const _TitleTextField({
-    required this.notifier,
+    required this.title,
+    required this.titleError,
+    required this.onChanged,
   });
 
-  final CreatePostViewModel notifier;
+  final String title;
+  final String? titleError;
+  final ValueChanged<String> onChanged;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final createPostState = ref.watch(createPostViewModelProvider);
-    final hasError = createPostState.titleError != null;
+  Widget build(BuildContext context) {
+    final hasError = titleError != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -26,18 +29,14 @@ class _TitleTextField extends ConsumerWidget {
           ),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: TextField(
+            onChanged: onChanged,
+            maxLines: 1,
             decoration: InputDecoration(
               hintText: '제목을 입력하세요.',
+              border: InputBorder.none,
               hintStyle: const TextStyle(
                 color: Colors.grey,
                 fontSize: 18,
-              ),
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(vertical: 12),
-              prefixIcon: Icon(
-                Icons.edit_note_rounded,
-                color: hasError ? Colors.red : const Color(0xFFFF7B8E),
-                size: 24,
               ),
             ),
             style: const TextStyle(
@@ -45,15 +44,13 @@ class _TitleTextField extends ConsumerWidget {
               fontWeight: FontWeight.bold,
               color: Colors.black87,
             ),
-            maxLines: 1,
-            onChanged: notifier.setTitle,
           ),
         ),
         if (hasError)
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 16),
             child: Text(
-              createPostState.titleError!,
+              titleError!,
               style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12,
