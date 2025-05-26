@@ -10,6 +10,7 @@
 .history
 .svn/
 .swiftpm/
+.env
 migrate_working_dir/
 
 # IntelliJ related
@@ -17,6 +18,12 @@ migrate_working_dir/
 *.ipr
 *.iws
 .idea/
+
+# Firebase config
+firebase_options.dart
+firebase.json
+android/app/google-services.json
+ios/Runner/GoogleService-info.plist
 
 # The .vscode folder contains launch configuration and tasks you configure in
 # VS Code which you may wish to be included in version control, so this line

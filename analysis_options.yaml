@@ -21,7 +21,6 @@ linter:
   # `// ignore_for_file: name_of_lint` syntax on the line or in the file
   # producing the lint.
   rules:
-    - prefer_const_constructors
     - always_declare_return_types
     - avoid_types_on_closure_parameters
     - avoid_escaping_inner_quotes
@@ -29,7 +28,6 @@ linter:
     - sort_constructors_first
     - unawaited_futures
     - directives_ordering
-    - unnecessary_final
     - unnecessary_parenthesis
     - conditional_uri_does_not_exist
     - prefer_single_quotes
@@ -41,6 +39,5 @@ linter:
     - use_key_in_widget_constructors
     # avoid_print: false  # Uncomment to disable the `avoid_print` rule
     # prefer_single_quotes: true  # Uncomment to enable the `prefer_single_quotes` rule
-
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

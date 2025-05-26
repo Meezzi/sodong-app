@@ -1,4 +1,4 @@
-package com.example.sodong_app
+package com.devkingdom.sodong
 
 import io.flutter.embedding.android.FlutterActivity
 
