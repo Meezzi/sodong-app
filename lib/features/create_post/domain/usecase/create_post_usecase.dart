@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/core/result/result.dart';
-import 'package:sodong_app/features/post/data/remote_post_repository.dart';
+import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
