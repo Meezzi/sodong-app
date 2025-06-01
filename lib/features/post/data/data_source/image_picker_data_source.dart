@@ -1,8 +1,9 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 
-class ImagePickerService {
-  final ImagePicker _picker = ImagePicker();
+class ImagePickerDataSource {
+  ImagePickerDataSource(this._picker);
+
+  final ImagePicker _picker;
 
   Future<List<XFile>> pickImages() async {
     try {
@@ -13,7 +14,3 @@ class ImagePickerService {
     }
   }
 }
-
-final imagePickerRepositoryProvider = Provider<ImagePickerService>((ref) {
-  return ImagePickerService();
-});
