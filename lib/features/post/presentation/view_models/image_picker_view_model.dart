@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sodong_app/features/post/domain/use_case/pick_image_usecase.dart';
-import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
+import 'package:sodong_app/features/post/providers/image_providers.dart';
+import 'package:sodong_app/features/post/providers/post_providers.dart';
 
 class ImagePickerState {
   ImagePickerState({
@@ -36,7 +36,7 @@ class ImagePickerViewModel extends AutoDisposeNotifier<ImagePickerState> {
   Future<void> pickImages() async {
     try {
       state = state.copyWith(isLoading: true);
-      final imagePickerUsecase = ref.read(pickImagesUsecaseProvider);
+      final imagePickerUsecase = ref.read(imagePickerUsecaseProvider);
       final selectedImages = await imagePickerUsecase.execute();
 
       // 기존 이미지 + 새 이미지 합치기
@@ -114,8 +114,3 @@ class ImagePickerViewModel extends AutoDisposeNotifier<ImagePickerState> {
     state = state.copyWith(imageFiles: []);
   }
 }
-
-final imagePickerViewModelProvider =
-    AutoDisposeNotifierProvider<ImagePickerViewModel, ImagePickerState>(() {
-  return ImagePickerViewModel();
-});
