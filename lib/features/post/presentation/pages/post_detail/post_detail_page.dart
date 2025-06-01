@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post/providers/post_providers.dart';
-import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_view_model_provider.dart';
+import 'package:sodong_app/features/comment/providers/comment_provider.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_category.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_comment_input.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_comment_item.dart';
@@ -10,6 +9,7 @@ import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_image_view.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_loctaion.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_title.dart';
+import 'package:sodong_app/features/post/providers/post_providers.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:tuple/tuple.dart';
 
