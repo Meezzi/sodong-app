@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:sodong_app/features/post/data/data_source/post_data_source.dart';
+import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
-class RemotePostDataSource implements PostDataSource {
+class RemotePostDataSource implements CreatePostDataSource {
   RemotePostDataSource(this._firestore, this._storage);
 
   final FirebaseFirestore _firestore;

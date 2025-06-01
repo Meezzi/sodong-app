@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sodong_app/core/result/create_post_exception.dart';
 import 'package:sodong_app/core/result/result.dart';
-import 'package:sodong_app/features/post/data/data_source/post_data_source.dart';
+import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
@@ -10,7 +10,7 @@ import 'package:sodong_app/features/post_list/domain/models/category.dart';
 class RemotePostRepository implements PostRepository {
   RemotePostRepository(this._postDataSource);
 
-  final PostDataSource _postDataSource;
+  final CreatePostDataSource _postDataSource;
 
   /// Post 저장
   /// DataSource 내부에서 이미지 업로드 처리
