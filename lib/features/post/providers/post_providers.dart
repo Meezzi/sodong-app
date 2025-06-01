@@ -15,35 +15,32 @@ import 'package:sodong_app/features/post/domain/use_case/fetch_post_detail_useca
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
 import 'package:tuple/tuple.dart';
 
+/// Entity <-> DTO 변환
 final _postMapperProvider = Provider<PostMapper>((ref) {
   return PostMapper();
 });
 
+/// 게시물을 생성하는 CreatePostDataSource Provider
 final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
   final firestore = FirebaseFirestore.instance;
   final storage = FirebaseStorage.instance;
   return RemoteCreatePostDataSource(firestore, storage);
 });
 
-final _postDetailDataSourceProvider = Provider<PostDetailDataSource>((ref) {
-  return RemotePostDetailDataSource();
+/// 게시물을 생성하는 PostRepository Provider
+final _postRepositoryProvider = Provider<PostRepository>((ref) {
+  final datasource = ref.read(_createPostDatasourceProvider);
+  final mapper = ref.read(_postMapperProvider);
+  return RemotePostRepository(datasource, mapper);
 });
 
-final _postRepositoryProvider = Provider<PostRepository>(
-  (ref) {
-    final datasource = ref.read(_createPostDatasourceProvider);
-    final mapper = ref.read(_postMapperProvider);
-    return RemotePostRepository(datasource, mapper);
-  },
-);
+/// 게시물을 생성하는 CreatePostUseCase Provider
+final _createPostUsecaseProvider = Provider<CreatePostUseCase>((ref) {
+  final repository = ref.read(_postRepositoryProvider);
+  return CreatePostUseCase(repository);
+});
 
-final _createPostUsecaseProvider = Provider(
-  (ref) {
-    final repository = ref.read(_postRepositoryProvider);
-    return CreatePostUseCase(repository);
-  },
-);
-
+/// 게시물을 생성하는 CreatePostViewModel Provider
 final createPostViewModelProvider =
     StateNotifierProvider.autoDispose<CreatePostViewModel, CreatePostState>(
         (ref) {
@@ -51,17 +48,25 @@ final createPostViewModelProvider =
   return CreatePostViewModel(usecase);
 });
 
-final _postDetailRepositoryProvider = Provider((ref) {
+/// 게시물의 상세보기 데이터를 가져오는 PostDetailDataSource Provider
+final _postDetailDataSourceProvider = Provider<PostDetailDataSource>((ref) {
+  return RemotePostDetailDataSource();
+});
+
+/// 게시물의 상세보기 데이터를 가져오는 PostDetailRepository Provider
+final _postDetailRepositoryProvider = Provider<PostDetailRepositoryImpl>((ref) {
   final datasource = ref.read(_postDetailDataSourceProvider);
   final mapper = ref.read(_postMapperProvider);
   return PostDetailRepositoryImpl(datasource, mapper);
 });
 
+/// 게시물의 상세보기 데이터를 가져오는 FetchPostDetailUseCase Provider
 final fetchPostDetailUseCaseProvider = Provider<FetchPostDetailUseCase>((ref) {
   final repository = ref.read(_postDetailRepositoryProvider);
   return FetchPostDetailUseCase(repository);
 });
 
+/// 게시물의 상세보기 데이터를 가져오는 PostDetailStreamProvider
 final postDetailStreamProvider = StreamProvider.autoDispose
     .family<Post, Tuple3<String, String, String>>((ref, args) {
   final usecase = ref.read(fetchPostDetailUseCaseProvider);
