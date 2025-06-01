@@ -1,4 +1,4 @@
-import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
+import 'package:sodong_app/features/comment/domain/repositories/comment_repository.dart';
 
 class AddCommentUseCase {
   AddCommentUseCase(this.repository);

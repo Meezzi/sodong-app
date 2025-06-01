@@ -1,5 +1,5 @@
-import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
-import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
+import 'package:sodong_app/features/comment/domain/entities/comment_entity.dart';
+import 'package:sodong_app/features/comment/domain/repositories/comment_repository.dart';
 
 /// 댓글 조회 기능을 수행하는 유스케이스 클래스
 class GetCommentsUseCase {
