@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
-import 'package:sodong_app/features/post_detail/domain/usecases/add_comment_usecase.dart';
-import 'package:sodong_app/features/post_detail/domain/usecases/get_comment_usecase.dart';
+import 'package:sodong_app/features/comment/domain/entities/comment_entity.dart';
+import 'package:sodong_app/features/comment/domain/use_case/add_comment_usecase.dart';
+import 'package:sodong_app/features/comment/domain/use_case/get_comment_usecase.dart';
 
 class CommentViewModel extends StateNotifier<List<Comment>> {
   CommentViewModel({
