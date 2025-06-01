@@ -103,16 +103,17 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
 
     final post = Post(
       postId: '',
+      category: state.category,
       title: state.title,
       content: state.content,
-      imageUrls: state.imageUrls,
+      region: location,
       createdAt: DateTime.now(),
       isAnonymous: state.isAnonymous,
-      category: state.category,
-      region: location,
       userId: uid,
       nickname: state.isAnonymous ? '익명' : nickname,
       commentCount: 0,
+      profileImageUrl: '',
+      imageUrls: state.imageUrls,
     );
 
     final result = await _createPostUsecase.execute(
