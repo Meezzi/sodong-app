@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/data/providers/post_detail_providers.dart';
+import 'package:sodong_app/features/post/providers/post_providers.dart';
 import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_view_model_provider.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_category.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_comment_input.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_comment_item.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_content.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_header.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_image_view.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_loctaion.dart';
-import 'package:sodong_app/features/post_detail/presentation/widgets/detail_title.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_category.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_comment_input.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_comment_item.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_content.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_header.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_image_view.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_loctaion.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_title.dart';
+import 'package:sodong_app/features/post_list/domain/models/category.dart';
 import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {
@@ -21,7 +22,7 @@ class PostDetailPage extends ConsumerWidget {
   });
 
   final String location;
-  final String category;
+  final TownLifeCategory category;
   final String postId;
 
   @override
@@ -31,7 +32,7 @@ class PostDetailPage extends ConsumerWidget {
     );
 
     final comments = ref.watch(
-      commentViewModelProvider(Tuple3(location, category, postId)),
+      commentViewModelProvider(Tuple3(location, category.id, postId)),
     );
 
     return Scaffold(
@@ -112,7 +113,7 @@ class PostDetailPage extends ConsumerWidget {
                 ),
                 DetailCommentInput(
                   location: location,
-                  category: category,
+                  category: category.id,
                   postId: postId,
                 ),
               ],
