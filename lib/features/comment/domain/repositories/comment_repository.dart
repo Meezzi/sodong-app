@@ -1,4 +1,4 @@
-import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
+import 'package:sodong_app/features/comment/domain/entities/comment_entity.dart';
 
 abstract class CommentRepository {
   Stream<List<Comment>> getCommentsStream(
