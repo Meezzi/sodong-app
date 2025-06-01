@@ -13,7 +13,7 @@ import 'package:sodong_app/features/post/domain/repository/post_repository.dart'
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post/domain/use_case/fetch_post_detail_usecase.dart';
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:tuple/tuple.dart';
 
 final _postMapperProvider = Provider<PostMapper>((ref) {

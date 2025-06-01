@@ -10,7 +10,7 @@ import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_loctaion.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_title.dart';
 import 'package:sodong_app/features/post/providers/post_providers.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {

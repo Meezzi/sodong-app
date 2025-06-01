@@ -6,7 +6,7 @@ import 'package:sodong_app/features/post/data/data_source/create_post_data_sourc
 import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class RemotePostRepository implements PostRepository {
   RemotePostRepository(this._postDataSource, this._postMapper);

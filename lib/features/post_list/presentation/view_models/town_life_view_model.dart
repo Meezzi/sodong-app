@@ -2,7 +2,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post/domain/use_case/post_service.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/providers/post_providers.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/pagination_manager.dart';

@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/auth/domain/entities/user.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';

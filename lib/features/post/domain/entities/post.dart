@@ -1,4 +1,4 @@
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class Post {
   Post({

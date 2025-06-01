@@ -8,7 +8,7 @@ import 'package:sodong_app/features/post/presentation/view_models/create_post_vi
 import 'package:sodong_app/features/post/presentation/view_models/image_picker_view_model.dart';
 import 'package:sodong_app/features/post/providers/image_providers.dart';
 import 'package:sodong_app/features/post/providers/post_providers.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 part 'widgets/top_app_bar_title.dart';
 part 'widgets/current_location.dart';
 part 'widgets/post_card.dart';

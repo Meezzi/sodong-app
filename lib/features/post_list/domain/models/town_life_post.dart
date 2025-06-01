@@ -1,5 +1,5 @@
 import 'package:sodong_app/features/post/domain/entities/region.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class TownLifePost {
   // 모든 이미지 URL 목록

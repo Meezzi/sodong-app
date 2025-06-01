@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/post/data/data_source/post_detail_data_source.dart';
 import 'package:sodong_app/features/post/data/dto/post_dto.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class RemotePostDetailDataSource implements PostDetailDataSource {
   @override
