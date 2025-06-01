@@ -1,6 +1,6 @@
 import 'package:sodong_app/features/comment/data/data_sources/comment_data_source.dart';
-import 'package:sodong_app/features/post_detail/domain/entities/comment_entity.dart';
-import 'package:sodong_app/features/post_detail/domain/repositories/comment_repository.dart';
+import 'package:sodong_app/features/comment/domain/entities/comment_entity.dart';
+import 'package:sodong_app/features/comment/domain/repositories/comment_repository.dart';
 
 class CommentRepositoryImpl implements CommentRepository {
   CommentRepositoryImpl(this.service);
