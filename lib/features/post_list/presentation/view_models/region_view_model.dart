@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import 'package:sodong_app/features/post/domain/entities/region.dart';
 
 // 선택된 지역 프로바이더
 final selectedRegionProvider = StateProvider<Region>((ref) => regionList.first);

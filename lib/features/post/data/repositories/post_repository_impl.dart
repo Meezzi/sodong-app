@@ -1,6 +1,6 @@
 import 'package:sodong_app/features/post/data/data_source/post_cache_data_source.dart';
 import 'package:sodong_app/features/post/data/data_source/post_remote_data_source.dart';
-import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/domain/repositories/post_repository.dart';
 

@@ -1,4 +1,4 @@
-import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 
 /// 게시물 저장소 인터페이스
