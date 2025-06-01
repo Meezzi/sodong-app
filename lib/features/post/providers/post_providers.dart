@@ -3,10 +3,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
 import 'package:sodong_app/features/post/data/data_source/remote_create_post_data_source.dart';
+import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
 import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
+
+final _postMapperProvider = Provider<PostMapper>((ref) {
+  return PostMapper();
+});
 
 final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
   final firestore = FirebaseFirestore.instance;
@@ -17,7 +22,8 @@ final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
 final _postRepositoryProvider = Provider<PostRepository>(
   (ref) {
     final datasource = ref.read(_createPostDatasourceProvider);
-    return RemotePostRepository(datasource);
+    final mapper = ref.read(_postMapperProvider);
+    return RemotePostRepository(datasource, mapper);
   },
 );
 
