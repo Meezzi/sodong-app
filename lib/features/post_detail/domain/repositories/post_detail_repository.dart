@@ -1,6 +1,6 @@
-import 'package:sodong_app/features/post_detail/domain/entities/post_detail_entity.dart';
+import 'package:sodong_app/features/post/domain/entities/post.dart';
 
 abstract class PostDetailRepository {
-  Stream<PostDetail> getPostDetail(
+  Stream<Post> getPostDetail(
       String location, String category, String postId);
 }

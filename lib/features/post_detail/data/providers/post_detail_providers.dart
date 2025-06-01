@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post/data/data_source/remote_post_detail_data_source.dart';
+import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post_detail/data/repository/post_detail_repository_impl.dart';
-import 'package:sodong_app/features/post_detail/domain/entities/post_detail_entity.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/get_post_detail_usecase.dart';
 import 'package:tuple/tuple.dart';
 
@@ -16,7 +16,7 @@ final getPostDetailProvider = Provider(
 );
 
 final postDetailStreamProvider = StreamProvider.autoDispose
-    .family<PostDetail, Tuple3<String, String, String>>(
+    .family<Post, Tuple3<String, String, String>>(
   (ref, args) {
     final usecase = ref.read(getPostDetailProvider);
     return usecase(args.item1, args.item2, args.item3);
