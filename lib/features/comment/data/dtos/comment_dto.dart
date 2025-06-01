@@ -1,13 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Comment {
-  final String id;
-  final String postId;
-  final String userId;
-  final String content;
-  final DateTime createdAt;
-
-  Comment({
+class CommentDto {
+  CommentDto({
     required this.id,
     required this.postId,
     required this.userId,
@@ -15,9 +9,15 @@ class Comment {
     required this.createdAt,
   });
 
-  factory Comment.fromFirestore(DocumentSnapshot doc) {
+  final String id;
+  final String postId;
+  final String userId;
+  final String content;
+  final DateTime createdAt;
+
+  factory CommentDto.fromFirestore(DocumentSnapshot doc) {
     final data = doc.data() as Map<String, dynamic>;
-    return Comment(
+    return CommentDto(
       id: doc.id,
       postId: data['postId'],
       userId: data['userId'],
