@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
-import 'package:sodong_app/features/post/domain/entities/post.dart';
+import 'package:sodong_app/features/post/data/dto/post_dto.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 class RemoteCreatePostDataSource implements CreatePostDataSource {
@@ -12,11 +12,11 @@ class RemoteCreatePostDataSource implements CreatePostDataSource {
   final FirebaseStorage _storage;
 
   @override
-  Future<Post> createPostWithImages(
+  Future<PostDto> createPostWithImages(
     String location,
     TownLifeCategory category,
     List<String> imagePaths,
-    Post post,
+    PostDto post,
   ) async {
     final colRef =
         _firestore.collection('posts').doc(location).collection(category.id);
