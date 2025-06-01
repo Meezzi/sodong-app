@@ -61,8 +61,38 @@ class PostDto {
       'userId': userId,
       'nickname': nickname,
       'commentCount': commentCount,
-      'profileImageUrl' : profileImageUrl,
+      'profileImageUrl': profileImageUrl,
       'imageUrls': imageUrls,
     };
+  }
+
+  PostDto copyWith({
+    String? postId,
+    TownLifeCategory? category,
+    String? title,
+    String? content,
+    String? region,
+    DateTime? createdAt,
+    bool? isAnonymous,
+    String? userId,
+    String? nickname,
+    int? commentCount,
+    String? profileImageUrl,
+    List<String>? imageUrl,
+  }) {
+    return PostDto(
+      postId: postId ?? this.postId,
+      category: category ?? this.category,
+      title: title ?? this.title,
+      content: content ?? this.content,
+      region: region ?? this.region,
+      createdAt: createdAt ?? this.createdAt,
+      isAnonymous: isAnonymous ?? this.isAnonymous,
+      userId: userId ?? this.userId,
+      nickname: nickname ?? this.nickname,
+      commentCount: commentCount ?? this.commentCount,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
+      imageUrls: imageUrl ?? imageUrls,
+    );
   }
 }
