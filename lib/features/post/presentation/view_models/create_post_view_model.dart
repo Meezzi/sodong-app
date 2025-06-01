@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/core/result/result.dart';
-import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
+import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
 final class CreatePostState {
@@ -133,10 +133,3 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
     throw Exception('알 수 없는 오류 발생');
   }
 }
-
-final createPostViewModelProvider =
-    StateNotifierProvider.autoDispose<CreatePostViewModel, CreatePostState>(
-        (ref) {
-  final usecase = ref.watch(createPostUsecaseProvider);
-  return CreatePostViewModel(usecase);
-});

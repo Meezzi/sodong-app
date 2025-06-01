@@ -6,6 +6,7 @@ import 'package:sodong_app/features/post/data/data_source/remote_post_data_sourc
 import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
+import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
 
 final _postDatasourceProvider = Provider<PostDataSource>((ref) {
   final firestore = FirebaseFirestore.instance;
@@ -26,3 +27,10 @@ final _createPostUsecaseProvider = Provider(
     return CreatePostUseCase(repository);
   },
 );
+
+final createPostViewModelProvider =
+    StateNotifierProvider.autoDispose<CreatePostViewModel, CreatePostState>(
+        (ref) {
+  final usecase = ref.read(_createPostUsecaseProvider);
+  return CreatePostViewModel(usecase);
+});
