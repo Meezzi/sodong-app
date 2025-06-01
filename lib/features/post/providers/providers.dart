@@ -20,3 +20,9 @@ final _postRepositoryProvider = Provider<PostRepository>(
   },
 );
 
+final _createPostUsecaseProvider = Provider(
+  (ref) {
+    final repository = ref.read(_postRepositoryProvider);
+    return CreatePostUsecase(repository);
+  },
+);
