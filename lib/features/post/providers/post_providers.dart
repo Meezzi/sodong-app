@@ -6,6 +6,7 @@ import 'package:sodong_app/features/post/data/data_source/post_detail_data_sourc
 import 'package:sodong_app/features/post/data/data_source/remote_create_post_data_source.dart';
 import 'package:sodong_app/features/post/data/data_source/remote_post_detail_data_source.dart';
 import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
+import 'package:sodong_app/features/post/data/repositories/post_detail_repository_impl.dart';
 import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
@@ -21,7 +22,7 @@ final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
   return RemoteCreatePostDataSource(firestore, storage);
 });
 
-final _remotePostDetailDataSourceProvider = Provider<PostDetailDataSource>((ref) {
+final _postDetailDataSourceProvider = Provider<PostDetailDataSource>((ref) {
   return RemotePostDetailDataSource();
 });
 
@@ -45,4 +46,10 @@ final createPostViewModelProvider =
         (ref) {
   final usecase = ref.read(_createPostUsecaseProvider);
   return CreatePostViewModel(usecase);
+});
+
+final _postDetailRepositoryProvider = Provider((ref) {
+  final datasource = ref.read(_postDetailDataSourceProvider);
+  final mapper = ref.read(_postMapperProvider);
+  PostDetailRepositoryImpl(datasource, mapper);
 });
