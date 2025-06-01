@@ -1,4 +1,4 @@
-part of 'package:sodong_app/features/post/presentation/pages/create_post_page.dart';
+part of 'package:sodong_app/features/post/presentation/pages/create_post/create_post_page.dart';
 
 class _LocationInfo extends ConsumerWidget {
   const _LocationInfo();
