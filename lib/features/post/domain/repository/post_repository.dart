@@ -7,7 +7,7 @@ abstract interface class PostRepository {
   Future<Result<Post>> createPostWithImages(
     String location,
     TownLifeCategory category,
-    List<String> imageUrls,
+    List<String> imagePaths,
     Post post,
   );
 }
