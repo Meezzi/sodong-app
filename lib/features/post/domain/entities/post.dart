@@ -12,6 +12,7 @@ class Post {
     required this.userId,
     required this.nickname,
     required this.commentCount,
+    required this.profileImageUrl,
     required this.imageUrls,
   });
 
@@ -25,6 +26,7 @@ class Post {
   final String userId;
   final String nickname;
   final int commentCount;
+  final String profileImageUrl;
   final List<String> imageUrls;
 
   Post copyWith({
@@ -38,6 +40,7 @@ class Post {
     String? userId,
     String? nickname,
     int? commentCount,
+    String? profileImageUrl,
     List<String>? imageUrl,
   }) {
     return Post(
@@ -51,6 +54,7 @@ class Post {
       userId: userId ?? this.userId,
       nickname: nickname ?? this.nickname,
       commentCount: commentCount ?? this.commentCount,
+      profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       imageUrls: imageUrl ?? imageUrls,
     );
   }
