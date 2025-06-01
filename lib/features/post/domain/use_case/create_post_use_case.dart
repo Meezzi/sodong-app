@@ -3,8 +3,8 @@ import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
-class CreatePostUsecase {
-  CreatePostUsecase(this._repository);
+class CreatePostUseCase {
+  CreatePostUseCase(this._repository);
 
   final PostRepository _repository;
 
