@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
+import 'package:sodong_app/features/post/data/data_source/post_detail_data_source.dart';
 import 'package:sodong_app/features/post/data/data_source/remote_create_post_data_source.dart';
+import 'package:sodong_app/features/post/data/data_source/remote_post_detail_data_source.dart';
 import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
 import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
@@ -17,6 +19,10 @@ final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
   final firestore = FirebaseFirestore.instance;
   final storage = FirebaseStorage.instance;
   return RemoteCreatePostDataSource(firestore, storage);
+});
+
+final _remotePostDetailDataSourceProvider = Provider<PostDetailDataSource>((ref) {
+  return RemotePostDetailDataSource();
 });
 
 final _postRepositoryProvider = Provider<PostRepository>(
