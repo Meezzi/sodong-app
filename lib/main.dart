@@ -10,7 +10,7 @@ import 'package:sodong_app/features/auth/presentation/pages/policy/terms_page.da
 import 'package:sodong_app/features/auth/presentation/pages/profile_edit/profile_edit.dart';
 import 'package:sodong_app/features/auth/presentation/pages/splash/splash_page.dart';
 import 'package:sodong_app/features/post/presentation/pages/create_post/create_post_page.dart';
-import 'package:sodong_app/features/post_list/presentation/pages/post_list_page.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_list/post_list_page.dart';
 import 'package:sodong_app/firebase_options.dart';
 
 void main() async {

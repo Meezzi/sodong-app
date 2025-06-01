@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/presentation/pages/post_detail_page.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/post_detail_page.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/liked_posts_view_model.dart';
 
