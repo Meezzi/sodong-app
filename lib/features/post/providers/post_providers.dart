@@ -10,6 +10,7 @@ import 'package:sodong_app/features/post/data/repositories/post_detail_repositor
 import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
+import 'package:sodong_app/features/post/domain/use_case/fetch_post_detail_usecase.dart';
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
 
 final _postMapperProvider = Provider<PostMapper>((ref) {
@@ -52,4 +53,9 @@ final _postDetailRepositoryProvider = Provider((ref) {
   final datasource = ref.read(_postDetailDataSourceProvider);
   final mapper = ref.read(_postMapperProvider);
   PostDetailRepositoryImpl(datasource, mapper);
+});
+
+final fetchPostDetailUseCaseProvider = Provider<FetchPostDetailUseCase>((ref) {
+  final repository = ref.read(_postDetailRepositoryProvider);
+  return FetchPostDetailUseCase(repository);
 });
