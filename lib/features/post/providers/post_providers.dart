@@ -8,7 +8,7 @@ import 'package:sodong_app/features/post/domain/repository/post_repository.dart'
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
 
-final _postDatasourceProvider = Provider<CreatePostDataSource>((ref) {
+final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
   final firestore = FirebaseFirestore.instance;
   final storage = FirebaseStorage.instance;
   return RemoteCreatePostDataSource(firestore, storage);
@@ -16,7 +16,7 @@ final _postDatasourceProvider = Provider<CreatePostDataSource>((ref) {
 
 final _postRepositoryProvider = Provider<PostRepository>(
   (ref) {
-    final datasource = ref.read(_postDatasourceProvider);
+    final datasource = ref.read(_createPostDatasourceProvider);
     return RemotePostRepository(datasource);
   },
 );
