@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/post_detail/data/dtos/post_detail_dto.dart';
 
-class PostDetailDataSource {
+class RemotePostDetailDataSource {
   Stream<PostDetailModel> getPostDetail(
       String location, String category, String postId) {
     final postDocRef = FirebaseFirestore.instance

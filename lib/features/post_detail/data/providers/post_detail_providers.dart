@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_detail/data/data_sources/post_detail_data_source.dart';
+import 'package:sodong_app/features/post/data/data_source/remote_post_detail_data_source.dart';
 import 'package:sodong_app/features/post_detail/data/repository/post_detail_repository_impl.dart';
 import 'package:sodong_app/features/post_detail/domain/entities/post_detail_entity.dart';
 import 'package:sodong_app/features/post_detail/domain/usecases/get_post_detail_usecase.dart';
 import 'package:tuple/tuple.dart';
 
-final remoteDataSourceProvider = Provider((ref) => PostDetailDataSource());
+final remoteDataSourceProvider = Provider((ref) => RemotePostDetailDataSource());
 
 final postDetailRepositoryProvider = Provider(
   (ref) => PostDetailRepositoryImpl(ref.read(remoteDataSourceProvider)),
