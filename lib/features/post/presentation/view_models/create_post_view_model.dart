@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/core/result/result.dart';
-import 'package:sodong_app/features/create_post/domain/usecase/create_post_usecase.dart';
+import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post_list/domain/models/category.dart';
 
@@ -55,7 +55,7 @@ final class CreatePostState {
 class CreatePostViewModel extends StateNotifier<CreatePostState> {
   CreatePostViewModel(this._createPostUsecase) : super(CreatePostState());
 
-  final CreatePostUsecase _createPostUsecase;
+  final CreatePostUseCase _createPostUsecase;
 
   void setTitle(String title) {
     final titleError = title.trim().isEmpty ? '제목을 입력해주세요' : null;
@@ -119,7 +119,7 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
       location: location,
       category: state.category,
       post: post,
-      imageUrls: state.imageUrls,
+      imagePaths: state.imageUrls,
     );
 
     if (result is Ok<Post>) {

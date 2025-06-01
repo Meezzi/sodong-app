@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sodong_app/features/create_post/domain/usecase/pick_image_usecase.dart';
-import 'package:sodong_app/features/create_post/presentation/view_models/create_post_view_model.dart';
+import 'package:sodong_app/features/post/domain/use_case/pick_image_usecase.dart';
+import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
 
 class ImagePickerState {
   ImagePickerState({
