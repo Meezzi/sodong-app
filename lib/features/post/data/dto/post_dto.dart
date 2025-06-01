@@ -13,6 +13,7 @@ class PostDto {
     required this.userId,
     required this.nickname,
     required this.commentCount,
+    required this.profileImageUrl,
     required this.imageUrls,
   });
 
@@ -26,6 +27,7 @@ class PostDto {
   final String userId;
   final String nickname;
   final int commentCount;
+  final String profileImageUrl;
   final List<String> imageUrls;
 
   factory PostDto.fromFirestore(
@@ -42,6 +44,7 @@ class PostDto {
       userId: data['userId'] ?? '',
       nickname: data['nickname'] ?? '',
       commentCount: data['commentCount'] ?? 0,
+      profileImageUrl: data['profileImageUrl'] ?? '',
       imageUrls: List<String>.from(data['imageUrls'] ?? []),
     );
   }
@@ -58,6 +61,7 @@ class PostDto {
       'userId': userId,
       'nickname': nickname,
       'commentCount': commentCount,
+      'profileImageUrl' : profileImageUrl,
       'imageUrls': imageUrls,
     };
   }
