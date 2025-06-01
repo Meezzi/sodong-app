@@ -13,7 +13,6 @@ import 'package:sodong_app/features/post/domain/repository/post_repository.dart'
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
 import 'package:sodong_app/features/post/domain/use_case/fetch_post_detail_usecase.dart';
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:tuple/tuple.dart';
 
 final _postMapperProvider = Provider<PostMapper>((ref) {
@@ -55,7 +54,7 @@ final createPostViewModelProvider =
 final _postDetailRepositoryProvider = Provider((ref) {
   final datasource = ref.read(_postDetailDataSourceProvider);
   final mapper = ref.read(_postMapperProvider);
-  PostDetailRepositoryImpl(datasource, mapper);
+  return PostDetailRepositoryImpl(datasource, mapper);
 });
 
 final fetchPostDetailUseCaseProvider = Provider<FetchPostDetailUseCase>((ref) {
@@ -64,7 +63,7 @@ final fetchPostDetailUseCaseProvider = Provider<FetchPostDetailUseCase>((ref) {
 });
 
 final postDetailStreamProvider = StreamProvider.autoDispose
-    .family<Post, Tuple3<String, TownLifeCategory, String>>((ref, args) {
+    .family<Post, Tuple3<String, String, String>>((ref, args) {
   final usecase = ref.read(fetchPostDetailUseCaseProvider);
   return usecase(args.item1, args.item2, args.item3);
 });

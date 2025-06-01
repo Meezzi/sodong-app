@@ -10,7 +10,6 @@ import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_loctaion.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_title.dart';
 import 'package:sodong_app/features/post/providers/post_providers.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:tuple/tuple.dart';
 
 class PostDetailPage extends ConsumerWidget {
@@ -22,7 +21,7 @@ class PostDetailPage extends ConsumerWidget {
   });
 
   final String location;
-  final TownLifeCategory category;
+  final String category;
   final String postId;
 
   @override
@@ -32,7 +31,7 @@ class PostDetailPage extends ConsumerWidget {
     );
 
     final comments = ref.watch(
-      commentViewModelProvider(Tuple3(location, category.id, postId)),
+      commentViewModelProvider(Tuple3(location, category, postId)),
     );
 
     return Scaffold(
@@ -74,7 +73,7 @@ class PostDetailPage extends ConsumerWidget {
                       const SizedBox(height: 16),
                       DetailImageView(imageUrls: post.imageUrls),
                       const SizedBox(height: 16),
-                      DetailCategory(category: post.category.id),
+                      DetailCategory(category: post.category),
                       const SizedBox(height: 16),
                       DetailLocation(location: post.region),
                       const SizedBox(height: 24),
@@ -113,7 +112,7 @@ class PostDetailPage extends ConsumerWidget {
                 ),
                 DetailCommentInput(
                   location: location,
-                  category: category.id,
+                  category: category,
                   postId: postId,
                 ),
               ],

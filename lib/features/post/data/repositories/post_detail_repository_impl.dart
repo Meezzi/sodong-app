@@ -2,7 +2,6 @@ import 'package:sodong_app/features/post/data/data_source/post_detail_data_sourc
 import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_detail_repository.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class PostDetailRepositoryImpl implements PostDetailRepository {
   PostDetailRepositoryImpl(this.remoteDataSource, this._postMapper);
@@ -13,7 +12,7 @@ class PostDetailRepositoryImpl implements PostDetailRepository {
   @override
   Stream<Post> getPostDetail(
     String location,
-    TownLifeCategory category,
+    String category,
     String postId,
   ) {
     return remoteDataSource

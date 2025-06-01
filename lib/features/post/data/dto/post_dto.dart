@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class PostDto {
   PostDto({
@@ -18,7 +17,7 @@ class PostDto {
   });
 
   final String postId;
-  final TownLifeCategory category;
+  final String category;
   final String title;
   final String content;
   final String region;
@@ -35,7 +34,7 @@ class PostDto {
     final data = snapshot.data()!;
     return PostDto(
       postId: snapshot.id,
-      category: TownLifeCategory.fromId(data['category'] as String),
+      category: data['category'] ?? '',
       title: data['title'] ?? '',
       content: data['content'] ?? '',
       region: data['region'] ?? '',
@@ -52,7 +51,7 @@ class PostDto {
   Map<String, dynamic> toFirestore() {
     return {
       'postId': postId,
-      'category': category.id,
+      'category': category,
       'title': title,
       'content': content,
       'region': region,
@@ -68,7 +67,7 @@ class PostDto {
 
   PostDto copyWith({
     String? postId,
-    TownLifeCategory? category,
+    String? category,
     String? title,
     String? content,
     String? region,

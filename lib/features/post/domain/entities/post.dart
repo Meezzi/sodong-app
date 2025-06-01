@@ -1,5 +1,3 @@
-import 'package:sodong_app/features/post/domain/entities/category.dart';
-
 class Post {
   Post({
     required this.postId,
@@ -17,7 +15,7 @@ class Post {
   });
 
   final String postId;
-  final TownLifeCategory category;
+  final String category;
   final String title;
   final String content;
   final String region;
@@ -31,7 +29,7 @@ class Post {
 
   Post copyWith({
     String? postId,
-    TownLifeCategory? category,
+    String? category,
     String? title,
     String? content,
     String? region,

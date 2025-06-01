@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:sodong_app/features/post/data/data_source/post_detail_data_source.dart';
 import 'package:sodong_app/features/post/data/dto/post_dto.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class RemotePostDetailDataSource implements PostDetailDataSource {
   @override
   Stream<PostDto> getPostDetail(
-      String location, TownLifeCategory category, String postId) {
+      String location, String category, String postId) {
     final postDocRef = FirebaseFirestore.instance
         .collection('posts')
         .doc(location.trim())
-        .collection(category.id)
+        .collection(category)
         .doc(postId);
 
     return postDocRef.snapshots().asyncMap((docSnapshot) async {

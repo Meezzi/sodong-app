@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/core/result/result.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 final class CreatePostState {
   const CreatePostState({
@@ -103,7 +103,7 @@ class CreatePostViewModel extends StateNotifier<CreatePostState> {
 
     final post = Post(
       postId: '',
-      category: state.category,
+      category: state.category.id,
       title: state.title,
       content: state.content,
       region: location,
