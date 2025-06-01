@@ -1,19 +1,19 @@
-part of 'package:sodong_app/features/create_post/presentation/pages/create_post_page.dart';
+part of 'package:sodong_app/features/post/presentation/pages/create_post_page.dart';
 
-class _TitleTextField extends StatelessWidget {
-  const _TitleTextField({
-    required this.title,
-    required this.titleError,
+class _ContentTextField extends StatelessWidget {
+  const _ContentTextField({
+    required this.content,
+    required this.contentError,
     required this.onChanged,
   });
 
-  final String title;
-  final String? titleError;
+  final String content;
+  final String? contentError;
   final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final hasError = titleError != null;
+    final hasError = contentError != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,28 +21,33 @@ class _TitleTextField extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: const Color(0xFFFAFAFA),
-            borderRadius: BorderRadius.circular(16),
+            borderRadius: BorderRadius.circular(20),
             border: Border.all(
               color: hasError ? Colors.red : const Color(0xFFFFE4E8),
               width: hasError ? 1.5 : 1.0,
             ),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          padding: const EdgeInsets.all(16),
           child: TextField(
             onChanged: onChanged,
-            maxLines: 1,
+            minLines: 5,
+            maxLines: null,
+            keyboardType: TextInputType.multiline,
+            textInputAction: TextInputAction.newline,
+            textAlignVertical: TextAlignVertical.top,
+            style: const TextStyle(
+              fontSize: 16,
+              color: Colors.black87,
+              height: 1.5,
+            ),
             decoration: InputDecoration(
-              hintText: '제목을 입력하세요.',
-              border: InputBorder.none,
+              hintText: '이야기를 들려주세요.',
               hintStyle: const TextStyle(
                 color: Colors.grey,
-                fontSize: 18,
+                fontSize: 16,
               ),
-            ),
-            style: const TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.zero,
             ),
           ),
         ),
@@ -50,7 +55,7 @@ class _TitleTextField extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 16),
             child: Text(
-              titleError!,
+              contentError!,
               style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12,
@@ -61,3 +66,4 @@ class _TitleTextField extends StatelessWidget {
     );
   }
 }
+

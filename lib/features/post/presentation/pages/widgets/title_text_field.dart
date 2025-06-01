@@ -1,19 +1,19 @@
-part of 'package:sodong_app/features/create_post/presentation/pages/create_post_page.dart';
+part of 'package:sodong_app/features/post/presentation/pages/create_post_page.dart';
 
-class _ContentTextField extends StatelessWidget {
-  const _ContentTextField({
-    required this.content,
-    required this.contentError,
+class _TitleTextField extends StatelessWidget {
+  const _TitleTextField({
+    required this.title,
+    required this.titleError,
     required this.onChanged,
   });
 
-  final String content;
-  final String? contentError;
+  final String title;
+  final String? titleError;
   final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
-    final hasError = contentError != null;
+    final hasError = titleError != null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -21,33 +21,28 @@ class _ContentTextField extends StatelessWidget {
         Container(
           decoration: BoxDecoration(
             color: const Color(0xFFFAFAFA),
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
             border: Border.all(
               color: hasError ? Colors.red : const Color(0xFFFFE4E8),
               width: hasError ? 1.5 : 1.0,
             ),
           ),
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           child: TextField(
             onChanged: onChanged,
-            minLines: 5,
-            maxLines: null,
-            keyboardType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
-            textAlignVertical: TextAlignVertical.top,
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black87,
-              height: 1.5,
-            ),
+            maxLines: 1,
             decoration: InputDecoration(
-              hintText: '이야기를 들려주세요.',
+              hintText: '제목을 입력하세요.',
+              border: InputBorder.none,
               hintStyle: const TextStyle(
                 color: Colors.grey,
-                fontSize: 16,
+                fontSize: 18,
               ),
-              border: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
+            ),
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Colors.black87,
             ),
           ),
         ),
@@ -55,7 +50,7 @@ class _ContentTextField extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(top: 8, left: 16),
             child: Text(
-              contentError!,
+              titleError!,
               style: const TextStyle(
                 color: Colors.red,
                 fontSize: 12,
@@ -66,4 +61,3 @@ class _ContentTextField extends StatelessWidget {
     );
   }
 }
-
