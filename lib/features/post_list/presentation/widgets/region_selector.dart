@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/location/location_viewmodel.dart';
+import 'package:sodong_app/features/locations/presentation/viewmodel/location_view_model.dart';
 import 'package:sodong_app/features/post_list/domain/models/region.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
