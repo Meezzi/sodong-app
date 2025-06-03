@@ -55,7 +55,6 @@ class LocationViewmodel extends Notifier<Location> {
 
       return region != null;
     } catch (e) {
-      print('위치 정보 가져오기 오류: $e');
       return false;
     }
   }
