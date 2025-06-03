@@ -4,12 +4,6 @@ import 'package:sodong_app/features/locations/data/data_source/vworld_location_d
 import 'package:sodong_app/features/locations/presentation/provider/providers.dart';
 
 
-  @override
-  Location build() {
-    // 초기의 기본 위치값 설정(초기 위치 일단 null로 지정)
-    return Location(x: 129.0823133, y: 35.2202216, region: null);
-  }
-
   Future<bool> getLocation() async {
     try {
       // 1. 위치 권한 허용하기
