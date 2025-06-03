@@ -3,9 +3,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:sodong_app/features/locations/data/data_source/vworld_location_datasource_impl.dart';
 import 'package:sodong_app/features/locations/presentation/provider/providers.dart';
 
-class LocationViewmodel extends Notifier<Location> {
-  late final VWorldLocationDataSourceImpl _repository =
-      ref.read(vworldLocationDataSourceProvider);
 
   @override
   Location build() {
@@ -65,3 +62,4 @@ class LocationViewmodel extends Notifier<Location> {
     }
   }
 }
+
