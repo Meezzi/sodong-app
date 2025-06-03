@@ -76,8 +76,3 @@ class LocationViewmodel extends Notifier<Location> {
     }
   }
 }
-
-// provider 선언
-final locationProvider = NotifierProvider<LocationViewmodel, Location>(
-  () => LocationViewmodel(),
-);
