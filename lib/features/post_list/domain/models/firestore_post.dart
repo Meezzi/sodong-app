@@ -12,7 +12,7 @@ class FirestorePost {
     required this.isAnonymous,
     required this.nickname,
     required this.title,
-    required this.userId,
+    required this.userId, // 게시글 작성자 ID
     required this.region,
   });
 
@@ -25,7 +25,7 @@ class FirestorePost {
   final bool isAnonymous;
   final String nickname;
   final String title;
-  final String userId;
+  final String userId; // 게시글 작성자 ID
   final RegionInfo region;
 
   factory FirestorePost.fromFirestore(DocumentSnapshot doc) {
@@ -130,7 +130,7 @@ class FirestorePost {
         isAnonymous: data['isAnonymous'] as bool? ?? false,
         nickname: data['nickname'] as String? ?? '익명',
         title: data['title'] as String? ?? '',
-        userId: data['userId'] as String? ?? '',
+        userId: data['userId'] as String? ?? '', // userId 추가
         region: regionInfo,
       );
     } catch (e) {
@@ -145,7 +145,7 @@ class FirestorePost {
         isAnonymous: false,
         nickname: '익명',
         title: '제목 없음',
-        userId: '',
+        userId: '', // 기본값 빈 문자열
         region: RegionInfo(
           codeName: 'unknown',
           displayName: '알 수 없음',
@@ -226,6 +226,7 @@ class FirestorePost {
       imageUrl:
           imageUrls.isNotEmpty ? imageUrls[0] : null, // 첫 번째 이미지를 대표 이미지로 사용
       imageUrls: imageUrls, // 모든 이미지 URL 목록 전달
+      userId: userId, // userId 전달
     );
   }
 }
