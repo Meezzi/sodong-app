@@ -22,6 +22,7 @@ class CommentDataSource {
               return {
                 'id': doc.id,
                 'content': data['content'],
+                'userId': data['userId'], // ✅ userId 필드 추가
                 'createdAt': (data['createdAt'] as Timestamp).toDate(),
               };
             }).toList());
@@ -33,6 +34,7 @@ class CommentDataSource {
     required String category,
     required String postId,
     required String content,
+    required String userId,
   }) async {
     await _firestore
         .collection('posts')
@@ -42,6 +44,7 @@ class CommentDataSource {
         .collection('comments')
         .add({
       'content': content,
+      'userId': userId,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
