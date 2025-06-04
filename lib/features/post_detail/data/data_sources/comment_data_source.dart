@@ -22,7 +22,7 @@ class CommentDataSource {
               return {
                 'id': doc.id,
                 'content': data['content'],
-                'userId': data['userId'], // ✅ userId 필드 추가
+                'userId': data['userId'],
                 'createdAt': (data['createdAt'] as Timestamp).toDate(),
               };
             }).toList());
