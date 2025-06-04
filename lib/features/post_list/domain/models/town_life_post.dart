@@ -16,6 +16,7 @@ class TownLifePost {
     required this.likeCount,
     this.imageUrl,
     this.imageUrls = const [],
+    required this.userId
   });
 
   final String postId; // 게시글 ID
@@ -30,6 +31,7 @@ class TownLifePost {
   final int likeCount; // 좋아요 수
   final String? imageUrl; // 대표 이미지 URL (null일 경우 이미지 없음)
   final List<String> imageUrls;
+  final String userId
 
   // 카테고리 문자열을 enum으로 변환 (ID 기반 매핑)
   TownLifeCategory get categoryEnum {

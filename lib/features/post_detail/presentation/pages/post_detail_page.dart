@@ -18,11 +18,13 @@ class PostDetailPage extends ConsumerWidget {
     required this.location,
     required this.category,
     required this.postId,
+    required this.userId,
   });
 
   final String location;
   final String category;
   final String postId;
+  final String userId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -31,7 +33,7 @@ class PostDetailPage extends ConsumerWidget {
     );
 
     final comments = ref.watch(
-      commentViewModelProvider(Tuple3(location, category, postId)),
+      commentViewModelProvider(Tuple4(location, category, postId, userId)),
     );
 
     return Scaffold(
@@ -114,6 +116,7 @@ class PostDetailPage extends ConsumerWidget {
                   location: location,
                   category: category,
                   postId: postId,
+                  userId: userId, // ✅ 전달
                 ),
               ],
             );

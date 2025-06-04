@@ -9,11 +9,13 @@ class DetailCommentInput extends ConsumerStatefulWidget {
     required this.location,
     required this.category,
     required this.postId,
+    required this.userId,
   });
 
   final String location;
   final String category;
   final String postId;
+  final String userId;
 
   @override
   ConsumerState<DetailCommentInput> createState() => _DetailCommentInputState();
@@ -28,7 +30,8 @@ class _DetailCommentInputState extends ConsumerState<DetailCommentInput> {
     await ref
         .read(
           commentViewModelProvider(
-            Tuple3(widget.location, widget.category, widget.postId),
+            Tuple4(
+                widget.location, widget.category, widget.postId, widget.userId),
           ).notifier,
         )
         .addComment(_controller.text.trim());

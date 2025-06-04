@@ -99,10 +99,10 @@ class TownLifePostItem extends ConsumerWidget {
       context,
       MaterialPageRoute(
         builder: (context) => PostDetailPage(
-          location: post.location,
-          category: post.category,
-          postId: post.postId,
-        ),
+            location: post.location,
+            category: post.category,
+            postId: post.postId,
+            userId: post.userId),
       ),
     );
   }
