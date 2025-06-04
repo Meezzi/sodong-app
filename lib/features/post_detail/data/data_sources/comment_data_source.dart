@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class CommentDataSource {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
-  /// 특정 게시물의 댓글 스트림
+  /// 댓글 스트림
   Stream<List<Map<String, dynamic>>> fetchCommentsStream({
     required String location,
     required String category,
@@ -21,8 +21,9 @@ class CommentDataSource {
               final data = doc.data();
               return {
                 'id': doc.id,
-                'content': data['content'],
+                'postId': postId,
                 'userId': data['userId'],
+                'content': data['content'],
                 'createdAt': (data['createdAt'] as Timestamp).toDate(),
               };
             }).toList());
@@ -43,8 +44,8 @@ class CommentDataSource {
         .doc(postId)
         .collection('comments')
         .add({
-      'content': content,
       'userId': userId,
+      'content': content,
       'createdAt': FieldValue.serverTimestamp(),
     });
   }
