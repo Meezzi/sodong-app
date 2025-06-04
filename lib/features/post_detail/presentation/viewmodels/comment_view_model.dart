@@ -11,6 +11,7 @@ class CommentViewModel extends StateNotifier<List<Comment>> {
     required this.location,
     required this.category,
     required this.postId,
+    required this.userId,
   }) : super([]) {
     _subscribeComments();
   }
@@ -20,6 +21,7 @@ class CommentViewModel extends StateNotifier<List<Comment>> {
   final String location;
   final String category;
   final String postId;
+  final String userId;
 
   late final Stream<List<Comment>> _commentStream;
   late final StreamSubscription<List<Comment>> _commentSubscription;
@@ -32,7 +34,7 @@ class CommentViewModel extends StateNotifier<List<Comment>> {
   }
 
   Future<void> addComment(String content) async {
-    await addCommentUseCase(location, category, postId, content);
+    await addCommentUseCase(location, category, postId, content, userId);
   }
 
   @override

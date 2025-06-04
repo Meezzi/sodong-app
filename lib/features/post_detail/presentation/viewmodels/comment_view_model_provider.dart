@@ -5,11 +5,12 @@ import 'package:sodong_app/features/post_detail/presentation/viewmodels/comment_
 import 'package:tuple/tuple.dart';
 
 final commentViewModelProvider = StateNotifierProvider.family<CommentViewModel,
-    List<Comment>, Tuple3<String, String, String>>(
+    List<Comment>, Tuple4<String, String, String, String>>(
   (ref, params) {
     final location = params.item1;
     final category = params.item2;
     final postId = params.item3;
+    final userId = params.item4;
 
     final getCommentsUseCase = ref.watch(getCommentsUseCaseProvider);
     final addCommentUseCase = ref.watch(addCommentUseCaseProvider);
@@ -20,6 +21,7 @@ final commentViewModelProvider = StateNotifierProvider.family<CommentViewModel,
       location: location,
       category: category,
       postId: postId,
+      userId: userId,
     );
   },
 );
