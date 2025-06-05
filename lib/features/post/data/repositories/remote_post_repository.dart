@@ -3,16 +3,15 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:sodong_app/core/result/create_post_exception.dart';
 import 'package:sodong_app/core/result/result.dart';
 import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
-import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
+import 'package:sodong_app/features/post/data/dto/post_dto.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_repository.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 
 class RemotePostRepository implements PostRepository {
-  RemotePostRepository(this._postDataSource, this._postMapper);
+  RemotePostRepository(this._postDataSource);
 
   final CreatePostDataSource _postDataSource;
-  final PostMapper _postMapper;
 
   /// Post 저장
   /// DataSource 내부에서 이미지 업로드 처리
@@ -24,7 +23,7 @@ class RemotePostRepository implements PostRepository {
     Post post,
   ) async {
     try {
-      final postDto = _postMapper.toDto(post);
+      final postDto = PostDto.fromEntity(post);
 
       final createdPostDto = await _postDataSource.createPostWithImages(
         location,
@@ -33,7 +32,7 @@ class RemotePostRepository implements PostRepository {
         postDto,
       );
 
-      final createdPost = _postMapper.fromDto(createdPostDto);
+      final createdPost = createdPostDto.toEntity(createdPostDto);
 
       return Result.ok(createdPost);
     } on FirebaseException catch (e) {

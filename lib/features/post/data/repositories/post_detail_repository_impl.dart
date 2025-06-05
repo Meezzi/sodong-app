@@ -1,13 +1,11 @@
 import 'package:sodong_app/features/post/data/data_source/post_detail_data_source.dart';
-import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
 import 'package:sodong_app/features/post/domain/repository/post_detail_repository.dart';
 
 class PostDetailRepositoryImpl implements PostDetailRepository {
-  PostDetailRepositoryImpl(this.remoteDataSource, this._postMapper);
+  PostDetailRepositoryImpl(this.remoteDataSource);
 
   final PostDetailDataSource remoteDataSource;
-  final PostMapper _postMapper;
 
   @override
   Stream<Post> getPostDetail(
@@ -17,6 +15,6 @@ class PostDetailRepositoryImpl implements PostDetailRepository {
   ) {
     return remoteDataSource
         .getPostDetail(location, category, postId)
-        .map((postDto) => _postMapper.fromDto(postDto));
+        .map((postDto) => postDto.toEntity(postDto));
   }
 }

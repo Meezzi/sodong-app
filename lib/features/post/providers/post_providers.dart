@@ -5,7 +5,6 @@ import 'package:sodong_app/features/post/data/data_source/create_post_data_sourc
 import 'package:sodong_app/features/post/data/data_source/post_detail_data_source.dart';
 import 'package:sodong_app/features/post/data/data_source/remote_create_post_data_source.dart';
 import 'package:sodong_app/features/post/data/data_source/remote_post_detail_data_source.dart';
-import 'package:sodong_app/features/post/data/mapper/post_mapper.dart';
 import 'package:sodong_app/features/post/data/repositories/post_detail_repository_impl.dart';
 import 'package:sodong_app/features/post/data/repositories/remote_post_repository.dart';
 import 'package:sodong_app/features/post/domain/entities/post.dart';
@@ -14,11 +13,6 @@ import 'package:sodong_app/features/post/domain/use_case/create_post_use_case.da
 import 'package:sodong_app/features/post/domain/use_case/fetch_post_detail_usecase.dart';
 import 'package:sodong_app/features/post/presentation/view_models/create_post_view_model.dart';
 import 'package:tuple/tuple.dart';
-
-/// Entity <-> DTO 변환
-final _postMapperProvider = Provider<PostMapper>((ref) {
-  return PostMapper();
-});
 
 /// 게시물을 생성하는 CreatePostDataSource Provider
 final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
@@ -30,8 +24,7 @@ final _createPostDatasourceProvider = Provider<CreatePostDataSource>((ref) {
 /// 게시물을 생성하는 PostRepository Provider
 final _postRepositoryProvider = Provider<PostRepository>((ref) {
   final datasource = ref.read(_createPostDatasourceProvider);
-  final mapper = ref.read(_postMapperProvider);
-  return RemotePostRepository(datasource, mapper);
+  return RemotePostRepository(datasource);
 });
 
 /// 게시물을 생성하는 CreatePostUseCase Provider
@@ -56,8 +49,7 @@ final _postDetailDataSourceProvider = Provider<PostDetailDataSource>((ref) {
 /// 게시물의 상세보기 데이터를 가져오는 PostDetailRepository Provider
 final _postDetailRepositoryProvider = Provider<PostDetailRepositoryImpl>((ref) {
   final datasource = ref.read(_postDetailDataSourceProvider);
-  final mapper = ref.read(_postMapperProvider);
-  return PostDetailRepositoryImpl(datasource, mapper);
+  return PostDetailRepositoryImpl(datasource);
 });
 
 /// 게시물의 상세보기 데이터를 가져오는 FetchPostDetailUseCase Provider
