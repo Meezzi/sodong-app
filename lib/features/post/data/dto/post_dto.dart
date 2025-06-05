@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:sodong_app/features/post/domain/entities/post.dart';
 
 class PostDto {
   PostDto({
@@ -92,6 +93,42 @@ class PostDto {
       commentCount: commentCount ?? this.commentCount,
       profileImageUrl: profileImageUrl ?? this.profileImageUrl,
       imageUrls: imageUrl ?? imageUrls,
+    );
+  }
+
+  /// Post Entity -> Post Dto 변환
+  static PostDto fromEntity(Post post) {
+    return PostDto(
+      postId: post.postId,
+      category: post.category,
+      title: post.title,
+      content: post.content,
+      region: post.region,
+      createdAt: post.createdAt,
+      isAnonymous: post.isAnonymous,
+      userId: post.userId,
+      nickname: post.nickname,
+      commentCount: post.commentCount,
+      profileImageUrl: post.profileImageUrl,
+      imageUrls: post.imageUrls,
+    );
+  }
+
+  /// Post Dto -> Post Entity 변환
+  Post toEntity(PostDto dto) {
+    return Post(
+      postId: dto.postId,
+      category: dto.category,
+      title: dto.title,
+      content: dto.content,
+      region: dto.region,
+      createdAt: dto.createdAt,
+      isAnonymous: dto.isAnonymous,
+      userId: dto.userId,
+      nickname: dto.nickname,
+      commentCount: dto.commentCount,
+      profileImageUrl: dto.profileImageUrl,
+      imageUrls: dto.imageUrls,
     );
   }
 }
