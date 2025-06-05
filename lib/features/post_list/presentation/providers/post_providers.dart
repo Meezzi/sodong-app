@@ -1,10 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/data/datasources/post_cache_data_source.dart';
-import 'package:sodong_app/features/post_list/data/datasources/post_remote_data_source.dart';
-import 'package:sodong_app/features/post_list/data/repositories/post_repository_impl.dart';
+import 'package:sodong_app/features/post/data/data_source/post_cache_data_source.dart';
+import 'package:sodong_app/features/post/data/data_source/post_remote_data_source.dart';
+import 'package:sodong_app/features/post/data/repositories/post_repository_impl.dart';
+import 'package:sodong_app/features/post/domain/use_case/post_service.dart';
 import 'package:sodong_app/features/post_list/domain/repositories/post_repository.dart';
-import 'package:sodong_app/features/post_list/domain/usecase/post_service.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
 
 /// Firestore 인스턴스 제공

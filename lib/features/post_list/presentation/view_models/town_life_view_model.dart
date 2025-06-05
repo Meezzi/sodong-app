@@ -1,9 +1,9 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:sodong_app/features/post_list/domain/models/category.dart';
-import 'package:sodong_app/features/post_list/domain/models/region.dart';
+import 'package:sodong_app/features/post/domain/entities/region.dart';
+import 'package:sodong_app/features/post/domain/use_case/post_service.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
-import 'package:sodong_app/features/post_list/domain/usecase/post_service.dart';
 import 'package:sodong_app/features/post_list/presentation/providers/post_providers.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/pagination_manager.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/region_view_model.dart';
