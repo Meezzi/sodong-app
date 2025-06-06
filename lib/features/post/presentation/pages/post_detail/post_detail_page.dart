@@ -50,7 +50,7 @@ class PostDetailPage extends ConsumerWidget {
           ),
         ),
         actions: [
-          PostDetailActions(),
+          PostDetailActions(postId: postId),
         ],
         iconTheme: const IconThemeData(color: Colors.black),
       ),
