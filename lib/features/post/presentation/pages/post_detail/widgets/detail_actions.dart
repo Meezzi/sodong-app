@@ -4,6 +4,7 @@ import 'package:sodong_app/features/auth/domain/entities/user.dart';
 import 'package:sodong_app/features/post/presentation/pages/create_post/create_post_page.dart';
 import 'package:sodong_app/features/post/providers/report_providers.dart';
 import 'package:sodong_app/features/post/providers/selected_menu_provider.dart';
+import 'package:sodong_app/features/post_list/presentation/view_models/town_life_view_model.dart';
 
 class PostDetailActions extends ConsumerWidget {
   const PostDetailActions({
@@ -41,6 +42,11 @@ class PostDetailActions extends ConsumerWidget {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text('신고가 접수되었습니다.')),
                     );
+
+                    // 게시물 목록 새로고침
+                    await ref
+                        .read(townLifeStateProvider.notifier)
+                        .refreshAllCategoryData();
 
                     Navigator.pop(context); // 다이얼로그 닫기
                     Navigator.pop(context); // 상세 페이지 닫기
