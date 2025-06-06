@@ -1,3 +1,3 @@
 abstract interface class ReportDataSource {
-  Future<bool> report(String uid, String postId);
+  Future<bool> reportPost(String uid, String postId);
 }
