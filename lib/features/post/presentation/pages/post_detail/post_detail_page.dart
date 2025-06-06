@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sodong_app/features/comment/providers/comment_provider.dart';
+import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_actions.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_category.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_comment_input.dart';
 import 'package:sodong_app/features/post/presentation/pages/post_detail/widgets/detail_comment_item.dart';
@@ -48,6 +49,9 @@ class PostDetailPage extends ConsumerWidget {
             fontWeight: FontWeight.w600,
           ),
         ),
+        actions: [
+          PostDetailActions(),
+        ],
         iconTheme: const IconThemeData(color: Colors.black),
       ),
       body: SafeArea(
