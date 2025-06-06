@@ -108,6 +108,7 @@ class PostRemoteDataSource {
     required String regionId,
     required String subRegion,
     required String category,
+    required String uid,
   }) async {
     if (_lastDocument == null) {
       return [];
@@ -135,10 +136,16 @@ class PostRemoteDataSource {
       // 마지막 문서 업데이트
       _lastDocument = querySnapshot.docs.last;
 
-      // Firestore 문서를 도메인 모델로 변환
-      return querySnapshot.docs
+      // 신고된 게시물 가져오기
+      final reportedPostIds = await getReportedPostIds(uid);
+
+      // 신고된 게시물 필터링
+      final posts = querySnapshot.docs
           .map((doc) => FirestorePost.fromFirestore(doc).toTownLifePost())
+          .where((post) => !reportedPostIds.contains(post.postId))
           .toList();
+
+      return posts;
     } catch (e) {
       return [];
     }

@@ -72,7 +72,7 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<List<TownLifePost>> fetchMorePosts() async {
+  Future<List<TownLifePost>> fetchMorePosts(String uid) async {
     if (!_hasMore) return [];
 
     try {
@@ -80,6 +80,7 @@ class PostRepositoryImpl implements PostRepository {
         regionId: _currentRegionId,
         subRegion: _currentSubRegion,
         category: _currentCategory,
+        uid: uid
       );
 
       // 게시물이 비어있거나 예상 페이지 크기보다 적은 경우 더 이상 불러올 게시물이 없음

@@ -1,8 +1,9 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/auth/domain/entities/user.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post/domain/use_case/post_service.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/providers/post_providers.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/pagination_manager.dart';
@@ -515,7 +516,8 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         return;
       }
 
-      var newPosts = await _paginationManager.loadMorePosts();
+      final uid = _ref.read(appUserProvider)!.uid;
+      var newPosts = await _paginationManager.loadMorePosts(uid);
 
       // 다시 StateNotifier 상태 확인
       if (!mounted) return;

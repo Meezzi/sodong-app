@@ -7,7 +7,7 @@ abstract interface class PostRepository {
   Future<List<TownLifePost>> fetchInitialPosts(String uid);
 
   /// 추가 게시물 가져오기 (페이지네이션)
-  Future<List<TownLifePost>> fetchMorePosts();
+  Future<List<TownLifePost>> fetchMorePosts(String uid);
 
   /// 현재 지역에 대한 특정 카테고리 게시물 가져오기
   Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(String categoryId, String uid);

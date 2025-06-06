@@ -14,8 +14,8 @@ class PostService {
   }
 
   /// 추가 게시물 조회 UseCase
-  Future<List<TownLifePost>> getMorePosts() async {
-    return await _repository.fetchMorePosts();
+  Future<List<TownLifePost>> getMorePosts(String uid) async {
+    return await _repository.fetchMorePosts(uid);
   }
 
   /// 현재 지역 특정 카테고리 게시물 조회 UseCase
