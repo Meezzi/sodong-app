@@ -4,13 +4,13 @@ import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart'
 /// 게시물 저장소 인터페이스
 abstract interface class PostRepository {
   /// 초기 게시물 가져오기
-  Future<List<TownLifePost>> fetchInitialPosts();
+  Future<List<TownLifePost>> fetchInitialPosts(String uid);
 
   /// 추가 게시물 가져오기 (페이지네이션)
   Future<List<TownLifePost>> fetchMorePosts();
 
   /// 현재 지역에 대한 특정 카테고리 게시물 가져오기
-  Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(String categoryId);
+  Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(String categoryId, String uid);
 
   /// 지역 설정
   void setRegion(Region region);

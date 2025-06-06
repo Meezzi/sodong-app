@@ -9,8 +9,8 @@ class PostService {
   final PostRepository _repository;
 
   /// 초기 게시물 조회 UseCase
-  Future<List<TownLifePost>> getInitialPosts() async {
-    return await _repository.fetchInitialPosts();
+  Future<List<TownLifePost>> getInitialPosts(String uid) async {
+    return await _repository.fetchInitialPosts(uid);
   }
 
   /// 추가 게시물 조회 UseCase
@@ -20,8 +20,13 @@ class PostService {
 
   /// 현재 지역 특정 카테고리 게시물 조회 UseCase
   Future<List<TownLifePost>> getCurrentRegionCategoryPosts(
-      String categoryId) async {
-    return await _repository.fetchCurrentRegionCategoryPosts(categoryId);
+    String categoryId,
+    String uid,
+  ) async {
+    return await _repository.fetchCurrentRegionCategoryPosts(
+      categoryId,
+      uid,
+    );
   }
 
   /// 지역 설정 UseCase

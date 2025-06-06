@@ -312,8 +312,9 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
 
         try {
           // 현재 선택된 지역에서 해당 카테고리의 게시물 가져오기
+          final uid = _ref.read(appUserProvider)!.uid;
           final posts = await _paginationManager
-              .loadCurrentRegionCategoryPosts(categoryId);
+              .loadCurrentRegionCategoryPosts(categoryId, uid);
 
           if (posts.isNotEmpty) {
             allPosts.addAll(posts);
@@ -392,6 +393,7 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
   ///   - 데이터 파싱 오류
   Future<void> fetchInitialPosts() async {
     if (state.isLoading) return;
+    final uid = _ref.read(appUserProvider)!.uid;
 
     try {
       // 현재 선택된 카테고리
@@ -409,7 +411,7 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         return;
       }
 
-      var posts = await _paginationManager.loadInitialPosts();
+      var posts = await _paginationManager.loadInitialPosts(uid);
 
       // 다시 StateNotifier 상태 확인
       if (!mounted) return;
