@@ -73,6 +73,29 @@ class PostRemoteDataSource {
     }
   }
 
+  /// 신고된 게시물 ID 가져오기
+  Future<List<String>> getReportedPostIds(String uid) async {
+    try {
+      final docSnapshot =
+          await _firestore.collection('reports').doc('posts').get();
+
+      if (!docSnapshot.exists) {
+        return [];
+      }
+
+      final data = docSnapshot.data() as Map<String, dynamic>;
+
+      if (data.containsKey(uid) && data[uid] is List) {
+        final postIds = List<String>.from(data[uid]);
+        return postIds;
+      } else {
+        return [];
+      }
+    } catch (e) {
+      return [];
+    }
+  }
+
   /// 추가 게시물 가져오기
   Future<List<TownLifePost>> fetchMorePosts({
     required String regionId,
