@@ -1,8 +1,9 @@
 // 게시물 상태 관리를 위한 State 클래스
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sodong_app/features/auth/domain/entities/user.dart';
+import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post/domain/entities/region.dart';
 import 'package:sodong_app/features/post/domain/use_case/post_service.dart';
-import 'package:sodong_app/features/post/domain/entities/category.dart';
 import 'package:sodong_app/features/post_list/domain/models/town_life_post.dart';
 import 'package:sodong_app/features/post_list/presentation/providers/post_providers.dart';
 import 'package:sodong_app/features/post_list/presentation/view_models/pagination_manager.dart';
@@ -312,8 +313,9 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
 
         try {
           // 현재 선택된 지역에서 해당 카테고리의 게시물 가져오기
+          final uid = _ref.read(appUserProvider)!.uid;
           final posts = await _paginationManager
-              .loadCurrentRegionCategoryPosts(categoryId);
+              .loadCurrentRegionCategoryPosts(categoryId, uid);
 
           if (posts.isNotEmpty) {
             allPosts.addAll(posts);
@@ -392,6 +394,7 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
   ///   - 데이터 파싱 오류
   Future<void> fetchInitialPosts() async {
     if (state.isLoading) return;
+    final uid = _ref.read(appUserProvider)!.uid;
 
     try {
       // 현재 선택된 카테고리
@@ -409,7 +412,7 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         return;
       }
 
-      var posts = await _paginationManager.loadInitialPosts();
+      var posts = await _paginationManager.loadInitialPosts(uid);
 
       // 다시 StateNotifier 상태 확인
       if (!mounted) return;
@@ -513,7 +516,8 @@ class TownLifeViewModel extends StateNotifier<TownLifeState> {
         return;
       }
 
-      var newPosts = await _paginationManager.loadMorePosts();
+      final uid = _ref.read(appUserProvider)!.uid;
+      var newPosts = await _paginationManager.loadMorePosts(uid);
 
       // 다시 StateNotifier 상태 확인
       if (!mounted) return;

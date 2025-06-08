@@ -13,24 +13,27 @@ class PaginationManager {
   /// 추가 게시물 로드 메서드
   ///
   /// Returns: 다음 페이지 게시물 목록
-  Future<List<TownLifePost>> loadMorePosts() async {
-    return await _postService.getMorePosts();
+  Future<List<TownLifePost>> loadMorePosts(String uid) async {
+    return await _postService.getMorePosts(uid);
   }
 
   /// 초기 게시물 로드 메서드
   ///
   /// Returns: 첫 페이지 게시물 목록
-  Future<List<TownLifePost>> loadInitialPosts() async {
-    return await _postService.getInitialPosts();
+  Future<List<TownLifePost>> loadInitialPosts(String uid) async {
+    return await _postService.getInitialPosts(uid);
   }
 
   /// 특정 카테고리 게시물 로드 메서드
   ///
   /// [categoryId]: 로드할 카테고리 ID
   /// Returns: 해당 카테고리 게시물 목록
-  Future<List<TownLifePost>> loadCategoryPosts(String categoryId) async {
+  Future<List<TownLifePost>> loadCategoryPosts(
+    String categoryId,
+    String uid,
+  ) async {
     _postService.setCategory(categoryId);
-    return await _postService.getInitialPosts();
+    return await _postService.getInitialPosts(uid);
   }
 
   /// 현재 지역 특정 카테고리 게시물 로드 메서드
@@ -38,8 +41,10 @@ class PaginationManager {
   /// [categoryId]: 로드할 카테고리 ID
   /// Returns: 현재 지역 해당 카테고리 게시물 목록
   Future<List<TownLifePost>> loadCurrentRegionCategoryPosts(
-      String categoryId) async {
-    return await _postService.getCurrentRegionCategoryPosts(categoryId);
+    String categoryId,
+    String uid,
+  ) async {
+    return await _postService.getCurrentRegionCategoryPosts(categoryId, uid);
   }
 
   /// 다음 페이지 존재 여부 확인

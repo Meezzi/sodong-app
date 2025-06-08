@@ -184,7 +184,7 @@ class _CreatePostPageState extends ConsumerState<CreatePostPage> {
             parent: animation,
             curve: Curves.easeInOutBack,
           ),
-          child: _CustomDialog(
+          child: CustomDialog(
             icon: icon,
             title: title,
             message: message,

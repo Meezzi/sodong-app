@@ -1,7 +1,8 @@
 part of 'package:sodong_app/features/post/presentation/pages/create_post/create_post_page.dart';
 
-class _CustomDialog extends StatelessWidget {
-  const _CustomDialog({
+class CustomDialog extends StatelessWidget {
+  const CustomDialog({
+    super.key,
     required this.icon,
     required this.title,
     required this.message,

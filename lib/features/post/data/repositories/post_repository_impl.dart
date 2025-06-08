@@ -41,12 +41,13 @@ class PostRepositoryImpl implements PostRepository {
   String _currentCategory = 'question';
 
   @override
-  Future<List<TownLifePost>> fetchInitialPosts() async {
+  Future<List<TownLifePost>> fetchInitialPosts(String uid) async {
     try {
       final posts = await _remoteDataSource.fetchInitialPosts(
         regionId: _currentRegionId,
         subRegion: _currentSubRegion,
         category: _currentCategory,
+        uid: uid,
       );
 
       // 게시물이 비어있거나 예상 페이지 크기보다 적은 경우 더 이상 불러올 게시물이 없음
@@ -71,7 +72,7 @@ class PostRepositoryImpl implements PostRepository {
   }
 
   @override
-  Future<List<TownLifePost>> fetchMorePosts() async {
+  Future<List<TownLifePost>> fetchMorePosts(String uid) async {
     if (!_hasMore) return [];
 
     try {
@@ -79,6 +80,7 @@ class PostRepositoryImpl implements PostRepository {
         regionId: _currentRegionId,
         subRegion: _currentSubRegion,
         category: _currentCategory,
+        uid: uid
       );
 
       // 게시물이 비어있거나 예상 페이지 크기보다 적은 경우 더 이상 불러올 게시물이 없음
@@ -99,7 +101,9 @@ class PostRepositoryImpl implements PostRepository {
 
   @override
   Future<List<TownLifePost>> fetchCurrentRegionCategoryPosts(
-      String categoryId) async {
+    String categoryId,
+    String uid,
+  ) async {
     // 원래 카테고리와 hasMore 상태 저장
     final originalCategory = _currentCategory;
     final originalHasMore = _hasMore;
@@ -109,7 +113,7 @@ class PostRepositoryImpl implements PostRepository {
 
     try {
       // 해당 카테고리의 게시물 로드
-      final posts = await fetchInitialPosts();
+      final posts = await fetchInitialPosts(uid);
 
       // 원래 카테고리로 복원
       _currentCategory = originalCategory;
