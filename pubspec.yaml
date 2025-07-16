@@ -46,6 +46,7 @@ dependencies:
   google_sign_in: ^6.3.0
   image_picker: ^1.1.2
   tuple: ^2.0.2
+  flutter_image_compress: ^2.4.0
 
 dev_dependencies:
   flutter_test:
