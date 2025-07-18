@@ -37,24 +37,20 @@ class RemoteCreatePostDataSource implements CreatePostDataSource {
   }
 
   Future<List<String>> _uploadImages(
-    String postId,
-    List<String> imagePaths,
-  ) async {
-    final uploadedUrls = <String>[];
-
-    for (final path in imagePaths) {
+      String postId, List<String> imagePaths) async {
+    final uploadFutures = imagePaths.map((path) async {
       final file = File(path);
       final fileName =
           '${DateTime.now().millisecondsSinceEpoch}_${file.hashCode}.jpg';
-
       final ref = _storage.ref().child('posts/$postId/$fileName');
-      await ref.putFile(file);
+      final compressed =
+          await RemoteCreatePostDataSource._compressImageFile(file);
+      final uploadTarget = compressed ?? file; // 압축 실패 시 원본 사용
+      await ref.putFile(uploadTarget);
+      return await ref.getDownloadURL();
+    }).toList();
 
-      final url = await ref.getDownloadURL();
-      uploadedUrls.add(url);
-    }
-
-    return uploadedUrls;
+    return await Future.wait(uploadFutures);
   }
 
   static Future<File?> _compressImageFile(File file,
