@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
 import 'package:sodong_app/features/post/data/data_source/create_post_data_source.dart';
 import 'package:sodong_app/features/post/data/dto/post_dto.dart';
 import 'package:sodong_app/features/post/domain/entities/category.dart';
@@ -54,5 +55,26 @@ class RemoteCreatePostDataSource implements CreatePostDataSource {
     }
 
     return uploadedUrls;
+  }
+
+  static Future<File?> _compressImageFile(File file,
+      {int minWidth = 1024, int quality = 80}) async {
+    try {
+      final fileName =
+          'compressed_${DateTime.now().millisecondsSinceEpoch}_${file.hashCode}.jpg';
+      final compressedFilePath = '${file.parent.path}/$fileName';
+      final compressedXFile = await FlutterImageCompress.compressAndGetFile(
+        file.absolute.path,
+        compressedFilePath,
+        minWidth: minWidth,
+        quality: quality,
+      );
+      if (compressedXFile == null) {
+        return null;
+      }
+      return File(compressedXFile.path);
+    } catch (e) {
+      return null;
+    }
   }
 }
